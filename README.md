@@ -16,18 +16,17 @@ This library should be compatible with the following Apple platforms:
 
 but to date has only been extensively tested on macOS
 
-## Core Media Extensions
+## OpenTimelineIO Extensions
 
-See `CoreMedia.swift` for the extensions enabling:
-
-- Conversion of CoreMedia `CMTime` to OpenTimelineIO `RationalTime`
-- Conversion of CoreMedia `CMTimeRange` to OpenTimelineIO `TimeRange`
 - Conversion of OpenTimelineIO `RationalTime` to CoreMedia `CMTime`
 - Conversion of OpenTimelineIO `TimeRange` to CoreMedia `CMTimeRange`
 
-## AVFoundation Extensions
+## Core Media Extensions
 
-See `AVFoundation.swift` for the extensions enabling:
+- Conversion of CoreMedia `CMTime` to OpenTimelineIO `RationalTime`
+- Conversion of CoreMedia `CMTimeRange` to OpenTimelineIO `TimeRange`
+
+## AVFoundation Extensions
 
 - Conversion of `AVCompositionTrackSegment` to OpenTimelineIO `Clip` with an embedded OpenTimelineIO `ExternalReference` which has url metadata
 - Conversion of `AVCompositionTrack` to OpenTimelineIO `Track` with track segments converted to OpenTimelineIO `Clip` associations
@@ -36,7 +35,7 @@ See `AVFoundation.swift` for the extensions enabling:
 ## Dependencies
 
 - [OpenTimelineIO's Swift Bindings](https://github.com/openTimelineIO/OpenTimelineIO-Swift-Bindings/) for Swift interoperabiloty
-- TimecodeKit for reading and parsing Time Code from AVAsset's
+- [TimecodeKit](https://github.com/orchetect/TimecodeKit) for reading and parsing Time Code from AVAsset's
 
 ## Roadmap
 
@@ -66,4 +65,4 @@ If you have ideas on lossless conversion, PR's are welcome! This was a first pas
 
 ## Credits:
 
-OpenTimelineIO of course, and Ozu.ai for supporting this effort.
+OpenTimelineIO and TimecodeKit, and Ozu.ai for supporting this effort.

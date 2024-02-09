@@ -8,6 +8,15 @@
         "branch" : "main",
         "revision" : "77d532fb85d57979f2d6c81fd4dd6d46ff3c220e"
       }
+    },
+    {
+      "identity" : "timecodekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/orchetect/TimecodeKit",
+      "state" : {
+        "branch" : "main",
+        "revision" : "c5b8de894bc52d691cbc2d6ed974670bea741230"
+      }
     }
   ],
   "version" : 2
