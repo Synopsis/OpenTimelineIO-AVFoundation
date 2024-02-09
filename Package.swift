@@ -13,16 +13,17 @@ let package = Package(
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
-         .package(url:"https://github.com/openTimelineIO/OpenTimelineIO-Swift-Bindings", from: "1.0.0"),
+         .package(url:"https://github.com/openTimelineIO/OpenTimelineIO-Swift-Bindings", branch: "main"),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "OpenTimelineIO-AVFoundation",
-            dependencies: []),
+            dependencies: [ .product(name: "OpenTimelineIO", package: "OpenTimelineIO-Swift-Bindings") ]
+        ),
         .testTarget(
             name: "OpenTimelineIO-AVFoundationTests",
-            dependencies: ["OpenTimelineIO-AVFoundation"]),
+            dependencies: [.product(name: "OpenTimelineIO", package: "OpenTimelineIO-Swift-Bindings"), "OpenTimelineIO-AVFoundation"]),
     ]
 )

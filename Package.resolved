@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "opentimelineio-swift-bindings",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/OpenTimelineIO/OpenTimelineIO-Swift-Bindings",
+      "state" : {
+        "branch" : "main",
+        "revision" : "77d532fb85d57979f2d6c81fd4dd6d46ff3c220e"
+      }
+    }
+  ],
+  "version" : 2
+}
