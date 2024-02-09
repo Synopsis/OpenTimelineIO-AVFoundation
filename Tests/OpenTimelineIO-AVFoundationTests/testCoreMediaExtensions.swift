@@ -5,6 +5,7 @@
 // Copyright Contributors to the OpenTimelineIO project
 
 import XCTest
+@testable import OpenTimelineIO_AVFoundation
 @testable import OpenTimelineIO
 
 import Foundation
