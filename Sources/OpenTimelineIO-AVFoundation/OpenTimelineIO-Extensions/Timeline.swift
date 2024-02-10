@@ -27,10 +27,10 @@ public extension Timeline
 
         let composition = AVMutableComposition(urlAssetInitializationOptions: options)
         let audioMix = AVMutableAudioMix()
-        var audioMixParams = [AVAudioMixInputParameters]()
 
         // All rendering instructions for our tracks / segments
         var compositionVideoInstructions = [AVVideoCompositionInstruction]()
+        var compositionAudioMixParams = [AVAudioMixInputParameters]()
 
         for track in self.videoTracks
         {
@@ -61,7 +61,6 @@ public extension Timeline
                 let sourcePreferredTransform = try await sourceAssetFirstVideoTrack.load(.preferredTransform);
                 compositionVideoTrack.preferredTransform = sourcePreferredTransform
 
-                                
                 // Video Layer Instruction
                 let compositionLayerInstruction = AVMutableVideoCompositionLayerInstruction(assetTrack: compositionVideoTrack)
                 let compositionLayerInstructions = [compositionLayerInstruction]
@@ -72,11 +71,38 @@ public extension Timeline
                 compositionVideoInstruction.timeRange = trackTimeRange
                 compositionVideoInstruction.enablePostProcessing = false
                 compositionVideoInstruction.backgroundColor = NSColor.black.cgColor
-                
                 compositionVideoInstructions.append( compositionVideoInstruction)
             }
         }
         
+        for track in self.audioTracks
+        {
+            for child in track.children
+            {
+                guard
+                    let clip = child as? Clip,
+                    let (sourceAsset, clipTimeMapping) = try clip.toAVAssetAndMapping(),
+                    let sourceAssetFirstAudioTrack = try await sourceAsset.loadTracks(withMediaType: .audio).first,
+                    let compositionAudioTrack = composition.mutableTrack(compatibleWith: sourceAssetFirstAudioTrack) ?? composition.addMutableTrack(withMediaType: .audio, preferredTrackID: kCMPersistentTrackID_Invalid)
+                else
+                {
+                    // TODO: GAP !?
+                    continue
+                }
+                
+                // Handle Timing
+                let trackTimeRange = clipTimeMapping.target
+                let sourceAssetTimeRange = clipTimeMapping.source
+                try compositionAudioTrack.insertTimeRange(sourceAssetTimeRange, of: sourceAssetFirstAudioTrack, at: trackTimeRange.start)
+                
+                compositionAudioTrack.isEnabled = try await sourceAssetFirstAudioTrack.load(.isEnabled)
+
+                // TODO: a few milliseconds fade up / fade out to avoid pops
+                let audioMixParams = AVMutableAudioMixInputParameters(track: compositionAudioTrack)
+
+                compositionAudioMixParams.append(audioMixParams)
+            }
+        }
         
         let videoComposition = try await AVMutableVideoComposition.videoComposition(withPropertiesOf: composition)
         // TODO: - Custom Resolution overrides?
@@ -95,7 +121,7 @@ public extension Timeline
         videoComposition.colorTransferFunction = AVVideoTransferFunction_ITU_R_709_2;
         videoComposition.colorYCbCrMatrix = AVVideoYCbCrMatrix_ITU_R_709_2;
 
-        audioMix.inputParameters = audioMixParams
+        audioMix.inputParameters = compositionAudioMixParams
         
         return (composition:composition, videoComposition:videoComposition, audioMix:audioMix)
 
