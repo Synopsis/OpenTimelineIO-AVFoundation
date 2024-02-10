@@ -5,7 +5,7 @@
 //  Created by Anton Marini on 2/9/24.
 //
 
-import Foundation
+import AppKit
 import CoreMedia
 import AVFoundation
 import OpenTimelineIO
@@ -21,15 +21,15 @@ public extension Timeline
     // So here, we effectively ignore OTIO tracks and use the assets to see if we have compatible tracks.
     // If we do - great. if we dont, we make a new one.
     
-    func toAVCompositionRenderables() -> (composition:AVComposition, videoComposition:AVVideoComposition, audioMix:AVAudioMix)?
+    func toAVCompositionRenderables(customCompositorClass:AVVideoCompositing.Type? = nil) async throws -> (composition:AVComposition, videoComposition:AVVideoComposition, audioMix:AVAudioMix)?
     {
         let options =  [AVURLAssetPreferPreciseDurationAndTimingKey : true] as [String : Any]
 
         let composition = AVMutableComposition(urlAssetInitializationOptions: options)
-        
         let audioMix = AVMutableAudioMix()
         var audioMixParams = [AVAudioMixInputParameters]()
 
+        // All rendering instructions for our tracks / segments
         var compositionVideoInstructions = [AVVideoCompositionInstruction]()
 
         for track in self.videoTracks
@@ -38,35 +38,66 @@ public extension Timeline
             {
                 guard
                     let clip = child as? Clip,
-                    let (asset, timeMapping) = clip.toAVAssetAndMapping(),
-                    let firstAssetVideoTrack = asset.tracks(withMediaType: .video).first
+                    let (sourceAsset, clipTimeMapping) = try clip.toAVAssetAndMapping(),
+                    let sourceAssetFirstVideoTrack = try await sourceAsset.loadTracks(withMediaType: .video).first,
+                    let compositionVideoTrack = composition.mutableTrack(compatibleWith: sourceAssetFirstVideoTrack) ?? composition.addMutableTrack(withMediaType: .video, preferredTrackID: kCMPersistentTrackID_Invalid)
                 else
                 {
                     // TODO: GAP !?
                     continue
                 }
                 
-                // the target track we will edit into
-                // Note this has no relation to our OTIO Track
-                let compositionVideoTrack = composition.mutableTrack(compatibleWith: firstAssetVideoTrack) ?? composition.addMutableTrack(withMediaType: .video, preferredTrackID: kCMPersistentTrackID_Invalid)
+                // Handle Timing
+                let trackTimeRange = clipTimeMapping.target
+                let sourceAssetTimeRange = clipTimeMapping.source
+                try compositionVideoTrack.insertTimeRange(sourceAssetTimeRange, of: sourceAssetFirstVideoTrack, at: trackTimeRange.start)
                 
-                try compositionVideoTrack.insertTimeRange(segmentTimeRange, of: firstSourceVideoTrack, at: accruedEditTime)
+                // Support Time Scaling
+                let unscaledTrackTime = CMTimeRangeMake(start: trackTimeRange.start, duration: sourceAssetTimeRange.duration)
+                compositionVideoTrack.scaleTimeRange(unscaledTrackTime, toDuration: trackTimeRange.duration)
+                
+                // Handle source asset video natural transform for
+                // ie iOS videos where camera was rotated
+                let sourcePreferredTransform = try await sourceAssetFirstVideoTrack.load(.preferredTransform);
+                compositionVideoTrack.preferredTransform = sourcePreferredTransform
 
-                
+                                
+                // Video Layer Instruction
+                let compositionLayerInstruction = AVMutableVideoCompositionLayerInstruction(assetTrack: compositionVideoTrack)
+                let compositionLayerInstructions = [compositionLayerInstruction]
+
+                // Video Composition Instruction
                 let compositionVideoInstruction = AVMutableVideoCompositionInstruction()
-                compositionVideoInstruction.timeRange = segmentTimeRange
+                compositionVideoInstruction.layerInstructions = compositionLayerInstructions
+                compositionVideoInstruction.timeRange = trackTimeRange
                 compositionVideoInstruction.enablePostProcessing = false
-
                 compositionVideoInstruction.backgroundColor = NSColor.black.cgColor
                 
-    //            let rec709CSpace = NSColorSpace(cgColorSpace: CGColorSpace(name: CGColorSpace.itur_709) ) ?? NSColorSpace.sRGB
-    //            compositionVideoInstruction.backgroundColor = NSColor(colorSpace: rec709CSpace, hue:0, saturation: 0, brightness: 0, alpha: 0).cgColor
-                
-                var requiredSourceTrackIDs = [CMPersistentTrackID]()
-                var layerInstructions = [AVVideoCompositionLayerInstruction]()
-                
-                
+                compositionVideoInstructions.append( compositionVideoInstruction)
             }
         }
+        
+        
+        let videoComposition = try await AVMutableVideoComposition.videoComposition(withPropertiesOf: composition)
+        // TODO: - Custom Resolution overrides?
+        // videoComposition.renderSize = CGSize(width: 1920, height: 1080)
+        videoComposition.renderScale = 1.0
+        videoComposition.instructions = compositionVideoInstructions
+        
+        // Handle custom effects (we'd need custom instructions and metadata parsing)
+        if let customCompositorClass = customCompositorClass
+        {
+            videoComposition.customVideoCompositorClass = customCompositorClass
+        }
+
+        // Rec 709 by default
+        videoComposition.colorPrimaries = AVVideoColorPrimaries_ITU_R_709_2;
+        videoComposition.colorTransferFunction = AVVideoTransferFunction_ITU_R_709_2;
+        videoComposition.colorYCbCrMatrix = AVVideoYCbCrMatrix_ITU_R_709_2;
+
+        audioMix.inputParameters = audioMixParams
+        
+        return (composition:composition, videoComposition:videoComposition, audioMix:audioMix)
+
     }
 }

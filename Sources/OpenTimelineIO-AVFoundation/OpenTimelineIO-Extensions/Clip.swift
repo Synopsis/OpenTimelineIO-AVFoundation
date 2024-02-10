@@ -12,13 +12,13 @@ import OpenTimelineIO
 
 extension Clip
 {
-    func toAVAssetAndMapping() -> (asset:AVAsset, timeMaping:CMTimeMapping)?
+    func toAVAssetAndMapping() throws -> (asset:AVAsset, timeMaping:CMTimeMapping)?
     {
         guard
             let externalReference = self.mediaReference as? ExternalReference,
             let asset = externalReference.toAVAsset(),
-            let timeRangeInAsset = self.sourceRange?.toCMTimeRange()
-            let trimmedRangeInParent = self.trimmedRangeInParent()?.toCMTimeRange()
+            let timeRangeInAsset = self.sourceRange?.toCMTimeRange(),
+            let trimmedRangeInParent = try self.trimmedRangeInParent()?.toCMTimeRange()
         else
         {
             return nil
