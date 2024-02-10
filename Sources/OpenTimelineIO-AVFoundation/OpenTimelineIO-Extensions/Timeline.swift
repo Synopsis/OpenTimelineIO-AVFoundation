@@ -50,6 +50,8 @@ public extension Timeline
                 // Note this has no relation to our OTIO Track
                 let compositionVideoTrack = composition.mutableTrack(compatibleWith: firstAssetVideoTrack) ?? composition.addMutableTrack(withMediaType: .video, preferredTrackID: kCMPersistentTrackID_Invalid)
                 
+                try compositionVideoTrack.insertTimeRange(segmentTimeRange, of: firstSourceVideoTrack, at: accruedEditTime)
+
                 
                 let compositionVideoInstruction = AVMutableVideoCompositionInstruction()
                 compositionVideoInstruction.timeRange = segmentTimeRange
