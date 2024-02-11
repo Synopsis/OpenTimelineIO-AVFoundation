@@ -36,7 +36,7 @@ public extension AVCompositionTrackSegment
 //            let frameRate = Double(firstVideoTrack.nominalFrameRate)
 //            minFrameDuration = RationalTime.from(seconds: 1.0/frameRate)
 //            minFrameDuration = RationalTime(value: 1.0, rate: frameRate)
-             minFrameDuration = firstVideoTrack.minFrameDuration.toOTIORationalTime()
+             minFrameDuration = sourceTrack.minFrameDuration.toOTIORationalTime()
         }
         
         let start = RationalTime(value:0, rate:duration.rate)
