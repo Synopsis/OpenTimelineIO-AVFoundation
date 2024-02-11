@@ -17,11 +17,12 @@ public extension AVCompositionTrack
     {
         var kind:Track.Kind? = nil
                 
-        let minFrameDuration = self.minFrameDuration.toOTIORationalTime()
+        var minFrameDuration:RationalTime? = nil
 
         switch (self.mediaType)
         {
         case .video:
+            minFrameDuration = self.minFrameDuration.toOTIORationalTime()
             kind = .video
         case .audio:
             kind = Track.Kind.audion
@@ -40,16 +41,19 @@ public extension AVCompositionTrack
                 
         let clips = self.segments.compactMap { $0.toOTIOClip() }
         
-        // Add rescaling - see Additional Notes above
-        clips.forEach( {
-            if let sourceRange = $0.sourceRange
-            {
-                let rescaledStart = sourceRange.startTime.rescaled(to: minFrameDuration)
-                let rescaledDuration = sourceRange.duration.rescaled(to: minFrameDuration)
-                
-                $0.sourceRange = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
-            }
-        })
+        // Add rescaling (for video) - see Additional Notes above
+        if let minFrameDuration = minFrameDuration
+        {
+            clips.forEach( {
+                if let sourceRange = $0.sourceRange
+                {
+                    let rescaledStart = sourceRange.startTime.rescaled(to: minFrameDuration)
+                    let rescaledDuration = sourceRange.duration.rescaled(to: minFrameDuration)
+                    
+                    $0.sourceRange = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
+                }
+            })
+        }
         
         // In AVAssets, tracks have time ranges at the start of the assets, and have gaps until a segment is needed
         // As opposed to OTIO, where tracks are 'inset' into the overall timeline (?)
