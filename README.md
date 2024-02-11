@@ -20,6 +20,8 @@ but to date has only been extensively tested on macOS
 
 - Conversion of OpenTimelineIO `RationalTime` to CoreMedia `CMTime`
 - Conversion of OpenTimelineIO `TimeRange` to CoreMedia `CMTimeRange`
+- Conversion of OpenTimelineIO `ExternalReference` to AVFoundation `AVAsset`
+- Conversion of OpenTimelineIO `Timeline` to playable/exportable AVFoundation `AVCompostion` `AVVideoCompostion` and `AVAudioMix` 
 
 ## Core Media Extensions
 
@@ -40,16 +42,15 @@ but to date has only been extensively tested on macOS
 ## Roadmap
 
 - Enable viable metadata from `AVAssets` to `ExternalRefernce` and other objects where appropriate to faciliate correctness and robustness in conversion.
+    - Waiting on [#51](https://github.com/OpenTimelineIO/OpenTimelineIO-Swift-Bindings/issues/51)
 
-- Enable conversion from an OpenTimelineIO `Timeline` into a playable custom `AVComposition` asset.
+- Enable robust support for transitions / effects metadata to be passed between AVFoundation and OTIO
     - This requires thinking deeply how to support transitions and effects, and the infrasturcture required (custom instructions, composition renderers, etc).
-    - The first attempt will mostly likely only implement standard cuts
-    - This would require mirroring the AVFoundation conversion, so `Track` `Clips` and `ExternalReference` can be converted to `AVCompositionTracks` `AVCompositionTrackSegments` and `AVURLAssets`
     - Input welcome!
     
 - Leverage TimecodeKit to enable Asset reading of TimeCode values and populating our OpenTimelineIO `RationalTimes` with Timecode Offsets as per best practice.
 
-- Follow a best practices guide to facilitate export
+- Follow a best practices guide to facilitate working export to various NLEs successfully.
 
 
 ## FAQ
