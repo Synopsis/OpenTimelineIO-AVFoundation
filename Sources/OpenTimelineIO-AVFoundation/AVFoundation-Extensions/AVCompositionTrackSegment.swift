@@ -31,10 +31,13 @@ public extension AVCompositionTrackSegment
         // AAF complains if our time ranges dont share the same rate
         var minFrameDuration:RationalTime? = nil
         
-        if let firstVideoTrack = asset.tracks(withMediaType: .video).first
+        if let sourceTrack = asset.track(withTrackID: self.sourceTrackID)
         {
-            let frameRate = Double(firstVideoTrack.nominalFrameRate)
-            minFrameDuration = RationalTime.from(seconds: 1.0/frameRate)
+            // Audio has invalid minFrameDuration
+            if sourceTrack.minFrameDuration.isValid
+            {
+                minFrameDuration = sourceTrack.minFrameDuration.toOTIORationalTime()
+            }
         }
         
         let start = RationalTime(value:0, rate:duration.rate)
