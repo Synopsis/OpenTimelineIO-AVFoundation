@@ -25,6 +25,6 @@ extension Clip
 
         let rangeInParent = try self.rangeInParent().toCMTimeRange()
 
-        return (asset, CMTimeMapping(source: rangeInParent, target: timeRangeInAsset))
+        return (asset, CMTimeMapping(source: timeRangeInAsset, target:rangeInParent))
     }
 }
