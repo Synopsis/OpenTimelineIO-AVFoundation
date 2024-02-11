@@ -1,9 +1,8 @@
 //
-//  File.swift
-//  
+//  TimeRange.swift
 //
-//  Created by Anton Marini on 2/9/24.
-//
+// SPDX-License-Identifier: Apache-2.0
+// Copyright Contributors to the OpenTimelineIO project
 
 import Foundation
 import CoreMedia
