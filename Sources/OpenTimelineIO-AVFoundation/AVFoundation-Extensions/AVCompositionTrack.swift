@@ -17,7 +17,8 @@ public extension AVCompositionTrack
         var kind:Track.Kind? = nil
         
         let frameRate = Double(self.nominalFrameRate)
-        let minFrameDuration = RationalTime.from(seconds: 1.0/frameRate)
+        let minFrameDuration = RationalTime(value: 1.0, rate: 1.0/frameRate)
+//        let minFrameDuration = RationalTime.from(seconds: 1.0/frameRate)
 
         switch (self.mediaType)
         {
