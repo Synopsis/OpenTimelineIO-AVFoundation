@@ -23,7 +23,7 @@ but to date has only been extensively tested on macOS
 Assuming you have a basic `AVPlayer` setup, this will let you import a `.otio` file with basic jump cut editing.
 See roadmap for transitions / effects.
 
-```
+```swift
     do {
         if
             let timeline = try Timeline.fromJSON(url: url) as? Timeline,
@@ -48,7 +48,7 @@ Assuming you have succssfuly created an `AVCompostion` - this will export a basi
 See roadmap for transitions / effects.
 
 
-```
+```swift
     do {
         let timeline = try compositon.toOTIOTimeline(named: toURL.lastPathComponent)
         try timeline.toJSON(url: toURL)
