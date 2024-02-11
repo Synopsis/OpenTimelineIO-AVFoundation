@@ -33,9 +33,10 @@ public extension AVCompositionTrackSegment
         
         if let firstVideoTrack = asset.tracks(withMediaType: .video).first
         {
-            let frameRate = Double(firstVideoTrack.nominalFrameRate)
+//            let frameRate = Double(firstVideoTrack.nominalFrameRate)
 //            minFrameDuration = RationalTime.from(seconds: 1.0/frameRate)
-            let minFrameDuration = RationalTime(value: 1.0, rate: frameRate)
+//            minFrameDuration = RationalTime(value: 1.0, rate: frameRate)
+             minFrameDuration = firstVideoTrack.minFrameDuration.toOTIORationalTime()
         }
         
         let start = RationalTime(value:0, rate:duration.rate)

@@ -9,16 +9,15 @@ import Foundation
 import AVFoundation
 import CoreMedia
 import OpenTimelineIO
+import TimecodeKit
 
 public extension AVCompositionTrack
 {
     func toOTIOTrack() throws -> Track?
     {
         var kind:Track.Kind? = nil
-        
-        let frameRate = Double(self.nominalFrameRate)
-        let minFrameDuration = RationalTime(value: 1.0, rate: frameRate)
-//        let minFrameDuration = RationalTime.from(seconds: 1.0/frameRate)
+                
+        let minFrameDuration = self.minFrameDuration.toOTIORationalTime()
 
         switch (self.mediaType)
         {
