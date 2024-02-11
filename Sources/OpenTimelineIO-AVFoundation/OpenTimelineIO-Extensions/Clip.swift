@@ -17,13 +17,14 @@ extension Clip
         guard
             let externalReference = self.mediaReference as? ExternalReference,
             let asset = externalReference.toAVAsset(),
-            let timeRangeInAsset = self.sourceRange?.toCMTimeRange(),
-            let trimmedRangeInParent = try self.trimmedRangeInParent()?.toCMTimeRange()
+            let timeRangeInAsset = self.sourceRange?.toCMTimeRange()
         else
         {
             return nil
         }
-        
-        return (asset, CMTimeMapping(source: trimmedRangeInParent, target: timeRangeInAsset))
+
+        let rangeInParent = try self.rangeInParent().toCMTimeRange()
+
+        return (asset, CMTimeMapping(source: rangeInParent, target: timeRangeInAsset))
     }
 }
