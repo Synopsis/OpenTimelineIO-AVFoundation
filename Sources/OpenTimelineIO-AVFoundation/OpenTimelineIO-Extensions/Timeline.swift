@@ -75,34 +75,34 @@ public extension Timeline
             }
         }
         
-        for track in self.audioTracks
-        {
-            for child in track.children
-            {
-                guard
-                    let clip = child as? Clip,
-                    let (sourceAsset, clipTimeMapping) = try clip.toAVAssetAndMapping(),
-                    let sourceAssetFirstAudioTrack = try await sourceAsset.loadTracks(withMediaType: .audio).first,
-                    let compositionAudioTrack = composition.mutableTrack(compatibleWith: sourceAssetFirstAudioTrack) ?? composition.addMutableTrack(withMediaType: .audio, preferredTrackID: kCMPersistentTrackID_Invalid)
-                else
-                {
-                    // TODO: GAP !?
-                    continue
-                }
-                
-                // Handle Timing
-                let trackTimeRange = clipTimeMapping.target
-                let sourceAssetTimeRange = clipTimeMapping.source
-                try compositionAudioTrack.insertTimeRange(sourceAssetTimeRange, of: sourceAssetFirstAudioTrack, at: trackTimeRange.start)
-                
-                compositionAudioTrack.isEnabled = try await sourceAssetFirstAudioTrack.load(.isEnabled)
-
-                // TODO: a few milliseconds fade up / fade out to avoid pops
-                let audioMixParams = AVMutableAudioMixInputParameters(track: compositionAudioTrack)
-
-                compositionAudioMixParams.append(audioMixParams)
-            }
-        }
+//        for track in self.audioTracks
+//        {
+//            for child in track.children
+//            {
+//                guard
+//                    let clip = child as? Clip,
+//                    let (sourceAsset, clipTimeMapping) = try clip.toAVAssetAndMapping(),
+//                    let sourceAssetFirstAudioTrack = try await sourceAsset.loadTracks(withMediaType: .audio).first,
+//                    let compositionAudioTrack = composition.mutableTrack(compatibleWith: sourceAssetFirstAudioTrack) ?? composition.addMutableTrack(withMediaType: .audio, preferredTrackID: kCMPersistentTrackID_Invalid)
+//                else
+//                {
+//                    // TODO: GAP !?
+//                    continue
+//                }
+//                
+//                // Handle Timing
+//                let trackTimeRange = clipTimeMapping.target
+//                let sourceAssetTimeRange = clipTimeMapping.source
+//                try compositionAudioTrack.insertTimeRange(sourceAssetTimeRange, of: sourceAssetFirstAudioTrack, at: trackTimeRange.start)
+//                
+//                compositionAudioTrack.isEnabled = try await sourceAssetFirstAudioTrack.load(.isEnabled)
+//
+//                // TODO: a few milliseconds fade up / fade out to avoid pops
+//                let audioMixParams = AVMutableAudioMixInputParameters(track: compositionAudioTrack)
+//
+//                compositionAudioMixParams.append(audioMixParams)
+//            }
+//        }
         
         // Composition Validation
         for track in composition.tracks
