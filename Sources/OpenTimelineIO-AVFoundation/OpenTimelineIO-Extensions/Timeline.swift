@@ -104,6 +104,18 @@ public extension Timeline
             }
         }
         
+        // Composition Validation
+        for track in composition.tracks
+        {
+            do {
+                try track.validateSegments(track.segments)
+            }
+            catch
+            {
+                throw error
+            }
+        }
+        
         let videoComposition = try await AVMutableVideoComposition.videoComposition(withPropertiesOf: composition)
         // TODO: - Custom Resolution overrides?
         // videoComposition.renderSize = CGSize(width: 1920, height: 1080)
@@ -121,9 +133,37 @@ public extension Timeline
         videoComposition.colorTransferFunction = AVVideoTransferFunction_ITU_R_709_2;
         videoComposition.colorYCbCrMatrix = AVVideoYCbCrMatrix_ITU_R_709_2;
 
+        // Video Composition Validation
+        try await videoComposition.isValid(for: composition, timeRange: CMTimeRange(start: .zero, end: composition.duration), validationDelegate:self)
+
         audioMix.inputParameters = compositionAudioMixParams
+
         
         return (composition:composition, videoComposition:videoComposition, audioMix:audioMix)
 
+    }
+}
+
+
+extension Timeline : AVVideoCompositionValidationHandling
+{
+    public func videoComposition(_ videoComposition: AVVideoComposition, shouldContinueValidatingAfterFindingInvalidValueForKey key: String) -> Bool
+    {
+        return false
+    }
+    
+    public func videoComposition(_ videoComposition: AVVideoComposition, shouldContinueValidatingAfterFindingEmptyTimeRange timeRange: CMTimeRange) -> Bool
+    {
+        return false
+    }
+    
+    public func videoComposition(_ videoComposition: AVVideoComposition, shouldContinueValidatingAfterFindingInvalidTimeRangeIn videoCompositionInstruction: AVVideoCompositionInstructionProtocol) -> Bool
+    {
+        return false
+    }
+    
+    public func videoComposition(_ videoComposition: AVVideoComposition, shouldContinueValidatingAfterFindingInvalidTrackIDIn videoCompositionInstruction: AVVideoCompositionInstructionProtocol, layerInstruction: AVVideoCompositionLayerInstruction, asset: AVAsset) -> Bool
+    {
+        return false
     }
 }
