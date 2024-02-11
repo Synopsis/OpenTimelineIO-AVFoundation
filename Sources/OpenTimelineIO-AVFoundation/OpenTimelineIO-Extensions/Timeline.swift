@@ -48,8 +48,8 @@ public extension Timeline
                 }
                 
                 // Handle Timing
-                let trackTimeRange = clipTimeMapping.target
-                let sourceAssetTimeRange = clipTimeMapping.source
+                let trackTimeRange = clipTimeMapping.source
+                let sourceAssetTimeRange = clipTimeMapping.target
                 try compositionVideoTrack.insertTimeRange(sourceAssetTimeRange, of: sourceAssetFirstVideoTrack, at: trackTimeRange.start)
                 
                 // Support Time Scaling
