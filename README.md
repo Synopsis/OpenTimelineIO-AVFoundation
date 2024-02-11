@@ -16,6 +16,49 @@ This library should be compatible with the following Apple platforms:
 
 but to date has only been extensively tested on macOS
 
+## QuickStart
+
+### OpenTimelineIO to AVFoundation:
+
+Assuming you have a basic `AVPlayer` setup, this will let you import a `.otio` file with basic jump cut editing.
+See roadmap for transitions / effects.
+
+```
+    do {
+        if
+            let timeline = try Timeline.fromJSON(url: url) as? Timeline,
+            let (composition, videoComposition, audioMix) = try await timeline.toAVCompositionRenderables()
+        {
+            let playerItem = AVPlayerItem(asset: composition)
+            playerItem.videoComposition = videoComposition
+            playerItem.audioMix = audioMix
+            
+            self.player.replaceCurrentItem(with: playerItem)
+        }
+    }
+    catch
+    {
+        print(error)
+    }
+```
+
+### AVFoundation to OpenTimelineIO:
+
+Assuming you have succssfuly created an `AVCompostion` - this will export a basic `.otio` file without effects or transition metadata.
+See roadmap for transitions / effects.
+
+
+```
+    do {
+        let timeline = try compositon.toOTIOTimeline(named: toURL.lastPathComponent)
+        try timeline.toJSON(url: toURL)
+    }
+    catch
+    {
+        print(error)
+    }
+```
+
 ## OpenTimelineIO Extensions
 
 - Conversion of OpenTimelineIO `RationalTime` to CoreMedia `CMTime`
