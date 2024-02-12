@@ -83,7 +83,7 @@ See roadmap for transitions / effects.
 | OTIO Formats | Compatible
 -- | --
 |OTIO| :white_check_mark:|
-|OTIOD | :x: - Planned|
+|OTIOD | :white_check_mark:|
 |OTIOZ | :x: - Planned|
 
 Generally if Quicktime or Final Cut Pro X Can support it, it should just work?
