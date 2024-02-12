@@ -80,11 +80,26 @@ See roadmap for transitions / effects.
 
 ## Format Compatibility Matrix
 
-| Formats | Compatible
+| OTIO Formats | Compatible
 -- | --
 |OTIO| :white_check_mark:|
-|OTIOD | :x: Planned|
-|OTIOZ | :x: Planned|
+|OTIOD | :x: - Planned|
+|OTIOZ | :x: - Planned|
+
+Generally if Quicktime or Final Cut Pro X Can support it, it should just work?
+
+| Video Formats | Compatible
+-- | --
+| H.264 | :white_check_mark: | 
+| HEVC | :white_check_mark: | 
+| Apple ProRes | :white_check_mark: - requires [Apple Pro Video Formats](https://support.apple.com/kb/DL2100?locale=en_US) for some variants | 
+| Apple Intermediate Codec | :white_check_mark: - requires [Apple Pro Video Formats](https://support.apple.com/kb/DL2100?locale=en_US) for some variants
+| MXF wrapped Pro Res | :white_check_mark: - Requires `MTRegisterProfessionalVideoWorkflowFormatReaders()` and `VTRegisterProfessionalVideoWorkflowVideoDecoders()`  to be enabled |
+| MXF Wrapped DnXHD | :white_check_mark: - Requires `MTRegisterProfessionalVideoWorkflowFormatReaders()` and `VTRegisterProfessionalVideoWorkflowVideoDecoders()`  to be enabled - only some DnxHD variants work | 
+| Image Frames | :x: - Planned - requires custom compositor | 
+| Image Sequences | :x: - Planned - requires custom compositor| 
+| Raw Formats (BRaw, Red, etc) | :x: - Possible - requires you to have SDK - manage decode and roll your own custom compositor | 
+
 
 ## Project Validation
 
@@ -92,7 +107,7 @@ See roadmap for transitions / effects.
 -- | -- | --
 | [ALab Trailer](https://dpel.aswf.io/alab-trailer/) |  :white_check_mark: | Not yet tested 
 | [AWS Picchu Edit](https://dpel.aswf.io/aws-picchu-edit/) | :x: (requires image support & OTIOZ support) | Not yet tested 
-| [otio-oc-examples](https://github.com/darbyjohnston/otio-oc-examples) |  Not yet tested  | Not yet tested 
+| [OTIO-OC-Examples](https://github.com/darbyjohnston/otio-oc-examples) |  Not yet tested  | Not yet tested 
 
 
 ## Dependencies
