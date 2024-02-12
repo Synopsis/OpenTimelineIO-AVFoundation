@@ -77,6 +77,24 @@ See roadmap for transitions / effects.
 - Conversion of `AVCompositionTrack` to OpenTimelineIO `Track` with track segments converted to OpenTimelineIO `Clip` associations
 - Conversion of `AVComposition` to OpenTimelineIO `Timeline` with associated `Tracks` converted
 
+
+## Format Compatibility Matrix
+
+| Formats | Compatible
+-- | --
+|OTIO| :white_check_mark:|
+|OTIOD | :x: Planned|
+|OTIOZ | :x: Planned|
+
+## Project Validation
+
+| Sample Project | Import to AVFoundation | Export from AVFoundation 
+-- | -- | --
+| [ALab Trailer](https://dpel.aswf.io/alab-trailer/) |  :white_check_mark: | Not yet tested 
+| [AWS Picchu Edit](https://dpel.aswf.io/aws-picchu-edit/) | :x: (requires image support & OTIOZ support) | Not yet tested 
+| [otio-oc-examples](https://github.com/darbyjohnston/otio-oc-examples) |  Not yet tested  | Not yet tested 
+
+
 ## Dependencies
 
 - [OpenTimelineIO's Swift Bindings](https://github.com/openTimelineIO/OpenTimelineIO-Swift-Bindings/) for Swift interoperabiloty
