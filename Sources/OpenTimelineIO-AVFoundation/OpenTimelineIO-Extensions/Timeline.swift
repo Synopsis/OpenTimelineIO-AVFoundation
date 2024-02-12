@@ -93,7 +93,7 @@ public extension Timeline
             {
                 guard
                     let clip = child as? Clip,
-                    let (sourceAsset, clipTimeMapping) = try clip.toAVAssetAndMapping(),
+                    let (sourceAsset, clipTimeMapping) = try clip.toAVAssetAndMapping(baseURL: baseURL),
                     let sourceAssetFirstAudioTrack = try await sourceAsset.loadTracks(withMediaType: .audio).first,
                     let compositionAudioTrack = composition.mutableTrack(compatibleWith: sourceAssetFirstAudioTrack) ?? composition.addMutableTrack(withMediaType: .audio, preferredTrackID: kCMPersistentTrackID_Invalid)
                 else
