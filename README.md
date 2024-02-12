@@ -80,25 +80,25 @@ See roadmap for transitions / effects.
 
 ## Format Compatibility Matrix
 
-| OTIO Formats | Compatible
--- | --
-|OTIO| :white_check_mark:|
-|OTIOD | :white_check_mark:|
-|OTIOZ | :x: - Planned|
+| OTIO Formats | Status | Notes |
+-- | -- | -- 
+|OTIO| :white_check_mark:| |
+|OTIOD | :white_check_mark:| | 
+|OTIOZ | :x: | Planned|
 
 Generally if Quicktime or Final Cut Pro X Can support it, it should just work?
 
-| Video Formats | Compatible
--- | --
-| H.264 | :white_check_mark: | 
-| HEVC | :white_check_mark: | 
-| Apple ProRes | :white_check_mark: - requires [Apple Pro Video Formats](https://support.apple.com/kb/DL2100?locale=en_US) for some variants | 
-| Apple Intermediate Codec | :white_check_mark: - requires [Apple Pro Video Formats](https://support.apple.com/kb/DL2100?locale=en_US) for some variants
-| MXF wrapped Pro Res | :white_check_mark: - Requires `MTRegisterProfessionalVideoWorkflowFormatReaders()` and `VTRegisterProfessionalVideoWorkflowVideoDecoders()`  to be enabled |
-| MXF Wrapped DnXHD | :white_check_mark: - Requires `MTRegisterProfessionalVideoWorkflowFormatReaders()` and `VTRegisterProfessionalVideoWorkflowVideoDecoders()`  to be enabled - only some DnxHD variants work | 
-| Image Frames | :x: - Planned - requires custom compositor | 
-| Image Sequences | :x: - Planned - requires custom compositor| 
-| Raw Formats (BRaw, Red, etc) | :x: - Possible - requires you to have SDK - manage decode and roll your own custom compositor | 
+| Video Formats | Status | Notes 
+-- | -- | -- 
+| H.264 | :white_check_mark: | Native |
+| HEVC | :white_check_mark: | Native |
+| Apple ProRes | :white_check_mark: | Requires [Apple Pro Video Formats](https://support.apple.com/kb/DL2100?locale=en_US) for some variants | 
+| Apple Intermediate Codec | :white_check_mark: | Requires [Apple Pro Video Formats](https://support.apple.com/kb/DL2100?locale=en_US) for some variants
+| MXF wrapped Pro Res | :white_check_mark: | Requires `MTRegisterProfessionalVideoWorkflowFormatReaders()` and `VTRegisterProfessionalVideoWorkflowVideoDecoders()`  to be enabled |
+| MXF Wrapped DnXHD | :white_check_mark: | Requires `MTRegisterProfessionalVideoWorkflowFormatReaders()` and `VTRegisterProfessionalVideoWorkflowVideoDecoders()`  to be enabled - only some DnxHD variants work | 
+| Image Frames | :x: | Requires custom compositor | 
+| Image Sequences | :x: | Requires custom compositor| 
+| Raw Formats (BRaw, Red, etc) | :x: | Requires you to have SDK - manage decode and roll your own custom compositor | 
 
 
 ## Project Validation
