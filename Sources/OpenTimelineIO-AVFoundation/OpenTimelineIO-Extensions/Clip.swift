@@ -26,9 +26,16 @@ extension Clip
         let rangeInParent = try self.rangeInParent().toCMTimeRange()
 
         // if we have timecode from our asset
-        if let timecodeCMTime = try asset.startTimecode()?.cmTimeValue
+        do
         {
-            timeRangeInAsset = CMTimeRange(start: timeRangeInAsset.start - timecodeCMTime, duration: timeRangeInAsset.duration )
+            if let timecodeCMTime = try asset.startTimecode()?.cmTimeValue
+            {
+                timeRangeInAsset = CMTimeRange(start: timeRangeInAsset.start - timecodeCMTime, duration: timeRangeInAsset.duration )
+            }
+        }
+        catch Timecode.MediaParseError.missingOrNonStandardFrameRate
+        {
+            // not an error
         }
         
         return (asset, CMTimeMapping(source: timeRangeInAsset, target:rangeInParent))
