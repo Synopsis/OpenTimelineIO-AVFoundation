@@ -9,7 +9,7 @@ import Foundation
 import CoreMedia
 import AVFoundation
 import OpenTimelineIO
-
+import TimecodeKit
 extension Clip
 {
     func toAVAssetAndMapping(baseURL:URL? = nil) throws -> (asset:AVAsset, timeMaping:CMTimeMapping)?
@@ -17,7 +17,7 @@ extension Clip
         guard
             let externalReference = self.mediaReference as? ExternalReference,
             let asset = externalReference.toAVAsset(baseURL: baseURL),
-            let timeRangeInAsset = self.sourceRange?.toCMTimeRange()
+            var timeRangeInAsset = self.sourceRange?.toCMTimeRange()
         else
         {
             return nil
@@ -25,6 +25,19 @@ extension Clip
 
         let rangeInParent = try self.rangeInParent().toCMTimeRange()
 
+        // if we have timecode from our asset
+        do
+        {
+            if let timecodeCMTime = try asset.startTimecode()?.cmTimeValue
+            {
+                timeRangeInAsset = CMTimeRange(start: timeRangeInAsset.start - timecodeCMTime, duration: timeRangeInAsset.duration )
+            }
+        }
+        catch Timecode.MediaParseError.missingOrNonStandardFrameRate
+        {
+            // not an error
+        }
+        
         return (asset, CMTimeMapping(source: timeRangeInAsset, target:rangeInParent))
     }
 }

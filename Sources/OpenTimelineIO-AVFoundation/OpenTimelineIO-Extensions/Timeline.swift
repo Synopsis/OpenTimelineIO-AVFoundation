@@ -39,13 +39,15 @@ public extension Timeline
 
         for track in self.videoTracks
         {
+            let compositionVideoTrack = composition.addMutableTrack(withMediaType: .video, preferredTrackID: kCMPersistentTrackID_Invalid)
+
             for child in track.children
             {
                 guard
                     let clip = child as? Clip,
                     let (sourceAsset, clipTimeMapping) = try clip.toAVAssetAndMapping(baseURL: baseURL),
                     let sourceAssetFirstVideoTrack = try await sourceAsset.loadTracks(withMediaType: .video).first,
-                    let compositionVideoTrack = composition.mutableTrack(compatibleWith: sourceAssetFirstVideoTrack) ?? composition.addMutableTrack(withMediaType: .video, preferredTrackID: kCMPersistentTrackID_Invalid)
+                    let compositionVideoTrack = compositionVideoTrack //composition.mutableTrack(compatibleWith: sourceAssetFirstVideoTrack) ??
                 else
                 {
                     // TODO: GAP !?
@@ -53,16 +55,22 @@ public extension Timeline
                 }
                 
                 // Handle Timing
-                var trackTimeRange = clipTimeMapping.target
-                var sourceAssetTimeRange = clipTimeMapping.source
-                
-//                // Handle global time offset
-//                if let globalStartCMTime = globalStartCMTime
-//                {
-//                    trackTimeRange = CMTimeRange(start: trackTimeRange.start - globalStartCMTime, duration: trackTimeRange.duration)
-//                }
-                
-                try compositionVideoTrack.insertTimeRange(sourceAssetTimeRange, of: sourceAssetFirstVideoTrack, at: trackTimeRange.start)
+                let trackTimeRange = clipTimeMapping.target
+                let sourceAssetTimeRange = clipTimeMapping.source
+                   
+                // We attempt to re-use a track per OTIO track, but we may have CMFormatDesc inconsistencies which means insertion will fails
+                // If so - we make a new one
+                do
+                {
+                    try compositionVideoTrack.insertTimeRange(sourceAssetTimeRange, of: sourceAssetFirstVideoTrack, at: trackTimeRange.start)
+                }
+                catch
+                {
+                    if let compositionVideoTrack = composition.mutableTrack(compatibleWith: sourceAssetFirstVideoTrack) ?? composition.addMutableTrack(withMediaType: .video, preferredTrackID: kCMPersistentTrackID_Invalid)
+                    {
+                        try compositionVideoTrack.insertTimeRange(sourceAssetTimeRange, of: sourceAssetFirstVideoTrack, at: trackTimeRange.start)
+                    }
+                }
                 
                 // Support Time Scaling
                 let unscaledTrackTime = CMTimeRangeMake(start: trackTimeRange.start, duration: sourceAssetTimeRange.duration)
@@ -89,13 +97,15 @@ public extension Timeline
         
         for track in self.audioTracks
         {
+            let compositionAudioTrack = composition.addMutableTrack(withMediaType: .audio, preferredTrackID: kCMPersistentTrackID_Invalid)
+
             for child in track.children
             {
                 guard
                     let clip = child as? Clip,
-                    let (sourceAsset, clipTimeMapping) = try clip.toAVAssetAndMapping(),
+                    let (sourceAsset, clipTimeMapping) = try clip.toAVAssetAndMapping(baseURL: baseURL),
                     let sourceAssetFirstAudioTrack = try await sourceAsset.loadTracks(withMediaType: .audio).first,
-                    let compositionAudioTrack = composition.mutableTrack(compatibleWith: sourceAssetFirstAudioTrack) ?? composition.addMutableTrack(withMediaType: .audio, preferredTrackID: kCMPersistentTrackID_Invalid)
+                    let compositionAudioTrack = compositionAudioTrack
                 else
                 {
                     // TODO: GAP !?
@@ -105,7 +115,20 @@ public extension Timeline
                 // Handle Timing
                 let trackTimeRange = clipTimeMapping.target
                 let sourceAssetTimeRange = clipTimeMapping.source
-                try compositionAudioTrack.insertTimeRange(sourceAssetTimeRange, of: sourceAssetFirstAudioTrack, at: trackTimeRange.start)
+                
+                // We attempt to re-use a track per OTIO track, but we may have CMFormatDesc inconsistencies which means insertion will fails
+                // If so - we make a new one
+                do
+                {
+                    try compositionAudioTrack.insertTimeRange(sourceAssetTimeRange, of: sourceAssetFirstAudioTrack, at: trackTimeRange.start)
+                }
+                catch
+                {
+                    if let compositionAudioTrack = composition.mutableTrack(compatibleWith: sourceAssetFirstAudioTrack) ?? composition.addMutableTrack(withMediaType: .audio, preferredTrackID: kCMPersistentTrackID_Invalid)
+                    {
+                        try compositionAudioTrack.insertTimeRange(sourceAssetTimeRange, of: sourceAssetFirstAudioTrack, at: trackTimeRange.start)
+                    }
+                }
                 
                 compositionAudioTrack.isEnabled = try await sourceAssetFirstAudioTrack.load(.isEnabled)
 
