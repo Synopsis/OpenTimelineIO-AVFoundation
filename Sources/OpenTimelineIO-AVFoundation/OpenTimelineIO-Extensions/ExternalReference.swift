@@ -12,17 +12,31 @@ import OpenTimelineIO
 
 extension ExternalReference
 {
-    func toAVAsset() -> AVAsset?
+    func toAVAsset(baseURL:URL? = nil) -> AVAsset?
     {
         guard
-            let targetURL = self.targetURL,
-            let sourceURL = URL(string: targetURL)
+            let targetURL = self.targetURL
         else
         {
             return nil
         }
         
-        return AVURLAsset(url: sourceURL)
+        if targetURL.hasPrefix("file:")
+        {
+            if let sourceURL = URL(string: targetURL)
+            {
+                return AVURLAsset(url: sourceURL)
+            }
+        }
+        else
+        {
+            if let sourceURL = baseURL?.appending(path: targetURL)
+            {
+                return AVURLAsset(url: sourceURL)
+            }
+        }
+
+        return nil
     }
 }
 

@@ -12,11 +12,11 @@ import OpenTimelineIO
 
 extension Clip
 {
-    func toAVAssetAndMapping() throws -> (asset:AVAsset, timeMaping:CMTimeMapping)?
+    func toAVAssetAndMapping(baseURL:URL? = nil) throws -> (asset:AVAsset, timeMaping:CMTimeMapping)?
     {
         guard
             let externalReference = self.mediaReference as? ExternalReference,
-            let asset = externalReference.toAVAsset(),
+            let asset = externalReference.toAVAsset(baseURL: baseURL),
             let timeRangeInAsset = self.sourceRange?.toCMTimeRange()
         else
         {

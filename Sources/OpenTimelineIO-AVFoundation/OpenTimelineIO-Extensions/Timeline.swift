@@ -12,6 +12,7 @@ import OpenTimelineIO
 
 public extension Timeline
 {
+    
     // Some running notes about this conversion
     
     // 1 - Tracks
@@ -21,8 +22,12 @@ public extension Timeline
     // So here, we effectively ignore OTIO tracks and use the assets to see if we have compatible tracks.
     // If we do - great. if we dont, we make a new one.
     
-    func toAVCompositionRenderables(customCompositorClass:AVVideoCompositing.Type? = nil) async throws -> (composition:AVComposition, videoComposition:AVVideoComposition, audioMix:AVAudioMix)?
+    func toAVCompositionRenderables(baseURL:URL? = nil, customCompositorClass:AVVideoCompositing.Type? = nil) async throws -> (composition:AVComposition, videoComposition:AVVideoComposition, audioMix:AVAudioMix)?
     {
+        
+        // Get our global offset - if we have one, to normalize track times
+        let globalStartCMTime = self.globalStartTime?.toCMTime()
+        
         let options =  [AVURLAssetPreferPreciseDurationAndTimingKey : true] as [String : Any]
 
         let composition = AVMutableComposition(urlAssetInitializationOptions: options)
@@ -38,7 +43,7 @@ public extension Timeline
             {
                 guard
                     let clip = child as? Clip,
-                    let (sourceAsset, clipTimeMapping) = try clip.toAVAssetAndMapping(),
+                    let (sourceAsset, clipTimeMapping) = try clip.toAVAssetAndMapping(baseURL: baseURL),
                     let sourceAssetFirstVideoTrack = try await sourceAsset.loadTracks(withMediaType: .video).first,
                     let compositionVideoTrack = composition.mutableTrack(compatibleWith: sourceAssetFirstVideoTrack) ?? composition.addMutableTrack(withMediaType: .video, preferredTrackID: kCMPersistentTrackID_Invalid)
                 else
@@ -48,8 +53,15 @@ public extension Timeline
                 }
                 
                 // Handle Timing
-                let trackTimeRange = clipTimeMapping.target
-                let sourceAssetTimeRange = clipTimeMapping.source
+                var trackTimeRange = clipTimeMapping.target
+                var sourceAssetTimeRange = clipTimeMapping.source
+                
+//                // Handle global time offset
+//                if let globalStartCMTime = globalStartCMTime
+//                {
+//                    trackTimeRange = CMTimeRange(start: trackTimeRange.start - globalStartCMTime, duration: trackTimeRange.duration)
+//                }
+                
                 try compositionVideoTrack.insertTimeRange(sourceAssetTimeRange, of: sourceAssetFirstVideoTrack, at: trackTimeRange.start)
                 
                 // Support Time Scaling
