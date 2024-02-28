@@ -13,7 +13,7 @@ public extension RationalTime
 {
     func toCMTime() -> CMTime
     {
-        let valueDecimalPlaces = self.value.decimalPlaces()
+        let valueDecimalPlaces = self.value.decimalPlaces() 
         let rateDecimalPlaces = self.rate.decimalPlaces()
                 
         let scale = pow(10.0, max( Double(rateDecimalPlaces), Double(valueDecimalPlaces) ) )

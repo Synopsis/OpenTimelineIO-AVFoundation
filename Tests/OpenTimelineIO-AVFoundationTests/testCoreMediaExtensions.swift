@@ -96,7 +96,7 @@ class testCoreMediaExtensions: XCTestCase {
         let mutableComposition = AVMutableComposition()
         
         let asset1TimeRange = CMTimeRange(start: CMTime.zero, end: CMTimeMakeWithSeconds(2.5, preferredTimescale: 23976) )
-        let asset2TimeRange = CMTimeRange(start: CMTimeMakeWithSeconds(2.5, preferredTimescale: 23976), end: CMTimeMakeWithSeconds(5.0, preferredTimescale: 23976) )
+        let asset2TimeRange = CMTimeRange(start: CMTimeMakeWithSeconds(2.5, preferredTimescale: 23976), end: CMTimeMakeWithSeconds(6.25, preferredTimescale: 23976) )
 
         try mutableComposition.insertTimeRange(asset1TimeRange, of: asset1, at: CMTime.zero)
 
@@ -106,9 +106,24 @@ class testCoreMediaExtensions: XCTestCase {
 
         let timeline = try mutableComposition.toOTIOTimeline(named: "Test")
 
-        let timelineDuration = try timeline.duration().toCMTime()
+        let timelineDuration = try timeline.duration()
 
-        XCTAssertEqual(compositionDuration.seconds, timelineDuration.seconds)
+        XCTAssertEqual(compositionDuration.seconds, timelineDuration.toSeconds(), accuracy: Self.accuracy)
 
+        let firstClip = timeline.videoTracks.first!.children.first as! Clip
+        let firstClipDuration = try firstClip.duration()
+        let firstClipSourceRange = firstClip.sourceRange
+        
+        XCTAssertEqual(asset1TimeRange.duration.seconds, firstClipDuration.toSeconds(), accuracy: Self.accuracy)
+        XCTAssertEqual(asset1TimeRange, firstClipSourceRange?.toCMTimeRange())
+        XCTAssertEqual(asset1TimeRange.toOTIOTimeRange(), firstClipSourceRange)
+
+        let secondClip = timeline.videoTracks.first!.children[1] as! Clip
+        let secondClipDuration = try secondClip.duration()
+        let secondClipSourceRange = secondClip.sourceRange
+
+        XCTAssertEqual(asset2TimeRange.duration.seconds, secondClipDuration.toSeconds(), accuracy: Self.accuracy)
+        XCTAssertEqual(asset2TimeRange, secondClipSourceRange?.toCMTimeRange())
+        XCTAssertEqual(asset2TimeRange.toOTIOTimeRange(), secondClipSourceRange)
     }
 }

@@ -30,7 +30,7 @@ public extension Double
         
         // Calculate the number of decimal places
         let fractionalPart = numberString.suffix(from: decimalRange.upperBound)
-        return fractionalPart.count
+        return fractionalPart.count 
     }
     
     func toTimeScale(_ scale:Double = 1.0) -> CMTimeScale
