@@ -164,11 +164,6 @@ public extension Timeline
             videoComposition.customVideoCompositorClass = customCompositorClass
         }
 
-        // Rec 709 by default
-        videoComposition.colorPrimaries = AVVideoColorPrimaries_ITU_R_709_2;
-        videoComposition.colorTransferFunction = AVVideoTransferFunction_ITU_R_709_2;
-        videoComposition.colorYCbCrMatrix = AVVideoYCbCrMatrix_ITU_R_709_2;
-
         // Video Composition Validation
         try await videoComposition.isValid(for: composition, timeRange: CMTimeRange(start: .zero, end: composition.duration), validationDelegate:self)
 
