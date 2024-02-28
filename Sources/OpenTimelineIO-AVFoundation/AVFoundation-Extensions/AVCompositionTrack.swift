@@ -38,8 +38,8 @@ public extension AVCompositionTrack
         
         let name = String(format: "Track %i", self.trackID)
                 
-        let clips = self.segments.compactMap { $0.toOTIOClip() }
-        
+        let clips = self.segments.compactMap { $0.toOTIOItem() }
+                
         // Add rescaling (for video) - see Additional Notes above
         if let minFrameDuration = minFrameDuration
         {
@@ -58,21 +58,8 @@ public extension AVCompositionTrack
         // As opposed to OTIO, where tracks are 'inset' into the overall timeline (?)
         // We need to manually account for the insets by finding the first (?)
                 
-        let earliestClipStartTime = CMTime.zero.toOTIORationalTime()
-        
-        let latestEndTime = clips.reduce(RationalTime.from(seconds: 0 )) { partialResult, aClip in
-            
-            guard
-                let duration = aClip.sourceRange?.duration
-            else
-            {
-                return partialResult
-            }
-            
-            return partialResult + duration
-        }
 
-        let trackRange = TimeRange.rangeFrom(startTime: earliestClipStartTime, endTimeExclusive: latestEndTime)
+        let trackRange = self.timeRange.toOTIOTimeRange()
         let track = Track(name:name, sourceRange:trackRange, kind: kind)
         
         try track.set(children: clips)

@@ -11,8 +11,13 @@ import OpenTimelineIO
 
 public extension AVCompositionTrackSegment
 {
-    func toOTIOClip() -> Clip?
+    func toOTIOItem() -> Item?
     {
+        if self.isEmpty
+        {
+            return Gap(name:nil, sourceRange: self.timeMapping.target.toOTIOTimeRange())
+        }
+        
         guard
             let sourceURL = self.sourceURL
         else
