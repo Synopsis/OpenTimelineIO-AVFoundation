@@ -56,8 +56,8 @@ public extension Timeline
                 }
                 
                 // Handle Timing
-                let trackTimeRange = clipTimeMapping.source
-                let sourceAssetTimeRange = clipTimeMapping.target
+                let trackTimeRange = clipTimeMapping.target
+                let sourceAssetTimeRange = clipTimeMapping.source
                    
                 // We attempt to re-use a track per OTIO track, but we may have CMFormatDesc inconsistencies which means insertion will fails
                 // If so - we make a new one
