@@ -24,12 +24,12 @@
                     "OTIO_SCHEMA": "TimeRange.1",
                     "duration": {
                         "OTIO_SCHEMA": "RationalTime.1",
-                        "rate": 24000,
-                        "value": 150000
+                        "rate": 1,
+                        "value": 6.5
                     },
                     "start_time": {
                         "OTIO_SCHEMA": "RationalTime.1",
-                        "rate": 24000,
+                        "rate": 1,
                         "value": 0
                     }
                 },
@@ -90,12 +90,12 @@
                             "duration": {
                                 "OTIO_SCHEMA": "RationalTime.1",
                                 "rate": 24000,
-                                "value": 90000
+                                "value": 96000
                             },
                             "start_time": {
                                 "OTIO_SCHEMA": "RationalTime.1",
                                 "rate": 24000,
-                                "value": 60000
+                                "value": 84000
                             }
                         },
                         "effects": [],
