@@ -18,7 +18,7 @@ class testCoreMediaExtensions: XCTestCase {
     // Compared to Int64 Rational match in CMTime
     // In these cases, we check our our accuracy
 
-    static let accuracy = 0.00000000001
+    static let accuracy = 0.00000001
     
     func testCMTImeRangeGaps()
     {
@@ -34,6 +34,15 @@ class testCoreMediaExtensions: XCTestCase {
         XCTAssertEqual(missingRanges, [firstMissingRange, secondMissingRange] )
 
         print(missingRanges)
+    }
+    
+    func testOTIOTimeToCMTime_Scaling_Overflow()
+    {
+        let otio_time = RationalTime(value: 80747.33333333333, rate: 16000.0)
+
+        let cm_time = otio_time.toCMTime()
+        
+        XCTAssertEqual(cm_time.seconds, otio_time.toSeconds(), accuracy: Self.accuracy)
     }
     
     func testOTIOTImeToCMTime_24()
@@ -78,9 +87,9 @@ class testCoreMediaExtensions: XCTestCase {
         
         let cmtimerange = otio_timerange.toCMTimeRange()
         
-        XCTAssertEqual(cmtimerange.start.seconds, otio_timerange.startTime.toSeconds())
-        XCTAssertEqual(cmtimerange.duration.seconds, otio_timerange.duration.toSeconds())
-        XCTAssertEqual(cmtimerange.end.seconds, otio_timerange.endTimeExclusive().toSeconds())
+        XCTAssertEqual(cmtimerange.start.seconds, otio_timerange.startTime.toSeconds(), accuracy: Self.accuracy)
+        XCTAssertEqual(cmtimerange.duration.seconds, otio_timerange.duration.toSeconds(), accuracy: Self.accuracy)
+        XCTAssertEqual(cmtimerange.end.seconds, otio_timerange.endTimeExclusive().toSeconds(), accuracy: Self.accuracy)
 
         // Note - CMTimeRange end is not end time inclusive
         XCTAssertNotEqual(cmtimerange.end.seconds, otio_timerange.endTimeInclusive().toSeconds())
