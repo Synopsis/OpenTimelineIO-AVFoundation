@@ -22,7 +22,7 @@ public extension Timeline
     // So here, we effectively ignore OTIO tracks and use the assets to see if we have compatible tracks.
     // If we do - great. if we dont, we make a new one.
     
-    func toAVCompositionRenderables(baseURL:URL? = nil, customCompositorClass:AVVideoCompositing.Type? = nil) async throws -> (composition:AVComposition, videoComposition:AVVideoComposition, audioMix:AVAudioMix)?
+    func toAVCompositionRenderables(baseURL:URL? = nil, customCompositorClass:AVVideoCompositing.Type? = nil, useAssetTimecode:Bool = false) async throws -> (composition:AVComposition, videoComposition:AVVideoComposition, audioMix:AVAudioMix)?
     {
         // Get our global offset - if we have one, to normalize track times
         let globalStartCMTime = self.globalStartTime?.toCMTime()
@@ -46,7 +46,7 @@ public extension Timeline
             for clip in clips
             {
                 guard
-                    let (sourceAsset, clipTimeMapping) = try clip.toAVAssetAndMapping(baseURL: baseURL),
+                    let (sourceAsset, clipTimeMapping) = try clip.toAVAssetAndMapping(baseURL: baseURL, useTimecode: useAssetTimecode),
                     let sourceAssetFirstVideoTrack = try await sourceAsset.loadTracks(withMediaType: .video).first,
                     let compositionVideoTrack = compositionVideoTrack //composition.mutableTrack(compatibleWith: sourceAssetFirstVideoTrack) ??
                 else
@@ -168,7 +168,6 @@ public extension Timeline
         try await videoComposition.isValid(for: composition, timeRange: CMTimeRange(start: .zero, end: composition.duration), validationDelegate:self)
 
         audioMix.inputParameters = compositionAudioMixParams
-
         
         return (composition:composition, videoComposition:videoComposition, audioMix:audioMix)
 

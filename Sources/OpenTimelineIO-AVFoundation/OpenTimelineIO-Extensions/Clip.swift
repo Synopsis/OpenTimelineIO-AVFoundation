@@ -12,7 +12,7 @@ import OpenTimelineIO
 import TimecodeKit
 extension Clip
 {
-    func toAVAssetAndMapping(baseURL:URL? = nil) throws -> (asset:AVAsset, timeMaping:CMTimeMapping)?
+    func toAVAssetAndMapping(baseURL:URL? = nil, useTimecode:Bool = false) throws -> (asset:AVAsset, timeMaping:CMTimeMapping)?
     {
         guard
             let externalReference = self.mediaReference as? ExternalReference,
@@ -32,16 +32,19 @@ extension Clip
          let rangeInParent = try self.rangeInParent().toCMTimeRange()
 
         // if we have timecode from our asset
-        do
+        if useTimecode
         {
-            if let timecodeCMTime = try asset.startTimecode()?.cmTimeValue
+            do
             {
-                timeRangeInAsset = CMTimeRange(start: timeRangeInAsset.start - timecodeCMTime, duration: timeRangeInAsset.duration )
+                if let timecodeCMTime = try asset.startTimecode()?.cmTimeValue
+                {
+                    timeRangeInAsset = CMTimeRange(start: timeRangeInAsset.start - timecodeCMTime, duration: timeRangeInAsset.duration )
+                }
             }
-        }
-        catch Timecode.MediaParseError.missingOrNonStandardFrameRate
-        {
-            // not an error
+            catch Timecode.MediaParseError.missingOrNonStandardFrameRate
+            {
+                // not an error
+            }
         }
         
         return (asset, CMTimeMapping(source: timeRangeInAsset, target:rangeInParent))
