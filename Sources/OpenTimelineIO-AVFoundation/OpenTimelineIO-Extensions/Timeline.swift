@@ -84,6 +84,7 @@ public extension Timeline
 
                 // Video Layer Instruction
                 let compositionLayerInstruction = AVMutableVideoCompositionLayerInstruction(assetTrack: compositionVideoTrack)
+                compositionLayerInstruction.setOpacity(0.5, at: unscaledTrackTime.start)
                 let compositionLayerInstructions = [compositionLayerInstruction]
 
                 // Video Composition Instruction

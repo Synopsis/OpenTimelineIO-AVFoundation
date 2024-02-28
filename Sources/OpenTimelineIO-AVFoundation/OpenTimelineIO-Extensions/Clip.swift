@@ -28,7 +28,7 @@ extension Clip
 //        var timeRangeInAsset = try self.visibleRange().toCMTimeRange()
 //        let rangeInParent = try self.transformed(timeRange: self.visibleRange(), toItem:parent ).toCMTimeRange()
         
-        // if we dont want this, we would rather do:
+        // if we dont w`ant this, we would rather do:
          let rangeInParent = try self.rangeInParent().toCMTimeRange()
 
         // if we have timecode from our asset
