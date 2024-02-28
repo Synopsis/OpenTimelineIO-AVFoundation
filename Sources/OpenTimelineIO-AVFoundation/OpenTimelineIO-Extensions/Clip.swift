@@ -17,6 +17,7 @@ extension Clip
         guard
             let externalReference = self.mediaReference as? ExternalReference,
             let asset = externalReference.toAVAsset(baseURL: baseURL),
+            var timeRangeInAsset = self.sourceRange?.toCMTimeRange(),
             let parent = self.parent as? Item
         else
         {
@@ -24,12 +25,11 @@ extension Clip
         }
         
         // This accounts for visible ranges which also account for transition times
-        var timeRangeInAsset = try self.visibleRange().toCMTimeRange()
-        let rangeInParent = try self.transformed(timeRange: self.visibleRange(), toItem:parent ).toCMTimeRange()
+//        var timeRangeInAsset = try self.visibleRange().toCMTimeRange()
+//        let rangeInParent = try self.transformed(timeRange: self.visibleRange(), toItem:parent ).toCMTimeRange()
         
         // if we dont want this, we would rather do:
-        // var timeRangeInAsset = self.sourceRange?.toCMTimeRange()
-        // let rangeInParent = try self.rangeInParent().toCMTimeRange()
+         let rangeInParent = try self.rangeInParent().toCMTimeRange()
 
         // if we have timecode from our asset
         do
