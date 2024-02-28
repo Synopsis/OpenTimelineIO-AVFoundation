@@ -96,7 +96,7 @@ class testCoreMediaExtensions: XCTestCase {
         let mutableComposition = AVMutableComposition()
         
         let asset1TimeRange = CMTimeRange(start: CMTime.zero, end: CMTimeMakeWithSeconds(2.5, preferredTimescale: 23976) )
-        let asset2TimeRange = CMTimeRange(start: CMTimeMakeWithSeconds(2.5, preferredTimescale: 23976), end: CMTimeMakeWithSeconds(6.25, preferredTimescale: 23976) )
+        let asset2TimeRange = CMTimeRange(start: CMTimeMakeWithSeconds(3.5, preferredTimescale: 23976), end: CMTimeMakeWithSeconds(7.5, preferredTimescale: 23976) )
 
         try mutableComposition.insertTimeRange(asset1TimeRange, of: asset1, at: CMTime.zero)
 

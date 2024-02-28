@@ -58,28 +58,18 @@ public extension AVCompositionTrack
         // As opposed to OTIO, where tracks are 'inset' into the overall timeline (?)
         // We need to manually account for the insets by finding the first (?)
                 
-        let earliestClipStartTime = clips.reduce(RationalTime.from(seconds: Double.infinity ) ) { partialResult, aClip in
-            
-            guard
-                let startTime = aClip.sourceRange?.startTime
-            else
-            {
-                return partialResult
-            }
-
-            return (startTime < partialResult) ? startTime : partialResult
-        }
-
+        let earliestClipStartTime = CMTime.zero.toOTIORationalTime()
+        
         let latestEndTime = clips.reduce(RationalTime.from(seconds: 0 )) { partialResult, aClip in
             
             guard
-                let endTime = aClip.sourceRange?.endTimeExclusive()
+                let duration = aClip.sourceRange?.duration
             else
             {
                 return partialResult
             }
             
-            return (endTime > partialResult) ? endTime : partialResult
+            return partialResult + duration
         }
 
         let trackRange = TimeRange.rangeFrom(startTime: earliestClipStartTime, endTimeExclusive: latestEndTime)
