@@ -20,6 +20,22 @@ class testCoreMediaExtensions: XCTestCase {
 
     static let accuracy = 0.00000000001
     
+    func testCMTImeRangeGaps()
+    {
+        // Example usage
+        let fullRange = CMTimeRange(start: CMTime.zero, duration: CMTime.init(seconds: 10, preferredTimescale: 600))
+        let subRange = CMTimeRange(start: CMTime.init(seconds: 2, preferredTimescale: 600), duration: CMTime.init(seconds: 4, preferredTimescale: 600))
+
+        let missingRanges = fullRange.computeMissingTimeRanges(subRange: subRange)
+        
+        let firstMissingRange = CMTimeRange(start: CMTime.zero, end: CMTime.init(seconds: 2, preferredTimescale: 600) )
+        let secondMissingRange = CMTimeRange(start: CMTime.init(seconds: 6, preferredTimescale: 600), end: CMTime.init(seconds: 10, preferredTimescale: 600) )
+
+        XCTAssertEqual(missingRanges, [firstMissingRange, secondMissingRange] )
+
+        print(missingRanges)
+    }
+    
     func testOTIOTImeToCMTime_24()
     {
         let otio_time = RationalTime(value: 18, rate: 24)

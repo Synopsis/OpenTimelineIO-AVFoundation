@@ -54,15 +54,14 @@ public extension AVCompositionTrack
             })
         }
         
-        // In AVAssets, tracks have time ranges at the start of the assets, and have gaps until a segment is needed
-        // As opposed to OTIO, where tracks are 'inset' into the overall timeline (?)
-        // We need to manually account for the insets by finding the first (?)
-                
-
+        // We need to manually account for gaps
+        let gapRanges = self.segments.compactMap( {  self.timeRange.computeMissingTimeRanges(subRange:  $0.timeMapping.target ) }).flatMap( { $0 } )
+        let gaps = gapRanges.compactMap { Gap(name:nil, sourceRange: $0.toOTIOTimeRange() ) }
+        
         let trackRange = self.timeRange.toOTIOTimeRange()
         let track = Track(name:name, sourceRange:trackRange, kind: kind)
         
-        try track.set(children: clips)
+        try track.set(children: clips + gaps)
         
         print("Creating OTIO Track", name, "range", trackRange.startTime.toTimestring(), trackRange.endTimeExclusive().toTimestring())
 
