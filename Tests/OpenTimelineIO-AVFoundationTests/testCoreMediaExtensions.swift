@@ -10,9 +10,10 @@ import XCTest
 
 import Foundation
 import CoreMedia
+import AVFoundation
 
 class testCoreMediaExtensions: XCTestCase {
-        
+            
     // When dealing with non int rates, we suffer from some floating point precision
     // Compared to Int64 Rational match in CMTime
     // In these cases, we check our our accuracy
@@ -81,5 +82,33 @@ class testCoreMediaExtensions: XCTestCase {
 
         // Note - CMTimeRange end is not end time inclusive
         XCTAssertNotEqual(cmtimerange.end.seconds, otio_timerange.endTimeInclusive().toSeconds(), accuracy: Self.accuracy)
+    }
+    
+    func testCompositionToTimeline() throws
+    {
+        let thisFile = URL(filePath: #file)
+        let testAsset1URL = thisFile.deletingLastPathComponent().appending(component: "OTIO Test Media 1 - 23.98.mp4")
+        let testAsset2URL = thisFile.deletingLastPathComponent().appending(component: "OTIO Test Media 2 - 23.98.mp4")
+
+        let asset1 = AVURLAsset(url: testAsset1URL)
+        let asset2 = AVURLAsset(url: testAsset2URL)
+        
+        let mutableComposition = AVMutableComposition()
+        
+        let asset1TimeRange = CMTimeRange(start: CMTime.zero, end: CMTimeMakeWithSeconds(2.5, preferredTimescale: 23976) )
+        let asset2TimeRange = CMTimeRange(start: CMTimeMakeWithSeconds(2.5, preferredTimescale: 23976), end: CMTimeMakeWithSeconds(5.0, preferredTimescale: 23976) )
+
+        try mutableComposition.insertTimeRange(asset1TimeRange, of: asset1, at: CMTime.zero)
+
+        try mutableComposition.insertTimeRange(asset2TimeRange, of: asset2, at: CMTimeRangeGetEnd(asset1TimeRange) )
+        
+        let compositionDuration = mutableComposition.duration
+
+        let timeline = try mutableComposition.toOTIOTimeline(named: "Test")
+
+        let timelineDuration = try timeline.duration().toCMTime()
+
+        XCTAssertEqual(compositionDuration.seconds, timelineDuration.seconds)
+
     }
 }
