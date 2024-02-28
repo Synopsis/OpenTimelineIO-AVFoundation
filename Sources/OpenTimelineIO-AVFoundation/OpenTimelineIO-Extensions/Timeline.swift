@@ -24,7 +24,6 @@ public extension Timeline
     
     func toAVCompositionRenderables(baseURL:URL? = nil, customCompositorClass:AVVideoCompositing.Type? = nil) async throws -> (composition:AVComposition, videoComposition:AVVideoComposition, audioMix:AVAudioMix)?
     {
-        
         // Get our global offset - if we have one, to normalize track times
         let globalStartCMTime = self.globalStartTime?.toCMTime()
         
@@ -33,7 +32,7 @@ public extension Timeline
         let composition = AVMutableComposition(urlAssetInitializationOptions: options)
         let audioMix = AVMutableAudioMix()
 
-        // All rendering instructions for our tracks / segments
+        // All rendering instructions for our tracks / segments 
         var compositionVideoInstructions = [AVVideoCompositionInstruction]()
         var compositionAudioMixParams = [AVAudioMixInputParameters]()
 
@@ -41,10 +40,12 @@ public extension Timeline
         {
             let compositionVideoTrack = composition.addMutableTrack(withMediaType: .video, preferredTrackID: kCMPersistentTrackID_Invalid)
 
-            for child in track.children
+            let transitions:[Transition] = track.children.compactMap( { guard let transition = $0 as? Transition else { return nil }; return transition })
+            let clips:[Clip] = track.children.compactMap( { guard let clip = $0 as? Clip else { return nil }; return clip })
+
+            for clip in clips
             {
                 guard
-                    let clip = child as? Clip,
                     let (sourceAsset, clipTimeMapping) = try clip.toAVAssetAndMapping(baseURL: baseURL),
                     let sourceAssetFirstVideoTrack = try await sourceAsset.loadTracks(withMediaType: .video).first,
                     let compositionVideoTrack = compositionVideoTrack //composition.mutableTrack(compatibleWith: sourceAssetFirstVideoTrack) ??

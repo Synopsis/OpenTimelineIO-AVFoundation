@@ -23,7 +23,8 @@ extension Clip
             return nil
         }
 
-        let rangeInParent = try self.rangeInParent().toCMTimeRange()
+//        let rangeInParent = try self.rangeInParent().toCMTimeRange()
+        let rangeInParent = try self.visibleRange().toCMTimeRange()
 
         // if we have timecode from our asset
         do
