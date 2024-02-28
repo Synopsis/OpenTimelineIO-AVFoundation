@@ -140,8 +140,6 @@ class testCoreMediaExtensions: XCTestCase {
 
         let timelineDuration = try timeline.duration()
 
-        XCTAssertEqual(compositionDuration.seconds, timelineDuration.toSeconds(), accuracy: Self.accuracy)
-
-        
+        XCTAssertEqual(compositionDuration.seconds, timelineDuration.toSeconds(), accuracy: Self.accuracy)        
     }
 }
