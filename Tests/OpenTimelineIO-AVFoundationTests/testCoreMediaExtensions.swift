@@ -126,4 +126,22 @@ class testCoreMediaExtensions: XCTestCase {
         XCTAssertEqual(asset2TimeRange, secondClipSourceRange?.toCMTimeRange())
         XCTAssertEqual(asset2TimeRange.toOTIOTimeRange(), secondClipSourceRange)
     }
+    
+    func testTimelineToComposition() async throws
+    {
+        let thisFile = URL(filePath: #file)
+        let timelineURL = thisFile.deletingLastPathComponent().appending(component: "Timeline_23.98.otio")
+        let path = timelineURL.path(percentEncoded: true)
+        let timeline = try Timeline.fromJSON(filename: path) as! Timeline
+
+        let (composition, _, _) = try await timeline.toAVCompositionRenderables(baseURL: timelineURL.deletingLastPathComponent() )!
+
+        let compositionDuration = composition.duration
+
+        let timelineDuration = try timeline.duration()
+
+        XCTAssertEqual(compositionDuration.seconds, timelineDuration.toSeconds(), accuracy: Self.accuracy)
+
+        
+    }
 }
