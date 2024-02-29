@@ -17,8 +17,8 @@ extension Clip
         guard
             let externalReference = self.mediaReference as? ExternalReference,
             let asset = externalReference.toAVAsset(baseURL: baseURL),
-            var timeRangeInAsset = self.sourceRange?.toCMTimeRange(),
-            let parent = self.parent as? Item
+            var timeRangeInAsset = self.sourceRange
+//            let parent = self.parent as? Item
         else
         {
             return nil
@@ -29,16 +29,31 @@ extension Clip
 //        let rangeInParent = try self.transformed(timeRange: self.visibleRange(), toItem:parent ).toCMTimeRange()
         
         // if we dont w`ant this, we would rather do:
-         let rangeInParent = try self.rangeInParent().toCMTimeRange()
+        var rangeInParent = try self.rangeInParent()
 
+        var minFrameDuration:RationalTime? = nil
+        if let videoTrack = asset.tracks(withMediaType: .video).first
+        {
+            minFrameDuration = videoTrack.minFrameDuration.toOTIORationalTime()
+        }
+        
+        // Add rescaling - see Additional Notes above
+        if let minFrameDuration = minFrameDuration
+        {
+            let rescaledStart = rangeInParent.startTime.rescaled(to: minFrameDuration)
+            let rescaledDuration = rangeInParent.duration.rescaled(to: minFrameDuration)
+            
+            rangeInParent = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
+        }
+        
         // if we have timecode from our asset
         if useTimecode
         {
             do
             {
-                if let timecodeCMTime = try asset.startTimecode()?.cmTimeValue
+                if let timecodeCMTime = try asset.startTimecode()?.cmTimeValue.toOTIORationalTime()
                 {
-                    timeRangeInAsset = CMTimeRange(start: timeRangeInAsset.start - timecodeCMTime, duration: timeRangeInAsset.duration )
+                    timeRangeInAsset = TimeRange(startTime: timeRangeInAsset.startTime - timecodeCMTime, duration: timeRangeInAsset.duration)
                 }
             }
             catch Timecode.MediaParseError.missingOrNonStandardFrameRate
@@ -47,6 +62,15 @@ extension Clip
             }
         }
         
-        return (asset, CMTimeMapping(source: timeRangeInAsset, target:rangeInParent))
+        // Add rescaling - see Additional Notes above
+        if let minFrameDuration = minFrameDuration
+        {
+            let rescaledStart = timeRangeInAsset.startTime.rescaled(to: minFrameDuration)
+            let rescaledDuration = timeRangeInAsset.duration.rescaled(to: minFrameDuration)
+            
+            timeRangeInAsset = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
+        }
+        
+        return (asset, CMTimeMapping(source: timeRangeInAsset.toCMTimeRange(), target:rangeInParent.toCMTimeRange()))
     }
 }
