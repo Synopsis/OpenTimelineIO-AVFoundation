@@ -16,12 +16,12 @@ public extension AVCompositionTrack
     {
         var kind:Track.Kind? = nil
                 
-//        var minFrameDuration:RationalTime? = nil
+        var minFrameDuration:RationalTime? = nil
 
         switch (self.mediaType)
         {
         case .video:
-//            minFrameDuration = self.minFrameDuration.toOTIORationalTime()
+            minFrameDuration = self.minFrameDuration.toOTIORationalTime()
             kind = .video
         case .audio:
             kind = Track.Kind.audion
@@ -46,29 +46,29 @@ public extension AVCompositionTrack
         let gapRanges = self.timeRange.computeGapsOf(subranges: clipTimeRanges)
         let gaps = gapRanges.compactMap { Gap(name:nil, sourceRange: $0.toOTIOTimeRange() ) }
 
-//        // Add rescaling (for video) - see Additional Notes above
-//        if let minFrameDuration = minFrameDuration
-//        {
-//            clips.forEach( {
-//                if let sourceRange = $0.sourceRange
-//                {
-//                    let rescaledStart = sourceRange.startTime.rescaled(to: minFrameDuration)
-//                    let rescaledDuration = sourceRange.duration.rescaled(to: minFrameDuration)
-//                    
-//                    $0.sourceRange = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
-//                }
-//            })
-//            
-//            gaps.forEach( {
-//                if let sourceRange = $0.sourceRange
-//                {
-//                    let rescaledStart = sourceRange.startTime.rescaled(to: minFrameDuration)
-//                    let rescaledDuration = sourceRange.duration.rescaled(to: minFrameDuration)
-//                    
-//                    $0.sourceRange = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
-//                }
-//            })
-//        }
+        // Add rescaling (for video) - see Additional Notes above
+        if let minFrameDuration = minFrameDuration
+        {
+            clips.forEach( {
+                if let sourceRange = $0.sourceRange
+                {
+                    let rescaledStart = sourceRange.startTime.rescaled(to: minFrameDuration)
+                    let rescaledDuration = sourceRange.duration.rescaled(to: minFrameDuration)
+                    
+                    $0.sourceRange = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
+                }
+            })
+            
+            gaps.forEach( {
+                if let sourceRange = $0.sourceRange
+                {
+                    let rescaledStart = sourceRange.startTime.rescaled(to: minFrameDuration)
+                    let rescaledDuration = sourceRange.duration.rescaled(to: minFrameDuration)
+                    
+                    $0.sourceRange = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
+                }
+            })
+        }
         
        
         let trackRange = self.timeRange.toOTIOTimeRange()

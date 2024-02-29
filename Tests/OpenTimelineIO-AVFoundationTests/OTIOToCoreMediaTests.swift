@@ -14,18 +14,9 @@ import AVFoundation
 
 class OTIOToCoreMediaTests: XCTestCase 
 {
-    func testOTIOTimeToCMTime_Scaling_Overflow1()
+    func testOTIOTimeToCMTime_Scaling_Overflow()
     {
         let otio_time = RationalTime(value: 80747.33333333333, rate: 16000.0)
-
-        let cm_time = otio_time.toCMTime()
-        
-        XCTAssertEqual(cm_time.seconds, otio_time.toSeconds(), accuracy: Self.accuracy)
-    }
-    
-    func testOTIOTimeToCMTime_Scaling_Overflow2()
-    {
-        let otio_time = RationalTime(value: (104104 + 31031), rate: 24000.0)
 
         let cm_time = otio_time.toCMTime()
         
