@@ -28,7 +28,7 @@ public extension RationalTime
     
     func toCMTime() -> CMTime
     {
-        let timecodeKitFraction = Fraction(double: self.toSeconds(), decimalPrecision:8)
+        let timecodeKitFraction = Fraction(double: self.toSeconds(), decimalPrecision:9)
         
         return timecodeKitFraction.cmTimeValue
     }
