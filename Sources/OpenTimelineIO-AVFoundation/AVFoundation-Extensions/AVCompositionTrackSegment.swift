@@ -47,7 +47,7 @@ public extension AVCompositionTrackSegment
 //        let start = RationalTime(value:0, rate:duration.rate)
 //        var referenceRange = TimeRange(startTime: start, duration: duration)
         
-        var referenceRange = self.timeMapping.target.toOTIOTimeRange()
+        var referenceRange = self.timeMapping.source.toOTIOTimeRange()
         
         // Add rescaling - see Additional Notes above
         if let minFrameDuration = minFrameDuration
@@ -61,7 +61,7 @@ public extension AVCompositionTrackSegment
         let externalReference = ExternalReference(targetURL: sourceURL.standardizedFileURL.absoluteString, availableRange:referenceRange )
         print("Creating OTIO External Reference", name, "externalReferenceRange", referenceRange.startTime.toTimestring(), referenceRange.endTimeExclusive().toTimestring())
         
-        var clipRange = self.timeMapping.source.toOTIOTimeRange()
+        var clipRange = self.timeMapping.target.toOTIOTimeRange()
         
         // Add rescaling - see Additional Notes above
         if let minFrameDuration = minFrameDuration
