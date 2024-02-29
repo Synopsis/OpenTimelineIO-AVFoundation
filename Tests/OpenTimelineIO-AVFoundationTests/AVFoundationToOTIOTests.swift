@@ -45,17 +45,21 @@ class AVFoundationToOTIOTests: XCTestCase
         let firstClip = timeline.videoTracks.first!.children.first as! Clip
         let firstClipDuration = try firstClip.duration()
         let firstClipSourceRange = try firstClip.rangeInParent()
+
+        let asset1TimeRangeInComposition = CMTimeRange(start: CMTime.zero, end: CMTimeMakeWithSeconds(2.5, preferredTimescale: 23976) )
+        let asset2TimeRangeInComposition = CMTimeRange(start: CMTimeMakeWithSeconds(2.5, preferredTimescale: 23976), end:CMTimeMakeWithSeconds(6.5, preferredTimescale: 23976)  )
+
         
-        XCTAssertEqual(asset1TimeRange.duration.seconds, firstClipDuration.toSeconds(), accuracy: Self.accuracy)
-//        XCTAssertEqual(asset1TimeRange, firstClipSourceRange.toCMTimeRange())
-//        XCTAssertEqual(asset1TimeRange.toOTIOTimeRange(), firstClipSourceRange)
+        XCTAssertEqual(asset1TimeRangeInComposition.duration.seconds, firstClipDuration.toSeconds(), accuracy: Self.accuracy)
+        XCTAssertEqual(asset1TimeRangeInComposition, firstClipSourceRange.toCMTimeRange())
+        XCTAssertEqual(asset1TimeRangeInComposition.toOTIOTimeRange(), firstClipSourceRange)
 
         let secondClip = timeline.videoTracks.first!.children[1] as! Clip
         let secondClipDuration = try secondClip.duration()
         let secondClipSourceRange = try secondClip.rangeInParent()
 
-        XCTAssertEqual(asset2TimeRange.duration.seconds, secondClipDuration.toSeconds(), accuracy: Self.accuracy)
-//        XCTAssertEqual(asset2TimeRange, secondClipSourceRange.toCMTimeRange())
-//        XCTAssertEqual(asset2TimeRange.toOTIOTimeRange(), secondClipSourceRange)
+        XCTAssertEqual(asset2TimeRangeInComposition.duration.seconds, secondClipDuration.toSeconds(), accuracy: Self.accuracy)
+        XCTAssertEqual(asset2TimeRangeInComposition, secondClipSourceRange.toCMTimeRange())
+        XCTAssertEqual(asset2TimeRangeInComposition.toOTIOTimeRange(), secondClipSourceRange)
     }
 }
