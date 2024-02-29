@@ -13,6 +13,29 @@ import OpenTimelineIO
 public extension Timeline
 {
     
+    private class VideoCompositionValidator : NSObject, AVVideoCompositionValidationHandling
+    {
+        func videoComposition(_ videoComposition: AVVideoComposition, shouldContinueValidatingAfterFindingInvalidValueForKey key: String) -> Bool
+        {
+            return false
+        }
+        
+        func videoComposition(_ videoComposition: AVVideoComposition, shouldContinueValidatingAfterFindingEmptyTimeRange timeRange: CMTimeRange) -> Bool
+        {
+            return true
+        }
+        
+        func videoComposition(_ videoComposition: AVVideoComposition, shouldContinueValidatingAfterFindingInvalidTimeRangeIn videoCompositionInstruction: AVVideoCompositionInstructionProtocol) -> Bool
+        {
+            return false
+        }
+        
+        func videoComposition(_ videoComposition: AVVideoComposition, shouldContinueValidatingAfterFindingInvalidTrackIDIn videoCompositionInstruction: AVVideoCompositionInstructionProtocol, layerInstruction: AVVideoCompositionLayerInstruction, asset: AVAsset) -> Bool
+        {
+            return false
+        }
+    }
+    
     // Some running notes about this conversion
     
     // 1 - Tracks
@@ -24,6 +47,8 @@ public extension Timeline
     
     func toAVCompositionRenderables(baseURL:URL? = nil, customCompositorClass:AVVideoCompositing.Type? = nil, useAssetTimecode:Bool = false) async throws -> (composition:AVComposition, videoComposition:AVVideoComposition, audioMix:AVAudioMix)?
     {
+        let validator = VideoCompositionValidator()
+        
         // Get our global offset - if we have one, to normalize track times
         let globalStartCMTime = self.globalStartTime?.toCMTime()
         
@@ -207,35 +232,13 @@ public extension Timeline
         }
 
         // Video Composition Validation
-        try await videoComposition.isValid(for: composition, timeRange: CMTimeRange(start: .zero, end: composition.duration), validationDelegate:self)
+        try await videoComposition.isValid(for: composition, timeRange: CMTimeRange(start: .zero, end: composition.duration), validationDelegate:validator)
 
         audioMix.inputParameters = compositionAudioMixParams
         
         return (composition:composition, videoComposition:videoComposition, audioMix:audioMix)
-
     }
 }
 
 
-extension Timeline : AVVideoCompositionValidationHandling
-{
-    public func videoComposition(_ videoComposition: AVVideoComposition, shouldContinueValidatingAfterFindingInvalidValueForKey key: String) -> Bool
-    {
-        return false
-    }
-    
-    public func videoComposition(_ videoComposition: AVVideoComposition, shouldContinueValidatingAfterFindingEmptyTimeRange timeRange: CMTimeRange) -> Bool
-    {
-        return true
-    }
-    
-    public func videoComposition(_ videoComposition: AVVideoComposition, shouldContinueValidatingAfterFindingInvalidTimeRangeIn videoCompositionInstruction: AVVideoCompositionInstructionProtocol) -> Bool
-    {
-        return false
-    }
-    
-    public func videoComposition(_ videoComposition: AVVideoComposition, shouldContinueValidatingAfterFindingInvalidTrackIDIn videoCompositionInstruction: AVVideoCompositionInstructionProtocol, layerInstruction: AVVideoCompositionLayerInstruction, asset: AVAsset) -> Bool
-    {
-        return false
-    }
-}
+

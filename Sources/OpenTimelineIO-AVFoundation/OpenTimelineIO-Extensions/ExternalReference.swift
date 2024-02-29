@@ -12,7 +12,7 @@ import OpenTimelineIO
 
 extension ExternalReference
 {
-    func toAVAsset(baseURL:URL? = nil) -> AVAsset?
+    func toAVAsset(baseURL:URL? = nil) -> AVURLAsset?
     {
         guard
             let targetURL = self.targetURL
