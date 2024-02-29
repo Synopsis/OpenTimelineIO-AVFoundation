@@ -77,30 +77,30 @@ public extension Timeline
                 else
                 {
                     // TODO: GAP !?
-                    if let gap = item as? Gap,
-                       let compositionVideoTrack = compositionVideoTrack
-                    {
-                        do
-                        {
-                            let gapTimeRange = try gap.rangeInParent().toCMTimeRange()
-                            compositionVideoTrack.insertEmptyTimeRange(gapTimeRange)
-                            
-                            let compositionLayerInstruction = AVMutableVideoCompositionLayerInstruction(assetTrack: compositionVideoTrack)
-                            let compositionLayerInstructions = [compositionLayerInstruction]
-
-                            // Video Composition Instruction
-                            let compositionVideoInstruction = AVMutableVideoCompositionInstruction()
-                            compositionVideoInstruction.layerInstructions = compositionLayerInstructions
-                            compositionVideoInstruction.timeRange = gapTimeRange
-                            compositionVideoInstruction.enablePostProcessing = true
-                            compositionVideoInstruction.backgroundColor = NSColor.clear.cgColor
-                            compositionVideoInstructions.append( compositionVideoInstruction)
-                        }
-                        catch
-                        {
-                            continue
-                        }
-                    }
+//                    if let gap = item as? Gap,
+//                       let compositionVideoTrack = compositionVideoTrack
+//                    {
+//                        do
+//                        {
+//                            let gapTimeRange = try gap.rangeInParent().toCMTimeRange()
+//                            compositionVideoTrack.insertEmptyTimeRange(gapTimeRange)
+//                            
+//                            let compositionLayerInstruction = AVMutableVideoCompositionLayerInstruction(assetTrack: compositionVideoTrack)
+//                            let compositionLayerInstructions = [compositionLayerInstruction]
+//
+//                            // Video Composition Instruction
+//                            let compositionVideoInstruction = AVMutableVideoCompositionInstruction()
+//                            compositionVideoInstruction.layerInstructions = compositionLayerInstructions
+//                            compositionVideoInstruction.timeRange = gapTimeRange
+//                            compositionVideoInstruction.enablePostProcessing = true
+//                            compositionVideoInstruction.backgroundColor = NSColor.clear.cgColor
+//                            compositionVideoInstructions.append( compositionVideoInstruction)
+//                        }
+//                        catch
+//                        {
+//                            continue
+//                        }
+//                    }
                     continue
                 }
                 
@@ -159,23 +159,23 @@ public extension Timeline
                 else
                 {
                     // TODO: GAP !?
-                    if let gap = child as? Gap,
-                       let compositionAudioTrack = compositionAudioTrack
-                    {
-                        do
-                        {
-                            let gapTimeRange = try gap.rangeInParent().toCMTimeRange()
-                            compositionAudioTrack.insertEmptyTimeRange(gapTimeRange)
-                            
-                            let audioMixParams = AVMutableAudioMixInputParameters(track: compositionAudioTrack)
-
-                            compositionAudioMixParams.append(audioMixParams)
-                        }
-                        catch
-                        {
-                            continue
-                        }
-                    }
+//                    if let gap = child as? Gap,
+//                       let compositionAudioTrack = compositionAudioTrack
+//                    {
+//                        do
+//                        {
+//                            let gapTimeRange = try gap.rangeInParent().toCMTimeRange()
+//                            compositionAudioTrack.insertEmptyTimeRange(gapTimeRange)
+//                            
+//                            let audioMixParams = AVMutableAudioMixInputParameters(track: compositionAudioTrack)
+//
+//                            compositionAudioMixParams.append(audioMixParams)
+//                        }
+//                        catch
+//                        {
+//                            continue
+//                        }
+//                    }
                     continue
                 }
                 
