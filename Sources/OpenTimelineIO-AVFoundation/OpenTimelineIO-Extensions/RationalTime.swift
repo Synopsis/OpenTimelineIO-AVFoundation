@@ -31,8 +31,9 @@ public extension RationalTime
 //        we need to figure out why we get a tiny fractional offset with the ava Material
 //        we get a gap between 5.630624999 and 5.630625
 //        maybe look into minFrameDuration timing on Clip to asset ?
-        
-        let timecodeKitFraction = Fraction(double: self.toSeconds(), decimalPrecision:9)
+        let nsnumber:NSNumber = NSNumber(floatLiteral: self.value / self.rate )
+        let double = Double(truncating: nsnumber)
+        let timecodeKitFraction = Fraction(double: double, decimalPrecision:9)
         
         return timecodeKitFraction.cmTimeValue
     }
