@@ -41,7 +41,7 @@ public extension AVCompositionTrack
         let clips = self.segments.compactMap { $0.toOTIOItem() }
                 
         // We need to manually account for gaps
-        let clipTimeRanges = clips.compactMap { $0.sourceRange?.toCMTimeRange() }
+        let clipTimeRanges = clips.compactMap { do { return try $0.rangeInParent().toCMTimeRange() } catch { return nil } }
 
         let gapRanges = self.timeRange.computeGapsOf(subranges: clipTimeRanges)
         let gaps = gapRanges.compactMap { Gap(name:nil, sourceRange: $0.toOTIOTimeRange() ) }
