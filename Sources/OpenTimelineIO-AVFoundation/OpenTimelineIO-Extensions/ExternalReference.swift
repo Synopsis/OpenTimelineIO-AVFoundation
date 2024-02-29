@@ -23,19 +23,47 @@ extension ExternalReference
         
         if targetURL.hasPrefix("file:")
         {
-            if let sourceURL = URL(string: targetURL)
+            if 
+                let sourceURL = URL(string: targetURL),
+                let asset = self.testForAsset(path:sourceURL.standardizedFileURL.path)
             {
-                return AVURLAsset(url: sourceURL)
+                return asset
             }
+            
+            return nil
         }
         else
         {
-            if let sourceURL = baseURL?.appending(path: targetURL)
+            if let asset = self.testForAsset(path:targetURL)
             {
-                return AVURLAsset(url: sourceURL)
+                return asset
+            }
+            
+            if let baseURL
+            {
+                if let asset = self.testForAsset(url: baseURL.appending(path: targetURL ) )
+                {
+                    return asset
+                }
             }
         }
 
+        return nil
+    }
+    
+    fileprivate func testForAsset(url:URL) -> AVURLAsset?
+    {
+        return self.testForAsset(path: url.standardizedFileURL.path)
+    }
+    
+    fileprivate func testForAsset(path:String) -> AVURLAsset?
+    {
+        if FileManager.default.fileExists(atPath: path)
+        {
+            let sourceURL = URL(filePath: path)
+            return AVURLAsset(url: sourceURL)
+        }
+        
         return nil
     }
 }
