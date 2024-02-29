@@ -42,8 +42,12 @@ public extension AVCompositionTrack
                 
         // We need to manually account for gaps
         let gapRanges = self.segments.compactMap( {  self.timeRange.computeMissingTimeRanges(subRange:  $0.timeMapping.target   ) }).flatMap( { $0 } )
-        let gaps = gapRanges.compactMap { Gap(name:nil, sourceRange: $0.toOTIOTimeRange() ) }
+        var gaps = gapRanges.compactMap { Gap(name:nil, sourceRange: $0.toOTIOTimeRange() ) }
         
+        let clipTimeRanges = clips.map { $0.sourceRange }
+
+        // Filter gaps that correspond to clips
+        gaps = gaps.filter {  !clipTimeRanges.contains( $0.sourceRange )  }
         
         // Add rescaling (for video) - see Additional Notes above
         if let minFrameDuration = minFrameDuration
@@ -74,6 +78,8 @@ public extension AVCompositionTrack
         let track = Track(name:name, sourceRange:trackRange, kind: kind)
         
         try track.set(children: clips + gaps)
+        
+        track.tr
         
         print("Creating OTIO Track", name, "range", trackRange.startTime.toTimestring(), trackRange.endTimeExclusive().toTimestring())
 
