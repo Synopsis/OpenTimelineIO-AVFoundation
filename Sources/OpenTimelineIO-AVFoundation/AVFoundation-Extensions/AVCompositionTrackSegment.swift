@@ -50,13 +50,13 @@ public extension AVCompositionTrackSegment
         var referenceRange = self.timeMapping.target.toOTIOTimeRange()
         
         // Add rescaling - see Additional Notes above
-        if let minFrameDuration = minFrameDuration
-        {
-            let rescaledStart = referenceRange.startTime.rescaled(to: minFrameDuration)
-            let rescaledDuration = referenceRange.duration.rescaled(to: minFrameDuration)
-            
-            referenceRange = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
-        }
+//        if let minFrameDuration = minFrameDuration
+//        {
+//            let rescaledStart = referenceRange.startTime.rescaled(to: minFrameDuration)
+//            let rescaledDuration = referenceRange.duration.rescaled(to: minFrameDuration)
+//            
+//            referenceRange = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
+//        }
         
         let externalReference = ExternalReference(targetURL: sourceURL.standardizedFileURL.absoluteString, availableRange:referenceRange )
         print("Creating OTIO External Reference", name, "externalReferenceRange", referenceRange.startTime.toTimestring(), referenceRange.endTimeExclusive().toTimestring())
@@ -64,13 +64,13 @@ public extension AVCompositionTrackSegment
         var clipRange = self.timeMapping.source.toOTIOTimeRange()
         
         // Add rescaling - see Additional Notes above
-        if let minFrameDuration = minFrameDuration
-        {
-            let rescaledStart = clipRange.startTime.rescaled(to: minFrameDuration)
-            let rescaledDuration = clipRange.duration.rescaled(to: minFrameDuration)
-            
-            clipRange = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
-        }
+//        if let minFrameDuration = minFrameDuration
+//        {
+//            let rescaledStart = clipRange.startTime.rescaled(to: minFrameDuration)
+//            let rescaledDuration = clipRange.duration.rescaled(to: minFrameDuration)
+//            
+//            clipRange = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
+//        }
         
         let clip = Clip(name: name, mediaReference: externalReference, sourceRange: clipRange)
         

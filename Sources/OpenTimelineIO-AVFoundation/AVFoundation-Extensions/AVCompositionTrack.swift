@@ -47,28 +47,28 @@ public extension AVCompositionTrack
         let gaps = gapRanges.compactMap { Gap(name:nil, sourceRange: $0.toOTIOTimeRange() ) }
 
         // Add rescaling (for video) - see Additional Notes above
-        if let minFrameDuration = minFrameDuration
-        {
-            clips.forEach( {
-                if let sourceRange = $0.sourceRange
-                {
-                    let rescaledStart = sourceRange.startTime.rescaled(to: minFrameDuration)
-                    let rescaledDuration = sourceRange.duration.rescaled(to: minFrameDuration)
-                    
-                    $0.sourceRange = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
-                }
-            })
-            
-            gaps.forEach( {
-                if let sourceRange = $0.sourceRange
-                {
-                    let rescaledStart = sourceRange.startTime.rescaled(to: minFrameDuration)
-                    let rescaledDuration = sourceRange.duration.rescaled(to: minFrameDuration)
-                    
-                    $0.sourceRange = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
-                }
-            })
-        }
+//        if let minFrameDuration = minFrameDuration
+//        {
+//            clips.forEach( {
+//                if let sourceRange = $0.sourceRange
+//                {
+//                    let rescaledStart = sourceRange.startTime.rescaled(to: minFrameDuration)
+//                    let rescaledDuration = sourceRange.duration.rescaled(to: minFrameDuration)
+//                    
+//                    $0.sourceRange = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
+//                }
+//            })
+//            
+//            gaps.forEach( {
+//                if let sourceRange = $0.sourceRange
+//                {
+//                    let rescaledStart = sourceRange.startTime.rescaled(to: minFrameDuration)
+//                    let rescaledDuration = sourceRange.duration.rescaled(to: minFrameDuration)
+//                    
+//                    $0.sourceRange = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
+//                }
+//            })
+//        }
         
        
         let trackRange = self.timeRange.toOTIOTimeRange()
