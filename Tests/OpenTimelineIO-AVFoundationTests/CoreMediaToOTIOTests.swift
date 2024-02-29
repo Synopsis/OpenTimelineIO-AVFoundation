@@ -1,6 +1,6 @@
 //
-//  testCoreMediaExtensions.swift
-//  
+//  CoreMediaToOTIOTests.swift
+//
 // SPDX-License-Identifier: Apache-2.0
 // Copyright Contributors to the OpenTimelineIO project
 
@@ -12,14 +12,8 @@ import Foundation
 import CoreMedia
 import AVFoundation
 
-class testCoreMediaExtensions: XCTestCase {
-            
-    // When dealing with non int rates, we suffer from some floating point precision
-    // Compared to Int64 Rational match in CMTime
-    // In these cases, we check our our accuracy
-
-    static let accuracy = 0.00000001
-    
+class CoreMediaToOTIOTests: XCTestCase {
+                
     func testCMTImeRangeGaps()
     {
         // Example usage
@@ -37,32 +31,7 @@ class testCoreMediaExtensions: XCTestCase {
         print(missingRanges)
     }
     
-    func testOTIOTimeToCMTime_Scaling_Overflow()
-    {
-        let otio_time = RationalTime(value: 80747.33333333333, rate: 16000.0)
 
-        let cm_time = otio_time.toCMTime()
-        
-        XCTAssertEqual(cm_time.seconds, otio_time.toSeconds(), accuracy: Self.accuracy)
-    }
-    
-    func testOTIOTImeToCMTime_24()
-    {
-        let otio_time = RationalTime(value: 18, rate: 24)
-
-        let cm_time = otio_time.toCMTime()
-        
-        XCTAssertEqual(cm_time.seconds, otio_time.toSeconds())
-    }
-    
-    func testOTIOTImeToCMTime_23_976()
-    {
-        let otio_time = RationalTime(value: 18 , rate: 23.976)
-
-        let cm_time = otio_time.toCMTime()
-        
-        XCTAssertEqual(cm_time.seconds, otio_time.toSeconds(), accuracy: Self.accuracy)
-    }
     
     func testCMTimeToOTIOTime_24()
     {
@@ -81,40 +50,12 @@ class testCoreMediaExtensions: XCTestCase {
         
         XCTAssertEqual(cm_time.seconds, otio_time.toSeconds(), accuracy: Self.accuracy)
     }
-    
-    func testOTIOTimeRangeToCMTimeRange_24()
-    {
-        let otio_timerange = TimeRange(startTime: RationalTime(value: 18, rate: 24), duration: RationalTime(value: 32, rate: 24))
         
-        let cmtimerange = otio_timerange.toCMTimeRange()
-        
-        XCTAssertEqual(cmtimerange.start.seconds, otio_timerange.startTime.toSeconds(), accuracy: Self.accuracy)
-        XCTAssertEqual(cmtimerange.duration.seconds, otio_timerange.duration.toSeconds(), accuracy: Self.accuracy)
-        XCTAssertEqual(cmtimerange.end.seconds, otio_timerange.endTimeExclusive().toSeconds(), accuracy: Self.accuracy)
-
-        // Note - CMTimeRange end is not end time inclusive
-        XCTAssertNotEqual(cmtimerange.end.seconds, otio_timerange.endTimeInclusive().toSeconds())
-    }
-    
-    func testOTIOTimeRangeToCMTimeRange_23_976()
-    {
-        let otio_timerange = TimeRange(startTime: RationalTime(value: 18, rate: 23.976), duration: RationalTime(value: 32, rate: 23.976))
-        
-        let cmtimerange = otio_timerange.toCMTimeRange()
-        
-        XCTAssertEqual(cmtimerange.start.seconds, otio_timerange.startTime.toSeconds(), accuracy: Self.accuracy)
-        XCTAssertEqual(cmtimerange.duration.seconds, otio_timerange.duration.toSeconds(), accuracy: Self.accuracy)
-        XCTAssertEqual(cmtimerange.end.seconds, otio_timerange.endTimeExclusive().toSeconds(), accuracy: Self.accuracy)
-
-        // Note - CMTimeRange end is not end time inclusive
-        XCTAssertNotEqual(cmtimerange.end.seconds, otio_timerange.endTimeInclusive().toSeconds(), accuracy: Self.accuracy)
-    }
-    
     func testCompositionToTimeline() throws
     {
         let thisFile = URL(filePath: #file)
-        let testAsset1URL = thisFile.deletingLastPathComponent().appending(component: "OTIO Test Media 1 - 23.98.mp4")
-        let testAsset2URL = thisFile.deletingLastPathComponent().appending(component: "OTIO Test Media 2 - 23.98.mp4")
+        let testAsset1URL = thisFile.deletingLastPathComponent().appending(component: "Assets/OTIO Test Media 1 - 23.98.mp4")
+        let testAsset2URL = thisFile.deletingLastPathComponent().appending(component: "Assets/OTIO Test Media 2 - 23.98.mp4")
 
         let asset1 = AVURLAsset(url: testAsset1URL)
         let asset2 = AVURLAsset(url: testAsset2URL)
@@ -156,9 +97,8 @@ class testCoreMediaExtensions: XCTestCase {
     func testTimelineToComposition() async throws
     {
         let thisFile = URL(filePath: #file)
-        let timelineURL = thisFile.deletingLastPathComponent().appending(component: "Timeline_23.98.otio")
-        let path = timelineURL.path(percentEncoded: true)
-        let timeline = try Timeline.fromJSON(filename: path) as! Timeline
+        let timelineURL = thisFile.deletingLastPathComponent().appending(component: "Assets/Timeline_23.98.otio")
+        let timeline = try Timeline.fromJSON(url:timelineURL) as! Timeline
 
         let (composition, _, _) = try await timeline.toAVCompositionRenderables(baseURL: timelineURL.deletingLastPathComponent() )!
 
