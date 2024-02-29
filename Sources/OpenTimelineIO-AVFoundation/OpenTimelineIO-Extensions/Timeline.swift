@@ -10,32 +10,31 @@ import CoreMedia
 import AVFoundation
 import OpenTimelineIO
 
-public extension Timeline
+public class VideoCompositionValidator : NSObject, AVVideoCompositionValidationHandling
 {
-    
-    private class VideoCompositionValidator : NSObject, AVVideoCompositionValidationHandling
+    public func videoComposition(_ videoComposition: AVVideoComposition, shouldContinueValidatingAfterFindingInvalidValueForKey key: String) -> Bool
     {
-        func videoComposition(_ videoComposition: AVVideoComposition, shouldContinueValidatingAfterFindingInvalidValueForKey key: String) -> Bool
-        {
-            return false
-        }
-        
-        func videoComposition(_ videoComposition: AVVideoComposition, shouldContinueValidatingAfterFindingEmptyTimeRange timeRange: CMTimeRange) -> Bool
-        {
-            return true
-        }
-        
-        func videoComposition(_ videoComposition: AVVideoComposition, shouldContinueValidatingAfterFindingInvalidTimeRangeIn videoCompositionInstruction: AVVideoCompositionInstructionProtocol) -> Bool
-        {
-            return false
-        }
-        
-        func videoComposition(_ videoComposition: AVVideoComposition, shouldContinueValidatingAfterFindingInvalidTrackIDIn videoCompositionInstruction: AVVideoCompositionInstructionProtocol, layerInstruction: AVVideoCompositionLayerInstruction, asset: AVAsset) -> Bool
-        {
-            return false
-        }
+        return false
     }
     
+    public func videoComposition(_ videoComposition: AVVideoComposition, shouldContinueValidatingAfterFindingEmptyTimeRange timeRange: CMTimeRange) -> Bool
+    {
+        return true
+    }
+    
+    public func videoComposition(_ videoComposition: AVVideoComposition, shouldContinueValidatingAfterFindingInvalidTimeRangeIn videoCompositionInstruction: AVVideoCompositionInstructionProtocol) -> Bool
+    {
+        return false
+    }
+    
+    public func videoComposition(_ videoComposition: AVVideoComposition, shouldContinueValidatingAfterFindingInvalidTrackIDIn videoCompositionInstruction: AVVideoCompositionInstructionProtocol, layerInstruction: AVVideoCompositionLayerInstruction, asset: AVAsset) -> Bool
+    {
+        return false
+    }
+}
+
+public extension Timeline
+{
     // Some running notes about this conversion
     
     // 1 - Tracks

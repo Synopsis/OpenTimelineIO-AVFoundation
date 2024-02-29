@@ -66,4 +66,24 @@ class DoubleTests: XCTestCase
         XCTAssertEqual(places, p)
     }
     
+    func testToTimeScale()
+    {
+        let d = 1001.0
+        let p = d.decimalPlaces()
+        
+        let timescale = d.toTimeScale(Double(p))
+    
+        XCTAssertEqual(CMTimeScale(1001), timescale)
+    }
+    
+    func testToTimeValue()
+    {
+        let d = 24000.0
+        let p = d.decimalPlaces()
+        
+        let timescale = d.toTimeValue(Double(p))
+    
+        XCTAssertEqual(CMTimeValue(24000), timescale)
+    }
+    
 }
