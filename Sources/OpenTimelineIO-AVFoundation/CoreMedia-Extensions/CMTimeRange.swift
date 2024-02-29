@@ -15,33 +15,51 @@ public extension CMTimeRange
         return TimeRange(startTime: self.start.toOTIORationalTime(), duration: self.duration.toOTIORationalTime() )
     }
     
-    func computeMissingTimeRanges(subRange: CMTimeRange) -> [CMTimeRange] 
+    func computeGapsOf(subranges: [CMTimeRange]) -> [CMTimeRange] 
     {
+        // Start with the full time range
         let fullRange = self
-        // Calculate the intersection between the full range and the sub range
-        let intersection = fullRange.intersection(subRange)
+        
+        var inverseRanges = [fullRange]
 
-        // If there is no intersection, the entire full range is missing
-        if intersection.duration == CMTime.zero
+        // Iterate over the source time ranges and subtract them from the current set of inverse ranges
+        for subrange in subranges 
         {
-            return [fullRange]
+            var newInverseRanges: [CMTimeRange] = []
+
+            for inverseRange in inverseRanges 
+            {
+                // Calculate the intersection between the current inverse range and the source range
+                let intersection = inverseRange.intersection(subrange)
+
+                // If there is an intersection, split the current inverse range into two parts
+                if intersection.duration > .zero 
+                {
+                    // Add the part before the intersection
+                    let beforeIntersection = CMTimeRange(start: inverseRange.start, end: intersection.start)
+                    if beforeIntersection.duration > .zero 
+                    {
+                        newInverseRanges.append(beforeIntersection)
+                    }
+
+                    // Add the part after the intersection
+                    let afterIntersection = CMTimeRange(start: intersection.end, end: inverseRange.end)
+                    if afterIntersection.duration > .zero 
+                    {
+                        newInverseRanges.append(afterIntersection)
+                    }
+                } 
+                else
+                {
+                    // If no intersection, keep the current inverse range as is
+                    newInverseRanges.append(inverseRange)
+                }
+            }
+
+            // Update the set of inverse ranges for the next iteration
+            inverseRanges = newInverseRanges
         }
 
-        // If the intersection starts after the full range, add the time before the intersection
-        var missingRanges: [CMTimeRange] = []
-        if intersection.start > fullRange.start 
-        {
-            let beforeIntersection = CMTimeRange(start: fullRange.start, end: intersection.start)
-            missingRanges.append(beforeIntersection)
-        }
-
-        // If the intersection ends before the full range, add the time after the intersection
-        if intersection.end < fullRange.end 
-        {
-            let afterIntersection = CMTimeRange(start: intersection.end, end: fullRange.end)
-            missingRanges.append(afterIntersection)
-        }
-
-        return missingRanges
+        return inverseRanges
     }
 }

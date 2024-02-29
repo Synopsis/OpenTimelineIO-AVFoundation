@@ -26,7 +26,8 @@ class testCoreMediaExtensions: XCTestCase {
         let fullRange = CMTimeRange(start: CMTime.zero, duration: CMTime.init(seconds: 10, preferredTimescale: 600))
         let subRange = CMTimeRange(start: CMTime.init(seconds: 2, preferredTimescale: 600), duration: CMTime.init(seconds: 4, preferredTimescale: 600))
 
-        let missingRanges = fullRange.computeMissingTimeRanges(subRange: subRange)
+        let missingRanges = fullRange.computeGapsOf(subranges: [subRange])
+//        let missingRanges = fullRange.computeMissingTimeRanges(subRange: subRange)
         
         let firstMissingRange = CMTimeRange(start: CMTime.zero, end: CMTime.init(seconds: 2, preferredTimescale: 600) )
         let secondMissingRange = CMTimeRange(start: CMTime.init(seconds: 6, preferredTimescale: 600), end: CMTime.init(seconds: 10, preferredTimescale: 600) )
