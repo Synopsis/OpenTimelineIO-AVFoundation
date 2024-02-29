@@ -92,7 +92,7 @@ public extension Timeline
                             let compositionVideoInstruction = AVMutableVideoCompositionInstruction()
                             compositionVideoInstruction.layerInstructions = compositionLayerInstructions
                             compositionVideoInstruction.timeRange = gapTimeRange
-                            compositionVideoInstruction.enablePostProcessing = false
+                            compositionVideoInstruction.enablePostProcessing = true
                             compositionVideoInstruction.backgroundColor = NSColor.clear.cgColor
                             compositionVideoInstructions.append( compositionVideoInstruction)
                         }
@@ -139,7 +139,7 @@ public extension Timeline
                 let compositionVideoInstruction = AVMutableVideoCompositionInstruction()
                 compositionVideoInstruction.layerInstructions = compositionLayerInstructions
                 compositionVideoInstruction.timeRange = trackTimeRange
-                compositionVideoInstruction.enablePostProcessing = false
+                compositionVideoInstruction.enablePostProcessing = true
                 compositionVideoInstruction.backgroundColor = NSColor.black.cgColor
                 compositionVideoInstructions.append( compositionVideoInstruction)
             }
