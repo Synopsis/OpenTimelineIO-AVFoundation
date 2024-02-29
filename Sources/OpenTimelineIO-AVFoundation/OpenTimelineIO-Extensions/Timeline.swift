@@ -41,17 +41,42 @@ public extension Timeline
             let compositionVideoTrack = composition.addMutableTrack(withMediaType: .video, preferredTrackID: kCMPersistentTrackID_Invalid)
 
             let transitions:[Transition] = track.children.compactMap( { guard let transition = $0 as? Transition else { return nil }; return transition })
-            let clips:[Clip] = track.children.compactMap( { guard let clip = $0 as? Clip else { return nil }; return clip })
+            let items:[Item] = track.children.compactMap( { guard let item = $0 as? Item else { return nil }; return item })
 
-            for clip in clips
+            for item in items
             {
                 guard
+                    let clip = item as? Clip,
                     let (sourceAsset, clipTimeMapping) = try clip.toAVAssetAndMapping(baseURL: baseURL, useTimecode: useAssetTimecode),
                     let sourceAssetFirstVideoTrack = try await sourceAsset.loadTracks(withMediaType: .video).first,
                     let compositionVideoTrack = compositionVideoTrack //composition.mutableTrack(compatibleWith: sourceAssetFirstVideoTrack) ??
                 else
                 {
                     // TODO: GAP !?
+                    if let gap = item as? Gap,
+                       let compositionVideoTrack = compositionVideoTrack
+                    {
+                        do
+                        {
+                            let gapTimeRange = try gap.rangeInParent().toCMTimeRange()
+                            compositionVideoTrack.insertEmptyTimeRange(gapTimeRange)
+                            
+                            let compositionLayerInstruction = AVMutableVideoCompositionLayerInstruction(assetTrack: compositionVideoTrack)
+                            let compositionLayerInstructions = [compositionLayerInstruction]
+
+                            // Video Composition Instruction
+                            let compositionVideoInstruction = AVMutableVideoCompositionInstruction()
+                            compositionVideoInstruction.layerInstructions = compositionLayerInstructions
+                            compositionVideoInstruction.timeRange = gapTimeRange
+                            compositionVideoInstruction.enablePostProcessing = false
+                            compositionVideoInstruction.backgroundColor = NSColor.black.cgColor
+                            compositionVideoInstructions.append( compositionVideoInstruction)
+                        }
+                        catch
+                        {
+                            continue
+                        }
+                    }
                     continue
                 }
                 
@@ -110,6 +135,23 @@ public extension Timeline
                 else
                 {
                     // TODO: GAP !?
+                    if let gap = child as? Gap,
+                       let compositionAudioTrack = compositionAudioTrack
+                    {
+                        do
+                        {
+                            let gapTimeRange = try gap.rangeInParent().toCMTimeRange()
+                            compositionAudioTrack.insertEmptyTimeRange(gapTimeRange)
+                            
+                            let audioMixParams = AVMutableAudioMixInputParameters(track: compositionAudioTrack)
+
+                            compositionAudioMixParams.append(audioMixParams)
+                        }
+                        catch
+                        {
+                            continue
+                        }
+                    }
                     continue
                 }
                 
