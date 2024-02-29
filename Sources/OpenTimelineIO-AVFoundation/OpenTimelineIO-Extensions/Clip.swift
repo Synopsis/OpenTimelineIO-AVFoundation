@@ -16,8 +16,7 @@ extension Clip
     {
         guard
             let externalReference = self.mediaReference as? ExternalReference,
-            let asset = externalReference.toAVAsset(baseURL: baseURL),
-            var timeRangeInAsset = try self.availableRange()
+            let asset = externalReference.toAVAsset(baseURL: baseURL)
 //            let parent = self.parent as? Item
         else
         {
@@ -29,6 +28,7 @@ extension Clip
 //        let rangeInParent = try self.transformed(timeRange: self.visibleRange(), toItem:parent ).toCMTimeRange()
         
         // if we dont w`ant this, we would rather do:
+        var timeRangeInAsset = try self.availableRange()
         var rangeInParent = try self.rangeInParent()
 
         var minFrameDuration:RationalTime? = nil
