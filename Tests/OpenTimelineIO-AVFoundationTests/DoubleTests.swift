@@ -85,5 +85,4 @@ class DoubleTests: XCTestCase
     
         XCTAssertEqual(CMTimeValue(24000), timescale)
     }
-    
 }

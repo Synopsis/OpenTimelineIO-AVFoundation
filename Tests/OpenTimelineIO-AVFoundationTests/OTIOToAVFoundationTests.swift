@@ -22,7 +22,7 @@ class OTIOToAVFoundationTests: XCTestCase
         let timelineURL = thisFile.deletingLastPathComponent().appending(component: "Assets/Timeline_23.98.otio")
         let timeline = try Timeline.fromJSON(url:timelineURL) as! Timeline
 
-        let (composition, videoComposition, a) = try await timeline.toAVCompositionRenderables(baseURL: timelineURL.deletingLastPathComponent() )!
+        let (composition, _, _) = try await timeline.toAVCompositionRenderables(baseURL: timelineURL.deletingLastPathComponent() )!
 
         let compositionDuration = composition.duration
 

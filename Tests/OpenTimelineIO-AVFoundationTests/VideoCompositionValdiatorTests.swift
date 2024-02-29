@@ -35,6 +35,5 @@ class VideoCompositionValdiatorTests: XCTestCase
 
         t = validator.videoComposition(videoComp, shouldContinueValidatingAfterFindingInvalidTrackIDIn:instruction, layerInstruction: layerInstruction, asset: comp)
         XCTAssertEqual(t, false)
-
     }
 }
