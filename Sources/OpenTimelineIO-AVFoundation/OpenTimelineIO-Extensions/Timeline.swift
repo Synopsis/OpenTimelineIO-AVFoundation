@@ -64,7 +64,8 @@ public extension Timeline
         {
             let compositionVideoTrack = composition.addMutableTrack(withMediaType: .video, preferredTrackID: kCMPersistentTrackID_Invalid)
 
-            let transitions:[Transition] = track.children.compactMap( { guard let transition = $0 as? Transition else { return nil }; return transition })
+//            let transitions:[Transition] = track.children.compactMap( { guard let transition = $0 as? Transition else { return nil }; return transition })
+            
             let items:[Item] = track.children.compactMap( { guard let item = $0 as? Item else { return nil }; return item })
 
             for item in items

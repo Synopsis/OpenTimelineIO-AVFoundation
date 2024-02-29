@@ -13,22 +13,6 @@ import CoreMedia
 import AVFoundation
 
 class CoreMediaToOTIOTests: XCTestCase {
-                
-    func testCMTImeRangeGaps()
-    {
-        // Example usage
-        let fullRange = CMTimeRange(start: CMTime.zero, duration: CMTime.init(seconds: 10, preferredTimescale: 600))
-        let subRange = CMTimeRange(start: CMTime.init(seconds: 2, preferredTimescale: 600), duration: CMTime.init(seconds: 4, preferredTimescale: 600))
-
-        let missingRanges = fullRange.computeGapsOf(subranges: [subRange])
-        
-        let firstMissingRange = CMTimeRange(start: CMTime.zero, end: CMTime.init(seconds: 2, preferredTimescale: 600) )
-        let secondMissingRange = CMTimeRange(start: CMTime.init(seconds: 6, preferredTimescale: 600), end: CMTime.init(seconds: 10, preferredTimescale: 600) )
-
-        XCTAssertEqual(missingRanges, [firstMissingRange, secondMissingRange] )
-
-        print(missingRanges)
-    }
     
     func testCMTimeToOTIOTime_24()
     {
@@ -46,5 +30,31 @@ class CoreMediaToOTIOTests: XCTestCase {
         let otio_time = cm_time.toOTIORationalTime()
         
         XCTAssertEqual(cm_time.seconds, otio_time.toSeconds(), accuracy: Self.accuracy)
+    }
+    
+    func testCMTimeRangeToOTIOTimeRange_24()
+    {
+        let cmtimerange =  CMTimeRange(start: CMTime(value: 18, timescale: 24), duration: CMTime(value: 32, timescale: 24))
+        let otio_timerange = cmtimerange.toOTIOTimeRange()
+        
+        XCTAssertEqual(cmtimerange.start.seconds, otio_timerange.startTime.toSeconds(), accuracy: Self.accuracy)
+        XCTAssertEqual(cmtimerange.duration.seconds, otio_timerange.duration.toSeconds(), accuracy: Self.accuracy)
+        XCTAssertEqual(cmtimerange.end.seconds, otio_timerange.endTimeExclusive().toSeconds(), accuracy: Self.accuracy)
+
+        // Note - CMTimeRange end is not end time inclusive
+        XCTAssertNotEqual(cmtimerange.end.seconds, otio_timerange.endTimeInclusive().toSeconds())
+    }
+    
+    func testCMTimeRangeToOTIOTimeRange_23_976()
+    {
+        let cmtimerange =  CMTimeRange(start: CMTime(value: 18000, timescale: 23976), duration: CMTime(value: 32000, timescale: 23976))
+        let otio_timerange = cmtimerange.toOTIOTimeRange()
+
+        XCTAssertEqual(cmtimerange.start.seconds, otio_timerange.startTime.toSeconds(), accuracy: Self.accuracy)
+        XCTAssertEqual(cmtimerange.duration.seconds, otio_timerange.duration.toSeconds(), accuracy: Self.accuracy)
+        XCTAssertEqual(cmtimerange.end.seconds, otio_timerange.endTimeExclusive().toSeconds(), accuracy: Self.accuracy)
+
+        // Note - CMTimeRange end is not end time inclusive
+        XCTAssertNotEqual(cmtimerange.end.seconds, otio_timerange.endTimeInclusive().toSeconds(), accuracy: Self.accuracy)
     }
 }
