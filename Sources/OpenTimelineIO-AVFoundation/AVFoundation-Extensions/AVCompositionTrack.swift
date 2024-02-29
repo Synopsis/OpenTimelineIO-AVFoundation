@@ -78,9 +78,7 @@ public extension AVCompositionTrack
         let track = Track(name:name, sourceRange:trackRange, kind: kind)
         
         try track.set(children: clips + gaps)
-        
-        track.tr
-        
+                
         print("Creating OTIO Track", name, "range", trackRange.startTime.toTimestring(), trackRange.endTimeExclusive().toTimestring())
 
         return track
