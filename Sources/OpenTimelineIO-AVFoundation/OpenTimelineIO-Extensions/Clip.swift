@@ -17,7 +17,7 @@ extension Clip
         guard
             let externalReference = self.mediaReference as? ExternalReference,
             let asset = externalReference.toAVAsset(baseURL: baseURL),
-            var timeRangeInAsset = self.sourceRange
+            var timeRangeInAsset = try self.availableRange()
 //            let parent = self.parent as? Item
         else
         {
