@@ -93,7 +93,7 @@ public extension Timeline
                             compositionVideoInstruction.layerInstructions = compositionLayerInstructions
                             compositionVideoInstruction.timeRange = gapTimeRange
                             compositionVideoInstruction.enablePostProcessing = false
-                            compositionVideoInstruction.backgroundColor = NSColor.black.cgColor
+                            compositionVideoInstruction.backgroundColor = NSColor.clear.cgColor
                             compositionVideoInstructions.append( compositionVideoInstruction)
                         }
                         catch
