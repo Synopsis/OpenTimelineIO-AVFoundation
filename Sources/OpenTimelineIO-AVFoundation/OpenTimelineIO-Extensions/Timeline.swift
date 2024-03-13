@@ -140,7 +140,7 @@ public extension Timeline
                 compositionVideoInstruction.layerInstructions = compositionLayerInstructions
                 compositionVideoInstruction.timeRange = trackTimeRange
                 compositionVideoInstruction.enablePostProcessing = true
-                compositionVideoInstruction.backgroundColor = CGColor.black
+                compositionVideoInstruction.backgroundColor = CGColor(gray: 0, alpha: 1)
                 compositionVideoInstructions.append( compositionVideoInstruction)
             }
         }
