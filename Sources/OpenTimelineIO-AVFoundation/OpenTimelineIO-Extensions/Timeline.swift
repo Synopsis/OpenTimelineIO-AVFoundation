@@ -5,7 +5,6 @@
 // Copyright Contributors to the OpenTimelineIO project
 
 
-import AppKit
 import CoreMedia
 import AVFoundation
 import OpenTimelineIO
@@ -141,7 +140,7 @@ public extension Timeline
                 compositionVideoInstruction.layerInstructions = compositionLayerInstructions
                 compositionVideoInstruction.timeRange = trackTimeRange
                 compositionVideoInstruction.enablePostProcessing = true
-                compositionVideoInstruction.backgroundColor = NSColor.black.cgColor
+                compositionVideoInstruction.backgroundColor = CGColor.black
                 compositionVideoInstructions.append( compositionVideoInstruction)
             }
         }
