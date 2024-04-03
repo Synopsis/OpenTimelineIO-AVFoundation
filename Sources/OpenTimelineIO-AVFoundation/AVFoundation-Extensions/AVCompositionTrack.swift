@@ -21,7 +21,7 @@ public extension AVCompositionTrack
         switch (self.mediaType)
         {
         case .video:
-            minFrameDuration = self.minFrameDuration.toOTIORationalTime()
+//            minFrameDuration = self.minFrameDuration.toOTIORationalTime()
             kind = .video
         case .audio:
             kind = Track.Kind.audion

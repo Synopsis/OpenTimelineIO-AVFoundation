@@ -35,14 +35,14 @@ public extension AVCompositionTrackSegment
         // AAF complains if our time ranges dont share the same rate
         var minFrameDuration:RationalTime? = nil
         
-        if let sourceTrack = asset.track(withTrackID: self.sourceTrackID)
-        {
-            // Audio has invalid minFrameDuration
-            if sourceTrack.minFrameDuration.isValid
-            {
-                minFrameDuration = sourceTrack.minFrameDuration.toOTIORationalTime()
-            }
-        }
+//        if let sourceTrack = asset.track(withTrackID: self.sourceTrackID)
+//        {
+//            // Audio has invalid minFrameDuration
+//            if sourceTrack.minFrameDuration.isValid
+//            {
+//                minFrameDuration = sourceTrack.minFrameDuration.toOTIORationalTime()
+//            }
+//        }
         
 //        let start = RationalTime(value:0, rate:duration.rate)
 //        var referenceRange = TimeRange(startTime: start, duration: duration)
