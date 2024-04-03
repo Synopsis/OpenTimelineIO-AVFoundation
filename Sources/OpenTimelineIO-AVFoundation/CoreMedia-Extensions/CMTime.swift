@@ -8,11 +8,14 @@
 import Foundation
 import CoreMedia
 import OpenTimelineIO
+import TimecodeKit
 
 public extension CMTime
 {
     func toOTIORationalTime() -> RationalTime
     {
-        return RationalTime(value: Double( self.value ), rate: Double( self.timescale ) )
+        let fraction = Fraction(reducing: Int(self.value), Int(self.timescale))
+                
+        return RationalTime(value: Double( fraction.numerator ), rate: Double( fraction.denominator ) )
     }
 }
