@@ -14,8 +14,6 @@ public extension CMTime
 {
     func toOTIORationalTime() -> RationalTime
     {
-        let fraction = Fraction(reducing: Int(self.value), Int(self.timescale))
-                
-        return RationalTime(value: Double( fraction.numerator ), rate: Double( fraction.denominator ) )
+        return RationalTime(value: Double( self.value ), rate: Double( self.timescale ) )
     }
 }
