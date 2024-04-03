@@ -25,7 +25,7 @@ public extension AVCompositionTrackSegment
             return nil
         }
         
-        let name = sourceURL.lastPathComponent
+        let name = sourceURL.absoluteURL.path()
         
         let asset = AVURLAsset(url: sourceURL)
         
