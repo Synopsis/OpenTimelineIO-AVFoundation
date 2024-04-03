@@ -28,13 +28,13 @@ import OpenTimelineIO
 
 public extension AVComposition
 {
-    func toOTIOTimeline(named name:String) throws -> Timeline
+    func toOTIOTimeline(named name:String, rescaled:Bool = true) throws -> Timeline
     {
         print("Making Timeline from Composition", self)
         
         let timeline = Timeline(name: name, globalStartTime: CMTime.zero.toOTIORationalTime() )
 
-        let all_tracks:[Track] = try self.tracks.compactMap { try $0.toOTIOTrack() }
+        let all_tracks:[Track] = try self.tracks.compactMap { try $0.toOTIOTrack(rescaleToAsset: rescaled) }
 
         let stack = Stack()
 

@@ -12,7 +12,7 @@ import TimecodeKit
 
 public extension AVCompositionTrack
 {
-    func toOTIOTrack() throws -> Track?
+    func toOTIOTrack(rescaleToAsset:Bool = true) throws -> Track?
     {
         var kind:Track.Kind? = nil
                 
@@ -21,7 +21,10 @@ public extension AVCompositionTrack
         switch (self.mediaType)
         {
         case .video:
-//            minFrameDuration = self.minFrameDuration.toOTIORationalTime()
+            if rescaleToAsset
+            {
+                minFrameDuration = self.minFrameDuration.toOTIORationalTime()
+            }
             kind = .video
         case .audio:
             kind = Track.Kind.audion

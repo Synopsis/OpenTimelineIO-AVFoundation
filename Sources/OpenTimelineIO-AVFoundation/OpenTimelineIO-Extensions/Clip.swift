@@ -12,7 +12,7 @@ import OpenTimelineIO
 import TimecodeKit
 extension Clip
 {
-    func toAVAssetAndMapping(baseURL:URL? = nil, useTimecode:Bool = false) throws -> (asset:AVAsset, timeMaping:CMTimeMapping)?
+    func toAVAssetAndMapping(baseURL:URL? = nil, useTimecode:Bool = false, rescaleToAsset:Bool = true) throws -> (asset:AVAsset, timeMaping:CMTimeMapping)?
     {
         guard
             let externalReference = self.mediaReference as? ExternalReference,
@@ -23,18 +23,14 @@ extension Clip
             return nil
         }
         
-        // This accounts for visible ranges which also account for transition times
-//        var timeRangeInAsset = try self.visibleRange().toCMTimeRange()
-//        let rangeInParent = try self.transformed(timeRange: self.visibleRange(), toItem:parent ).toCMTimeRange()
-        
-        // if we dont w`ant this, we would rather do:
         var timeRangeInAsset = try self.availableRange()
         var rangeInParent = try self.rangeInParent()
 
         var minFrameDuration:RationalTime? = nil
-        if let videoTrack = asset.tracks(withMediaType: .video).first
+        if let videoTrack = asset.tracks(withMediaType: .video).first,
+            rescaleToAsset
         {
-//            minFrameDuration = videoTrack.minFrameDuration.toOTIORationalTime()
+            minFrameDuration = videoTrack.minFrameDuration.toOTIORationalTime()
         }
         
         // Add rescaling - see Additional Notes above

@@ -11,7 +11,7 @@ import OpenTimelineIO
 
 public extension AVCompositionTrackSegment
 {
-    func toOTIOItem() -> Item?
+    func toOTIOItem(rescaleToAsset:Bool = true) -> Item?
     {
         if self.isEmpty
         {
@@ -29,23 +29,19 @@ public extension AVCompositionTrackSegment
         
         let asset = AVURLAsset(url: sourceURL)
         
-//        let duration = asset.duration.toOTIORationalTime()
 
-        // It seems to be a best practice to normalize all of our OTIO times to our assets frame rate tick
-        // AAF complains if our time ranges dont share the same rate
         var minFrameDuration:RationalTime? = nil
         
-//        if let sourceTrack = asset.track(withTrackID: self.sourceTrackID)
-//        {
-//            // Audio has invalid minFrameDuration
-//            if sourceTrack.minFrameDuration.isValid
-//            {
-//                minFrameDuration = sourceTrack.minFrameDuration.toOTIORationalTime()
-//            }
-//        }
+        if let sourceTrack = asset.track(withTrackID: self.sourceTrackID),
+           rescaleToAsset
+        {
+            // Audio has invalid minFrameDuration
+            if sourceTrack.minFrameDuration.isValid
+            {
+                minFrameDuration = sourceTrack.minFrameDuration.toOTIORationalTime()
+            }
+        }
         
-//        let start = RationalTime(value:0, rate:duration.rate)
-//        var referenceRange = TimeRange(startTime: start, duration: duration)
         
         var referenceRange = self.timeMapping.source.toOTIOTimeRange()
         
