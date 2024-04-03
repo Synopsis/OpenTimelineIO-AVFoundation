@@ -25,7 +25,7 @@ public extension AVCompositionTrackSegment
             return nil
         }
         
-        let name = sourceURL.absoluteURL.path()
+        let name = sourceURL.lastPathComponent
         
         let asset = AVURLAsset(url: sourceURL)
         
@@ -54,7 +54,7 @@ public extension AVCompositionTrackSegment
             referenceRange = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
         }
         
-        let externalReference = ExternalReference(targetURL: sourceURL.standardizedFileURL.absoluteString, availableRange:referenceRange )
+        let externalReference = ExternalReference(targetURL: sourceURL.standardizedFileURL.path(), availableRange:referenceRange )
         print("Creating OTIO External Reference", name, "externalReferenceRange", referenceRange.startTime.toTimestring(), referenceRange.endTimeExclusive().toTimestring())
         
         var clipRange = self.timeMapping.target.toOTIOTimeRange()
