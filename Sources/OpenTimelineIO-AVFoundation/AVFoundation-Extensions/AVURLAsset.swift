@@ -20,7 +20,13 @@ public extension AVURLAsset
             .map(\.nominalFrameRate)
     }
     
-    public func toOTIOExternalReference(config:OTIOConversionConfig) -> ExternalReference
+    func readMinFrameDurations() -> [CMTIme] {
+        tracks(withMediaType: .video)
+            .map(\.minFrameDuration)
+    }
+
+    
+    func toOTIOExternalReference(config:OTIOConversionConfig) -> ExternalReference
     {
         
         // MARK: - TimeCode Policy
@@ -48,9 +54,9 @@ public extension AVURLAsset
         var timeRangeRational = timeRange.toOTIOTimeRange()
         
         // MARK: - Time Conversion Policy
-        if let firstNominalRate = self.readNominalVideoFrameRates().first
+        if let firstMinFrameDuration = self.readMinFrameDurations().first
         {
-            timeRangeRational = config.rationalTimeConversionPolicy.convert(timeRangeRational, targetRate: Double(firstNominalRate))
+            timeRangeRational = config.rationalTimeConversionPolicy.convert(timeRangeRational, targetRate: firstMinFrameDuration.toOTIORationalTime() )
         }
        
         
