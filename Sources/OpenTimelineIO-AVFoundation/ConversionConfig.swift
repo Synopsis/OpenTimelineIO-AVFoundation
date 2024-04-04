@@ -95,4 +95,12 @@ public struct OTIOConversionConfig
     public let urlPolicy:URLPolicy
     public let rationalTimeConversionPolicy:RationalTimeConversionPolicy
     public let timecodePolicy:TimecodeOffsetPolicy
+    
+    public init(globalStartTime: RationalTime, urlPolicy: URLPolicy, rationalTimeConversionPolicy: RationalTimeConversionPolicy, timecodePolicy: TimecodeOffsetPolicy)
+    {
+        self.globalStartTime = globalStartTime
+        self.urlPolicy = urlPolicy
+        self.rationalTimeConversionPolicy = rationalTimeConversionPolicy
+        self.timecodePolicy = timecodePolicy
+    }
 }
