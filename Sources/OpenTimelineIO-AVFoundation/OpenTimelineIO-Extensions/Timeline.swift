@@ -123,9 +123,9 @@ public extension Timeline
                     }
                 }
                 
-                // Support Time Scaling
-                let unscaledTrackTime = CMTimeRangeMake(start: trackTimeRange.start, duration: sourceAssetTimeRange.duration)
-                compositionVideoTrack.scaleTimeRange(unscaledTrackTime, toDuration: trackTimeRange.duration)
+                // TODO: Fix - Support Time Scaling
+//                let unscaledTrackTime = CMTimeRangeMake(start: trackTimeRange.start, duration: sourceAssetTimeRange.duration)
+//                compositionVideoTrack.scaleTimeRange(unscaledTrackTime, toDuration: trackTimeRange.duration)
                 
                 // Handle source asset video natural transform for
                 // ie iOS videos where camera was rotated
@@ -198,9 +198,9 @@ public extension Timeline
                     }
                 }
                 
-                // Support Time Scaling
-                let unscaledTrackTime = CMTimeRangeMake(start: trackTimeRange.start, duration: sourceAssetTimeRange.duration)
-                compositionAudioTrack.scaleTimeRange(unscaledTrackTime, toDuration: trackTimeRange.duration)
+                // TODO: - FIX Support Time Scaling
+//                let unscaledTrackTime = CMTimeRangeMake(start: trackTimeRange.start, duration: sourceAssetTimeRange.duration)
+//                compositionAudioTrack.scaleTimeRange(unscaledTrackTime, toDuration: trackTimeRange.duration)
                 
                 compositionAudioTrack.isEnabled = try await sourceAssetFirstAudioTrack.load(.isEnabled)
 
