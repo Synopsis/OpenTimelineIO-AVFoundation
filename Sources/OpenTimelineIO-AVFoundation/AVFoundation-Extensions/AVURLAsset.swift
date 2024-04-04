@@ -20,7 +20,7 @@ public extension AVURLAsset
             .map(\.nominalFrameRate)
     }
     
-    func readMinFrameDurations() -> [CMTIme] {
+    func readMinFrameDurations() -> [CMTime] {
         tracks(withMediaType: .video)
             .map(\.minFrameDuration)
     }
