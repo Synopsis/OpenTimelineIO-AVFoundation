@@ -24,7 +24,7 @@ extension Clip
         }
         
         var timeRangeInAsset = try self.availableRange()
-        var rangeInParent = try self.rangeInParent()
+        var rangeInParent = try self.trimmedRange()
 
         var minFrameDuration:RationalTime? = nil
         if let videoTrack = asset.tracks(withMediaType: .video).first,
