@@ -12,20 +12,15 @@ import TimecodeKit
 
 public extension AVCompositionTrack
 {
-    func toOTIOTrack(rescaleToAsset:Bool = true) throws -> Track?
+    func toOTIOTrack(config:OTIOConversionConfig) throws -> Track?
     {
         var kind:Track.Kind? = nil
                 
-        var minFrameDuration:RationalTime? = nil
-
         switch (self.mediaType)
         {
         case .video:
-            if rescaleToAsset
-            {
-                minFrameDuration = self.minFrameDuration.toOTIORationalTime()
-            }
             kind = .video
+            
         case .audio:
             kind = Track.Kind.audion
         default:
@@ -41,7 +36,7 @@ public extension AVCompositionTrack
         
         let name = String(format: "Track %i", self.trackID)
                 
-        let clips = self.segments.compactMap { $0.toOTIOItem() }
+        let clips = self.segments.compactMap { $0.toOTIOItem(config:config) }
                 
         // We need to manually account for gaps
         let clipTimeRanges = clips.compactMap { do { return try $0.rangeInParent().toCMTimeRange() } catch { return nil } }
@@ -49,31 +44,31 @@ public extension AVCompositionTrack
         let gapRanges = self.timeRange.computeGapsOf(subranges: clipTimeRanges)
         let gaps = gapRanges.compactMap { Gap(name:nil, sourceRange: $0.toOTIOTimeRange() ) }
 
+        
+        // MARK: - Time Conversion Policy
+        var trackRange = self.timeRange.toOTIOTimeRange()
+
         // Add rescaling (for video) - see Additional Notes above
-        if let minFrameDuration = minFrameDuration
-        {
-            clips.forEach( {
-                if let sourceRange = $0.sourceRange
-                {
-                    let rescaledStart = sourceRange.startTime.rescaled(to: minFrameDuration)
-                    let rescaledDuration = sourceRange.duration.rescaled(to: minFrameDuration)
-                    
-                    $0.sourceRange = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
-                }
-            })
-            
-            gaps.forEach( {
-                if let sourceRange = $0.sourceRange
-                {
-                    let rescaledStart = sourceRange.startTime.rescaled(to: minFrameDuration)
-                    let rescaledDuration = sourceRange.duration.rescaled(to: minFrameDuration)
-                    
-                    $0.sourceRange = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
-                }
-            })
-        }
+        let minFrameDuration = self.minFrameDuration.toOTIORationalTime()
+        
+        trackRange = config.rationalTimeConversionPolicy.convert(trackRange, targetRate: minFrameDuration)
+        
+        clips.forEach( {
+            if let sourceRange = $0.sourceRange
+            {
+                $0.sourceRange = config.rationalTimeConversionPolicy.convert(sourceRange, targetRate: minFrameDuration)
+            }
+        })
+        
+        gaps.forEach( {
+            if let sourceRange = $0.sourceRange
+            {
+                $0.sourceRange = config.rationalTimeConversionPolicy.convert(sourceRange, targetRate: minFrameDuration)
+            }
+        })
        
-        let trackRange = self.timeRange.toOTIOTimeRange()
+        // MARK: -
+       
         let track = Track(name:name, sourceRange:trackRange, kind: kind)
         
         try track.set(children: clips )

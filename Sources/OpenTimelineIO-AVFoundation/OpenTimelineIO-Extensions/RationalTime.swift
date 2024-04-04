@@ -38,4 +38,6 @@ public extension RationalTime
         
         return timecodeKitFraction.cmTimeValue
     }
+    
+   
 }

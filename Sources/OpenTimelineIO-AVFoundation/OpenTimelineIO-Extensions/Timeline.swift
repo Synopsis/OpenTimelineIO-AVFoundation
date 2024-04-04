@@ -34,6 +34,7 @@ public class VideoCompositionValidator : NSObject, AVVideoCompositionValidationH
 
 public extension Timeline
 {
+    
     // Some running notes about this conversion
     
     // 1 - Tracks

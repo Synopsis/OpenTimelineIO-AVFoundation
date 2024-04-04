@@ -8,10 +8,11 @@ import Foundation
 import AVFoundation
 import CoreMedia
 import OpenTimelineIO
+import TimecodeKit
 
 public extension AVCompositionTrackSegment
 {
-    func toOTIOItem(rescaleToAsset:Bool = true) -> Item?
+    func toOTIOItem(config:OTIOConversionConfig) -> Item?
     {
         if self.isEmpty
         {
@@ -29,33 +30,32 @@ public extension AVCompositionTrackSegment
         
         let asset = AVURLAsset(url: sourceURL)
         
-
         var minFrameDuration:RationalTime? = nil
+//        
+//        if let sourceTrack = asset.track(withTrackID: self.sourceTrackID),
+//           rescaleToAsset
+//        {
+//            // Audio has invalid minFrameDuration
+//            if sourceTrack.minFrameDuration.isValid
+//            {
+//                minFrameDuration = sourceTrack.minFrameDuration.toOTIORationalTime()
+//            }
+//        }
+//        
+//        var referenceRange = self.timeMapping.source.toOTIOTimeRange()
+//        
+//        // Add rescaling - see Additional Notes above
+//        if let minFrameDuration = minFrameDuration
+//        {
+//            let rescaledStart = referenceRange.startTime.rescaled(to: minFrameDuration)
+//            let rescaledDuration = referenceRange.duration.rescaled(to: minFrameDuration)
+//            
+//            referenceRange = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
+//        }
         
-        if let sourceTrack = asset.track(withTrackID: self.sourceTrackID),
-           rescaleToAsset
-        {
-            // Audio has invalid minFrameDuration
-            if sourceTrack.minFrameDuration.isValid
-            {
-                minFrameDuration = sourceTrack.minFrameDuration.toOTIORationalTime()
-            }
-        }
+        let externalReference = asset.toOTIOExternalReference(config: config)
         
-        
-        var referenceRange = self.timeMapping.source.toOTIOTimeRange()
-        
-        // Add rescaling - see Additional Notes above
-        if let minFrameDuration = minFrameDuration
-        {
-            let rescaledStart = referenceRange.startTime.rescaled(to: minFrameDuration)
-            let rescaledDuration = referenceRange.duration.rescaled(to: minFrameDuration)
-            
-            referenceRange = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
-        }
-        
-        let externalReference = ExternalReference(targetURL: sourceURL.standardizedFileURL.path(), availableRange:referenceRange )
-        print("Creating OTIO External Reference", name, "externalReferenceRange", referenceRange.startTime.toTimestring(), referenceRange.endTimeExclusive().toTimestring())
+        print("Creating OTIO External Reference", name, "externalReferenceRange", externalReference.availableRange?.startTime.toTimestring(), externalReference.availableRange?.endTimeExclusive().toTimestring())
         
         var clipRange = self.timeMapping.target.toOTIOTimeRange()
         
