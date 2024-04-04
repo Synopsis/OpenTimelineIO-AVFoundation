@@ -67,6 +67,6 @@ extension Clip
             timeRangeInAsset = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
         }
         
-        return (asset, CMTimeMapping(source: timeRangeInAsset.toCMTimeRange(), target:rangeInParent.toCMTimeRange()))
+        return (asset, CMTimeMapping(source:rangeInParent.toCMTimeRange(), target:timeRangeInAsset.toCMTimeRange()))
     }
 }
