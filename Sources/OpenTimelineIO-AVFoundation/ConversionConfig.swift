@@ -6,6 +6,7 @@
 //
 
 import OpenTimelineIO
+import TimecodeKit
 
 public struct OTIOConversionConfig
 {
@@ -22,8 +23,12 @@ public struct OTIOConversionConfig
     public enum RationalTimeConversionPolicy
     {
         // Convert CMTimes to RationalTime as with as minimal loss as possible.
-        // Dtay true to the containers reported value and time base
+        // Stay true to the containers reported value and time base
         case passthrough
+
+        // Convert CMTIme to Rational Time and convert to the lowest common denominator possible.
+        // Do not scale to targetRate
+        case unscaledLCD
 
         // Convert CMTimes To Rational Times and normalize to the assets nominal framerate
         case assetNominalFrameRate
@@ -38,6 +43,11 @@ public struct OTIOConversionConfig
             {
             case .passthrough:
                 return rationalTime
+                
+            case .unscaledLCD:
+                let fraction = Fraction(double: rationalTime.toSeconds() )
+                let reduced = fraction.reduced()
+                return RationalTime(value: Double(reduced.numerator), rate: Double(reduced.numerator) )
                 
             case .assetNominalFrameRate:
                 return rationalTime.rescaled(to: targetRate)
@@ -55,6 +65,11 @@ public struct OTIOConversionConfig
             case .passthrough:
                 return rationalTime
                 
+            case .unscaledLCD:
+                let fraction = Fraction(double: rationalTime.toSeconds() )
+                let reduced = fraction.reduced()
+                return RationalTime(value: Double(reduced.numerator), rate: Double(reduced.numerator) )
+
             case .assetNominalFrameRate:
                 return rationalTime.rescaled(to: targetRate)
                 
