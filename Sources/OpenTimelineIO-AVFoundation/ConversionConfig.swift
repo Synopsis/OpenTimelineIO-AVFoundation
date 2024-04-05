@@ -28,7 +28,7 @@ public struct OTIOConversionConfig
 
         // Convert CMTIme to Rational Time and convert to the lowest common denominator possible.
         // Do not scale to targetRate
-        case unscaledLCD
+//        case unscaledLCD
 
         // Convert CMTimes To Rational Times and normalize to the assets nominal framerate
         case assetNominalFrameRate
@@ -36,6 +36,7 @@ public struct OTIOConversionConfig
         // Here we re-normalize our Rational Times to have well known rates
         case nearestSMTPERate
         
+        case seconds
         
         func convert(_ rationalTime:RationalTime, targetRate:RationalTime) -> RationalTime
         {
@@ -44,10 +45,10 @@ public struct OTIOConversionConfig
             case .passthrough:
                 return rationalTime
                 
-            case .unscaledLCD:
-                let fraction = Fraction(double: rationalTime.toSeconds() )
-                let reduced = fraction.reduced()
-                return RationalTime(value: Double(reduced.numerator), rate: Double(reduced.numerator) )
+//            case .unscaledLCD:
+//                let fraction = Fraction(double: rationalTime.toSeconds() )
+//                let reduced = fraction.reduced()
+//                return RationalTime(value: Double(reduced.numerator), rate: Double(reduced.numerator) )
                 
             case .assetNominalFrameRate:
                 return rationalTime.rescaled(to: targetRate)
@@ -55,6 +56,10 @@ public struct OTIOConversionConfig
             case .nearestSMTPERate:
                 guard let convertRate = targetRate.rate.closestValueIn(Double.validTimecodeRates) else { return rationalTime }
                 return rationalTime.rescaled(to: convertRate)
+                
+            case .seconds:
+                return rationalTime.rescaled(to: RationalTime(value: 1, rate: 60) )
+
             }
         }
         
@@ -65,10 +70,10 @@ public struct OTIOConversionConfig
             case .passthrough:
                 return rationalTime
                 
-            case .unscaledLCD:
-                let fraction = Fraction(double: rationalTime.toSeconds() )
-                let reduced = fraction.reduced()
-                return RationalTime(value: Double(reduced.numerator), rate: Double(reduced.numerator) )
+//            case .unscaledLCD:
+//                let fraction = Fraction(double: rationalTime.toSeconds() )
+//                let reduced = fraction.reduced()
+//                return RationalTime(value: Double(reduced.numerator), rate: Double(reduced.numerator) )
 
             case .assetNominalFrameRate:
                 return rationalTime.rescaled(to: targetRate)
@@ -76,6 +81,10 @@ public struct OTIOConversionConfig
             case .nearestSMTPERate:
                 guard let convertRate = targetRate.closestValueIn(Double.validTimecodeRates) else { return rationalTime }
                 return rationalTime.rescaled(to: convertRate)
+                
+            case .seconds:
+                return rationalTime.rescaled(to: RationalTime(value: 1, rate: 60) )
+
             }
         }
         
