@@ -1,0 +1,24 @@
+{
+  "originHash" : "3dfab55b9f3265b1713ea9ffb62de2c86e0a4060ae558e012df8b45ac5d4f388",
+  "pins" : [
+    {
+      "identity" : "opentimelineio-swift-bindings",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/openTimelineIO/OpenTimelineIO-Swift-Bindings",
+      "state" : {
+        "branch" : "main",
+        "revision" : "963be93eff6d2c01b7a699b8e2f89718970989fa"
+      }
+    },
+    {
+      "identity" : "timecodekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/orchetect/TimecodeKit",
+      "state" : {
+        "revision" : "5e2b41bf5d0316c8bf8ccd1ce5046048192c5376",
+        "version" : "2.1.0"
+      }
+    }
+  ],
+  "version" : 3
+}

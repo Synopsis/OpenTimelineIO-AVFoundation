@@ -44,12 +44,12 @@ public extension Timeline
     // So here, we effectively ignore OTIO tracks and use the assets to see if we have compatible tracks.
     // If we do - great. if we dont, we make a new one.
     
-    func toAVCompositionRenderables(baseURL:URL? = nil, customCompositorClass:AVVideoCompositing.Type? = nil, useAssetTimecode:Bool = false, rescaleToAsset:Bool = true) async throws -> (composition:AVComposition, videoComposition:AVVideoComposition, audioMix:AVAudioMix)?
+    func toAVCompositionRenderables(baseURL:URL? = nil, customCompositorClass:AVVideoCompositing.Type? = nil, useAssetTimecode:Bool = true, rescaleToAsset:Bool = true) async throws -> (composition:AVComposition, videoComposition:AVVideoComposition, audioMix:AVAudioMix)?
     {
         let validator = VideoCompositionValidator()
         
         // Get our global offset - if we have one, to normalize track times
-        let globalStartCMTime = self.globalStartTime?.toCMTime()
+        let globalStartCMTime = self.globalStartTime?.toCMTime() ?? .zero
         
         let options =  [AVURLAssetPreferPreciseDurationAndTimingKey : true] as [String : Any]
 
@@ -77,6 +77,7 @@ public extension Timeline
                     let compositionVideoTrack = compositionVideoTrack //composition.mutableTrack(compatibleWith: sourceAssetFirstVideoTrack) ??
                 else
                 {
+                    
                     // TODO: GAP !?
 //                    if let gap = item as? Gap,
 //                       let compositionVideoTrack = compositionVideoTrack
@@ -106,11 +107,11 @@ public extension Timeline
                 }
                 
                 // Handle Timing
-                let trackTimeRange = clipTimeMapping.target
-                let sourceAssetTimeRange = clipTimeMapping.source
+                let trackTimeRange = clipTimeMapping.source
+                let sourceAssetTimeRange = clipTimeMapping.target
                    
                 // We attempt to re-use a track per OTIO track, but we may have CMFormatDesc inconsistencies which means insertion will fails
-                // If so - we make a new one
+                // If so - we make a new one  
                 do
                 {
                     try compositionVideoTrack.insertTimeRange(sourceAssetTimeRange, of: sourceAssetFirstVideoTrack, at: trackTimeRange.start)
@@ -181,8 +182,8 @@ public extension Timeline
                 }
                 
                 // Handle Timing
-                let trackTimeRange = clipTimeMapping.target
-                let sourceAssetTimeRange = clipTimeMapping.source
+                let trackTimeRange = clipTimeMapping.source
+                let sourceAssetTimeRange = clipTimeMapping.target
                 
                 // We attempt to re-use a track per OTIO track, but we may have CMFormatDesc inconsistencies which means insertion will fails
                 // If so - we make a new one
@@ -227,7 +228,7 @@ public extension Timeline
         // TODO: - Custom Resolution overrides?
         // videoComposition.renderSize = CGSize(width: 1920, height: 1080)
         videoComposition.renderScale = 1.0
-        videoComposition.instructions = compositionVideoInstructions
+//        videoComposition.instructions = compositionVideoInstructions
         
         // Handle custom effects (we'd need custom instructions and metadata parsing)
         if let customCompositorClass = customCompositorClass
