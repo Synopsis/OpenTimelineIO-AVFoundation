@@ -228,7 +228,11 @@ public extension Timeline
         // TODO: - Custom Resolution overrides?
         // videoComposition.renderSize = CGSize(width: 1920, height: 1080)
         videoComposition.renderScale = 1.0
-//        videoComposition.instructions = compositionVideoInstructions
+ 
+        // TODO: It seems as though our custom instructions occasionally have a minor time gap
+        // likely due to numerical conversion precision which throws a validation error
+        // Im not entirely sure what to do there!
+        videoComposition.instructions = compositionVideoInstructions
         
         // Handle custom effects (we'd need custom instructions and metadata parsing)
         if let customCompositorClass = customCompositorClass
