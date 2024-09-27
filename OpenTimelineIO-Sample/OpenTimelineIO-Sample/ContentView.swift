@@ -11,8 +11,12 @@ import AVKit
 struct ContentView: View
 {
     @Binding var document: OpenTimelineIO_SampleDocument
+
+    // This is beyond lame that I need this in the view!?
     var fileURL:URL?
     
+    @State private var isExporting: Bool = false
+
     init(document:   Binding<OpenTimelineIO_SampleDocument>  , fileURL: URL? = nil) {
         self._document = document
         self.fileURL = fileURL
@@ -31,7 +35,22 @@ struct ContentView: View
             HStack
             {
                 Button("Export", role: .none) {
-                    print("Export")
+                    print("Export start")
+                    self.isExporting.toggle()
+                }
+                
+                
+                .fileExporter(isPresented: $isExporting,
+                              document: document,
+                              contentType: .mpeg4Movie,
+                              defaultFilename: document.timeline.name) { result in
+                             
+                  switch result {
+                  case .success(let url):
+                      print("saved to \(url)")
+                  case .failure(let error):
+                    print(error)
+                  }
                 }
             }
             .padding()

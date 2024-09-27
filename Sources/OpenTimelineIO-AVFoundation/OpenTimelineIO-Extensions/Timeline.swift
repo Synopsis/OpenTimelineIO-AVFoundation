@@ -232,7 +232,7 @@ public extension Timeline
         // TODO: It seems as though our custom instructions occasionally have a minor time gap
         // likely due to numerical conversion precision which throws a validation error
         // Im not entirely sure what to do there!
-        videoComposition.instructions = compositionVideoInstructions
+//        videoComposition.instructions = compositionVideoInstructions
         
         // Handle custom effects (we'd need custom instructions and metadata parsing)
         if let customCompositorClass = customCompositorClass

@@ -30,8 +30,9 @@ class OpenTimelineIO_SampleDocument: FileDocument
         self.timeline = Timeline(name: "Untitled OpenTimelineIO Timeline")
     }
 
-    static var readableContentTypes: [UTType]{ [.openTimelineIO] }
-
+    static var readableContentTypes: [UTType] { [.openTimelineIO] }
+    static var writableContentTypes: [UTType] { [.mpeg4Movie, .quickTimeMovie] }
+    
     required init(configuration: ReadConfiguration) throws
     {
         guard let data = configuration.file.regularFileContents,
@@ -46,6 +47,24 @@ class OpenTimelineIO_SampleDocument: FileDocument
     }
     
     func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper
+    {
+        switch configuration.contentType
+        {
+        case .openTimelineIO:
+            return try self.saveAsOTIO()
+            
+        case .mpeg4Movie:
+            let url = URL.temporaryDirectory.appendingPathComponent(UUID().uuidString, conformingTo: .mpeg4Movie)
+            self.setupPlayerWithBaseDocumentURL(url)
+             return try .init(url: url)
+ 
+        default:
+            throw CocoaError(.fileWriteUnknown)
+        }
+        
+    }
+    
+    private func saveAsOTIO() throws -> FileWrapper
     {
         let string = try self.timeline.toJSON()
         let data = string.data(using: .utf8)!
@@ -66,6 +85,26 @@ class OpenTimelineIO_SampleDocument: FileDocument
                     self.player.replaceCurrentItem(with: playerItem)
                 }
             }
+        }
+    }
+    
+    func exportToURL(url:URL)
+    {
+        if
+            let currentItem = self.player.currentItem,
+            let videoComposition = currentItem.videoComposition,
+            let audioMix = currentItem.audioMix
+        {
+            let composition = currentItem.asset
+            
+            let exportSession = AVAssetExportSession(asset: composition, presetName: AVAssetExportPresetHighestQuality)
+            exportSession?.videoComposition = videoComposition
+            exportSession?.audioMix = audioMix
+            exportSession?.outputURL = url
+            exportSession?.outputFileType = .mp4
+            exportSession?.exportAsynchronously(completionHandler: {
+                NSWorkspace.shared.open(url)
+            })
         }
     }
 }
