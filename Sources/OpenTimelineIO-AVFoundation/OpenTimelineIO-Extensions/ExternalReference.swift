@@ -21,47 +21,62 @@ extension ExternalReference
             return nil
         }
         
-        if targetURL.hasPrefix("file:")
+        if targetURL.hasPrefix("file://")
         {
-            if 
-                let sourceURL = URL(string: targetURL),
-                let asset = self.testForAsset(path:sourceURL.standardizedFileURL.path)
+            let fileURL = URL(fileURLWithPath:targetURL.replacingOccurrences(of:"file://", with: ""))
+            if
+               let asset = self.testForAsset(url:fileURL, baseURL:baseURL)
             {
                 return asset
             }
-            
+         
             return nil
         }
         else
         {
-            if let asset = self.testForAsset(path:targetURL)
+            if let asset = self.testForAsset(path:targetURL, baseURL: baseURL)
             {
                 return asset
             }
-            
-            if let baseURL
-            {
-                if let asset = self.testForAsset(url: baseURL.appending(path: targetURL ) )
-                {
-                    return asset
-                }
-            }
+
         }
 
         return nil
     }
     
-    fileprivate func testForAsset(url:URL) -> AVURLAsset?
+    fileprivate func testForAsset(url:URL, baseURL:URL?) -> AVURLAsset?
     {
-        return self.testForAsset(path: url.standardizedFileURL.path)
+        return self.testForAsset(path: url.standardizedFileURL.absoluteURL.path(), baseURL: baseURL)
     }
     
-    fileprivate func testForAsset(path:String) -> AVURLAsset?
+    fileprivate func testForAsset(path:String, baseURL:URL?) -> AVURLAsset?
     {
         if FileManager.default.fileExists(atPath: path)
         {
             let sourceURL = URL(filePath: path)
             return AVURLAsset(url: sourceURL)
+        }
+        else if let baseURL = baseURL
+        {
+            // try niave base relative
+            var sourceURL = baseURL.appending(path: path )
+            
+            if FileManager.default.fileExists(atPath: sourceURL.path())
+            {
+                return AVURLAsset(url: sourceURL)
+            }
+            
+            // we cant have a base url with a relative path to root dir...
+            if path.hasPrefix("/")
+            {
+                var pathWithoutRoot = path
+                pathWithoutRoot.removeFirst()
+                var sourceURL = baseURL.appending(path: pathWithoutRoot )
+                if FileManager.default.fileExists(atPath: sourceURL.path())
+                {
+                    return AVURLAsset(url: sourceURL)
+                }
+            }
         }
         
         return nil

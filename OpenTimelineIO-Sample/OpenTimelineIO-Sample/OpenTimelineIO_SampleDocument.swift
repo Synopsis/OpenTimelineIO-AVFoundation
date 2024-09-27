@@ -75,16 +75,24 @@ class OpenTimelineIO_SampleDocument: FileDocument
     {
         Task
         {
-            if let (composition, videoComposition, audioMix) = try await self.timeline.toAVCompositionRenderables(baseURL: url.deletingLastPathComponent())
+            do
             {
-                let playerItem = await AVPlayerItem(asset: composition)
-                playerItem.videoComposition = videoComposition
-                playerItem.audioMix = audioMix
-                
-                await MainActor.run {
-                    self.player.replaceCurrentItem(with: playerItem)
+                if let (composition, videoComposition, audioMix) = try await self.timeline.toAVCompositionRenderables(baseURL: url.deletingLastPathComponent())
+                {
+                    let playerItem = await AVPlayerItem(asset: composition)
+                    playerItem.videoComposition = videoComposition
+                    playerItem.audioMix = audioMix
+                    
+                    await MainActor.run {
+                        self.player.replaceCurrentItem(with: playerItem)
+                    }
                 }
             }
+            catch
+            {
+                print("Error creating composition from timeline: \(error)")
+            }
+                
         }
     }
     

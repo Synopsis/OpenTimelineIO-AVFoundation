@@ -69,16 +69,25 @@ extension Clip
         }
         
         // add a heuristic - if our asset has timecode we need to subtract the start time
-        if useTimecode == true,
-           let startTimeCode = try asset.startTimecode()
+        if useTimecode == true
         {
-            let assetStartTimeNoTC = timeRangeInAsset.startTime - startTimeCode.cmTimeValue.toOTIORationalTime()
-            
-            timeRangeInAsset = TimeRange(startTime: assetStartTimeNoTC, duration: timeRangeInAsset.duration)
-            
-//            let timeRangeInParentTrackNoTC = timeRangeInParentTrack.startTime - startTimeCode.cmTimeValue.toOTIORationalTime()
-//
-//            timeRangeInParentTrack = TimeRange(startTime: timeRangeInParentTrackNoTC, duration: timeRangeInParentTrack.duration)
+            do
+            {
+                if let startTimeCode = try asset.startTimecode()
+                {
+                    let assetStartTimeNoTC = timeRangeInAsset.startTime - startTimeCode.cmTimeValue.toOTIORationalTime()
+                    
+                    timeRangeInAsset = TimeRange(startTime: assetStartTimeNoTC, duration: timeRangeInAsset.duration)
+                    
+                    //            let timeRangeInParentTrackNoTC = timeRangeInParentTrack.startTime - startTimeCode.cmTimeValue.toOTIORationalTime()
+                    //
+                    //            timeRangeInParentTrack = TimeRange(startTime: timeRangeInParentTrackNoTC, duration: timeRangeInParentTrack.duration)
+                }
+            }
+            catch Timecode.MediaParseError.missingOrNonStandardFrameRate
+            {
+                // not an error
+            }
         }
         
         
