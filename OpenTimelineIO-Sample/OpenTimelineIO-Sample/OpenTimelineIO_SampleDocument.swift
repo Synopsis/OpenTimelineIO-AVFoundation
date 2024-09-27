@@ -21,6 +21,9 @@ extension UTType
 
 class OpenTimelineIO_SampleDocument: FileDocument
 {
+    static var readableContentTypes: [UTType] { [.openTimelineIO] }
+    static var writableContentTypes: [UTType] { [.openTimelineIO] }
+    
     var player = AVPlayer()
     var timeline:Timeline
     var fileURL:URL? = nil
@@ -29,9 +32,7 @@ class OpenTimelineIO_SampleDocument: FileDocument
     {
         self.timeline = Timeline(name: "Untitled OpenTimelineIO Timeline")
     }
-
-    static var readableContentTypes: [UTType] { [.openTimelineIO] }
-    static var writableContentTypes: [UTType] { [.mpeg4Movie, .quickTimeMovie] }
+ 
     
     required init(configuration: ReadConfiguration) throws
     {
@@ -52,11 +53,6 @@ class OpenTimelineIO_SampleDocument: FileDocument
         {
         case .openTimelineIO:
             return try self.saveAsOTIO()
-            
-        case .mpeg4Movie:
-            let url = URL.temporaryDirectory.appendingPathComponent(UUID().uuidString, conformingTo: .mpeg4Movie)
-            self.setupPlayerWithBaseDocumentURL(url)
-             return try .init(url: url)
  
         default:
             throw CocoaError(.fileWriteUnknown)
@@ -98,6 +94,13 @@ class OpenTimelineIO_SampleDocument: FileDocument
     
     func exportToURL(url:URL)
     {
+        let path = url.standardizedFileURL.path()
+        if FileManager.default.fileExists(atPath: path),
+           FileManager.default.isDeletableFile(atPath: path)
+        {
+            try! FileManager.default.removeItem(atPath: path)
+        }
+        
         if
             let currentItem = self.player.currentItem,
             let videoComposition = currentItem.videoComposition,

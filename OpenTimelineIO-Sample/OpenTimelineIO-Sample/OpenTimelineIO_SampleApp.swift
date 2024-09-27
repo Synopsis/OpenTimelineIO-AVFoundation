@@ -19,7 +19,6 @@ struct OpenTimelineIO_SampleApp: App {
         VTRegisterProfessionalVideoWorkflowVideoEncoders()
         VTRegisterSupplementalVideoDecoderIfAvailable(kCMVideoCodecType_AV1)
         VTRegisterSupplementalVideoDecoderIfAvailable(kCMVideoCodecType_VP9)
-
     }
     
     var body: some Scene

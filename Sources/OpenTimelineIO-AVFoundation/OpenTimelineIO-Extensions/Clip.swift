@@ -43,22 +43,6 @@ extension Clip
             timeRangeInParentTrack = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
         }
         
-        // if we have timecode from our asset
-//        if useTimecode
-//        {
-//            do
-//            {
-//                if let timecodeCMTime = try asset.startTimecode()?.cmTimeValue.toOTIORationalTime()
-//                {
-//                    timeRangeInAsset = TimeRange(startTime: timeRangeInAsset.startTime - timecodeCMTime, duration: timeRangeInAsset.duration)
-//                }
-//            }
-//            catch Timecode.MediaParseError.missingOrNonStandardFrameRate
-//            {
-//                // not an error
-//            }
-//        }
-        
         // Add rescaling - see Additional Notes above
         if let minFrameDuration = minFrameDuration
         {
@@ -78,10 +62,10 @@ extension Clip
                     let assetStartTimeNoTC = timeRangeInAsset.startTime - startTimeCode.cmTimeValue.toOTIORationalTime()
                     
                     timeRangeInAsset = TimeRange(startTime: assetStartTimeNoTC, duration: timeRangeInAsset.duration)
-                    
-                    //            let timeRangeInParentTrackNoTC = timeRangeInParentTrack.startTime - startTimeCode.cmTimeValue.toOTIORationalTime()
-                    //
-                    //            timeRangeInParentTrack = TimeRange(startTime: timeRangeInParentTrackNoTC, duration: timeRangeInParentTrack.duration)
+
+                    // We dont need to offset our parent..
+//                    let timeRangeInParentTrackNoTC = timeRangeInParentTrack.startTime - startTimeCode.cmTimeValue.toOTIORationalTime()
+//                    timeRangeInParentTrack = TimeRange(startTime: timeRangeInParentTrackNoTC, duration: timeRangeInParentTrack.duration)
                 }
             }
             catch Timecode.MediaParseError.missingOrNonStandardFrameRate
