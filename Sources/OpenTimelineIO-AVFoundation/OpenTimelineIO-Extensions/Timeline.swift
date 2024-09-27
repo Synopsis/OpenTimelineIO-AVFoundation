@@ -5,7 +5,6 @@
 // Copyright Contributors to the OpenTimelineIO project
 
 
-import AppKit
 import CoreMedia
 import AVFoundation
 import OpenTimelineIO
@@ -35,6 +34,7 @@ public class VideoCompositionValidator : NSObject, AVVideoCompositionValidationH
 
 public extension Timeline
 {
+    
     // Some running notes about this conversion
     
     // 1 - Tracks
@@ -44,12 +44,12 @@ public extension Timeline
     // So here, we effectively ignore OTIO tracks and use the assets to see if we have compatible tracks.
     // If we do - great. if we dont, we make a new one.
     
-    func toAVCompositionRenderables(baseURL:URL? = nil, customCompositorClass:AVVideoCompositing.Type? = nil, useAssetTimecode:Bool = false) async throws -> (composition:AVComposition, videoComposition:AVVideoComposition, audioMix:AVAudioMix)?
+    func toAVCompositionRenderables(baseURL:URL? = nil, customCompositorClass:AVVideoCompositing.Type? = nil, useAssetTimecode:Bool = true, rescaleToAsset:Bool = true) async throws -> (composition:AVComposition, videoComposition:AVVideoComposition, audioMix:AVAudioMix)?
     {
         let validator = VideoCompositionValidator()
         
         // Get our global offset - if we have one, to normalize track times
-        let globalStartCMTime = self.globalStartTime?.toCMTime()
+        let globalStartCMTime = self.globalStartTime?.toCMTime() ?? .zero
         
         let options =  [AVURLAssetPreferPreciseDurationAndTimingKey : true] as [String : Any]
 
@@ -72,11 +72,12 @@ public extension Timeline
             {
                 guard
                     let clip = item as? Clip,
-                    let (sourceAsset, clipTimeMapping) = try clip.toAVAssetAndMapping(baseURL: baseURL, useTimecode: useAssetTimecode),
+                    let (sourceAsset, clipTimeMapping) = try clip.toAVAssetAndMapping(baseURL: baseURL, useTimecode: useAssetTimecode, rescaleToAsset: rescaleToAsset),
                     let sourceAssetFirstVideoTrack = try await sourceAsset.loadTracks(withMediaType: .video).first,
                     let compositionVideoTrack = compositionVideoTrack //composition.mutableTrack(compatibleWith: sourceAssetFirstVideoTrack) ??
                 else
                 {
+                    
                     // TODO: GAP !?
 //                    if let gap = item as? Gap,
 //                       let compositionVideoTrack = compositionVideoTrack
@@ -106,11 +107,11 @@ public extension Timeline
                 }
                 
                 // Handle Timing
-                let trackTimeRange = clipTimeMapping.target
-                let sourceAssetTimeRange = clipTimeMapping.source
+                let trackTimeRange = clipTimeMapping.source
+                let sourceAssetTimeRange = clipTimeMapping.target
                    
                 // We attempt to re-use a track per OTIO track, but we may have CMFormatDesc inconsistencies which means insertion will fails
-                // If so - we make a new one
+                // If so - we make a new one  
                 do
                 {
                     try compositionVideoTrack.insertTimeRange(sourceAssetTimeRange, of: sourceAssetFirstVideoTrack, at: trackTimeRange.start)
@@ -123,9 +124,9 @@ public extension Timeline
                     }
                 }
                 
-                // Support Time Scaling
-                let unscaledTrackTime = CMTimeRangeMake(start: trackTimeRange.start, duration: sourceAssetTimeRange.duration)
-                compositionVideoTrack.scaleTimeRange(unscaledTrackTime, toDuration: trackTimeRange.duration)
+                // TODO: Fix - Support Time Scaling
+//                let unscaledTrackTime = CMTimeRangeMake(start: trackTimeRange.start, duration: sourceAssetTimeRange.duration)
+//                compositionVideoTrack.scaleTimeRange(unscaledTrackTime, toDuration: trackTimeRange.duration)
                 
                 // Handle source asset video natural transform for
                 // ie iOS videos where camera was rotated
@@ -141,7 +142,7 @@ public extension Timeline
                 compositionVideoInstruction.layerInstructions = compositionLayerInstructions
                 compositionVideoInstruction.timeRange = trackTimeRange
                 compositionVideoInstruction.enablePostProcessing = true
-                compositionVideoInstruction.backgroundColor = NSColor.black.cgColor
+                compositionVideoInstruction.backgroundColor = CGColor(gray: 0, alpha: 1)
                 compositionVideoInstructions.append( compositionVideoInstruction)
             }
         }
@@ -154,7 +155,7 @@ public extension Timeline
             {
                 guard
                     let clip = child as? Clip,
-                    let (sourceAsset, clipTimeMapping) = try clip.toAVAssetAndMapping(baseURL: baseURL),
+                    let (sourceAsset, clipTimeMapping) = try clip.toAVAssetAndMapping(baseURL: baseURL, useTimecode: useAssetTimecode, rescaleToAsset: rescaleToAsset),
                     let sourceAssetFirstAudioTrack = try await sourceAsset.loadTracks(withMediaType: .audio).first,
                     let compositionAudioTrack = compositionAudioTrack
                 else
@@ -181,8 +182,8 @@ public extension Timeline
                 }
                 
                 // Handle Timing
-                let trackTimeRange = clipTimeMapping.target
-                let sourceAssetTimeRange = clipTimeMapping.source
+                let trackTimeRange = clipTimeMapping.source
+                let sourceAssetTimeRange = clipTimeMapping.target
                 
                 // We attempt to re-use a track per OTIO track, but we may have CMFormatDesc inconsistencies which means insertion will fails
                 // If so - we make a new one
@@ -198,9 +199,9 @@ public extension Timeline
                     }
                 }
                 
-                // Support Time Scaling
-                let unscaledTrackTime = CMTimeRangeMake(start: trackTimeRange.start, duration: sourceAssetTimeRange.duration)
-                compositionAudioTrack.scaleTimeRange(unscaledTrackTime, toDuration: trackTimeRange.duration)
+                // TODO: - FIX Support Time Scaling
+//                let unscaledTrackTime = CMTimeRangeMake(start: trackTimeRange.start, duration: sourceAssetTimeRange.duration)
+//                compositionAudioTrack.scaleTimeRange(unscaledTrackTime, toDuration: trackTimeRange.duration)
                 
                 compositionAudioTrack.isEnabled = try await sourceAssetFirstAudioTrack.load(.isEnabled)
 
@@ -227,7 +228,11 @@ public extension Timeline
         // TODO: - Custom Resolution overrides?
         // videoComposition.renderSize = CGSize(width: 1920, height: 1080)
         videoComposition.renderScale = 1.0
-        videoComposition.instructions = compositionVideoInstructions
+ 
+        // TODO: It seems as though our custom instructions occasionally have a minor time gap
+        // likely due to numerical conversion precision which throws a validation error
+        // Im not entirely sure what to do there!
+//        videoComposition.instructions = compositionVideoInstructions
         
         // Handle custom effects (we'd need custom instructions and metadata parsing)
         if let customCompositorClass = customCompositorClass

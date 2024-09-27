@@ -8,6 +8,7 @@
 import Foundation
 import CoreMedia
 import OpenTimelineIO
+import TimecodeKit
 
 public extension CMTime
 {

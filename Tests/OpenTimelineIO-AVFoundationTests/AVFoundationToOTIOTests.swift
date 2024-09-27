@@ -36,7 +36,12 @@ class AVFoundationToOTIOTests: XCTestCase
         
         let compositionDuration = mutableComposition.duration
 
-        let timeline = try mutableComposition.toOTIOTimeline(named: "Test")
+        let config = OTIOConversionConfig(globalStartTime: RationalTime(),
+                                          urlPolicy: .fileURL,
+                                          rationalTimeConversionPolicy: .passthrough,
+                                          timecodePolicy: .trackTime)
+        
+        let timeline = try mutableComposition.toOTIOTimeline(named: "Test", config: config)
 
         let timelineDuration = try timeline.duration()
 

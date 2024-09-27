@@ -12,7 +12,8 @@ import OpenTimelineIO
 import TimecodeKit
 extension Clip
 {
-    func toAVAssetAndMapping(baseURL:URL? = nil, useTimecode:Bool = false) throws -> (asset:AVAsset, timeMaping:CMTimeMapping)?
+    // see https://opentimelineio.readthedocs.io/en/latest/tutorials/time-ranges.html
+    func toAVAssetAndMapping(baseURL:URL? = nil, useTimecode:Bool = true, rescaleToAsset:Bool = true) throws -> (asset:AVAsset, timeMaping:CMTimeMapping)?
     {
         guard
             let externalReference = self.mediaReference as? ExternalReference,
@@ -23,16 +24,12 @@ extension Clip
             return nil
         }
         
-        // This accounts for visible ranges which also account for transition times
-//        var timeRangeInAsset = try self.visibleRange().toCMTimeRange()
-//        let rangeInParent = try self.transformed(timeRange: self.visibleRange(), toItem:parent ).toCMTimeRange()
-        
-        // if we dont w`ant this, we would rather do:
-        var timeRangeInAsset = try self.availableRange()
-        var rangeInParent = try self.rangeInParent()
+        var timeRangeInAsset = try self.trimmedRange()
+        var timeRangeInParentTrack = try self.trimmedRangeInParent() ?? self.rangeInParent()
 
         var minFrameDuration:RationalTime? = nil
-        if let videoTrack = asset.tracks(withMediaType: .video).first
+        if let videoTrack = asset.tracks(withMediaType: .video).first,
+            rescaleToAsset
         {
             minFrameDuration = videoTrack.minFrameDuration.toOTIORationalTime()
         }
@@ -40,26 +37,10 @@ extension Clip
         // Add rescaling - see Additional Notes above
         if let minFrameDuration = minFrameDuration
         {
-            let rescaledStart = rangeInParent.startTime.rescaled(to: minFrameDuration)
-            let rescaledDuration = rangeInParent.duration.rescaled(to: minFrameDuration)
+            let rescaledStart = timeRangeInParentTrack.startTime.rescaled(to: minFrameDuration)
+            let rescaledDuration = timeRangeInParentTrack.duration.rescaled(to: minFrameDuration)
             
-            rangeInParent = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
-        }
-        
-        // if we have timecode from our asset
-        if useTimecode
-        {
-            do
-            {
-                if let timecodeCMTime = try asset.startTimecode()?.cmTimeValue.toOTIORationalTime()
-                {
-                    timeRangeInAsset = TimeRange(startTime: timeRangeInAsset.startTime - timecodeCMTime, duration: timeRangeInAsset.duration)
-                }
-            }
-            catch Timecode.MediaParseError.missingOrNonStandardFrameRate
-            {
-                // not an error
-            }
+            timeRangeInParentTrack = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
         }
         
         // Add rescaling - see Additional Notes above
@@ -71,6 +52,29 @@ extension Clip
             timeRangeInAsset = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
         }
         
-        return (asset, CMTimeMapping(source: timeRangeInAsset.toCMTimeRange(), target:rangeInParent.toCMTimeRange()))
+        // add a heuristic - if our asset has timecode we need to subtract the start time
+        if useTimecode == true
+        {
+            do
+            {
+                if let startTimeCode = try asset.startTimecode()
+                {
+                    let assetStartTimeNoTC = timeRangeInAsset.startTime - startTimeCode.cmTimeValue.toOTIORationalTime()
+                    
+                    timeRangeInAsset = TimeRange(startTime: assetStartTimeNoTC, duration: timeRangeInAsset.duration)
+
+                    // We dont need to offset our parent..
+//                    let timeRangeInParentTrackNoTC = timeRangeInParentTrack.startTime - startTimeCode.cmTimeValue.toOTIORationalTime()
+//                    timeRangeInParentTrack = TimeRange(startTime: timeRangeInParentTrackNoTC, duration: timeRangeInParentTrack.duration)
+                }
+            }
+            catch Timecode.MediaParseError.missingOrNonStandardFrameRate
+            {
+                // not an error
+            }
+        }
+        
+        
+        return (asset, CMTimeMapping(source:timeRangeInParentTrack.toCMTimeRange(), target:timeRangeInAsset.toCMTimeRange()))
     }
 }

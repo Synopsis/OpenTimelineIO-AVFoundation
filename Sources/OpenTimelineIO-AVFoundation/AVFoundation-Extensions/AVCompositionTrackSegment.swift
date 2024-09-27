@@ -8,10 +8,11 @@ import Foundation
 import AVFoundation
 import CoreMedia
 import OpenTimelineIO
+import TimecodeKit
 
 public extension AVCompositionTrackSegment
 {
-    func toOTIOItem() -> Item?
+    func toOTIOItem(config:OTIOConversionConfig) -> Item?
     {
         if self.isEmpty
         {
@@ -29,52 +30,48 @@ public extension AVCompositionTrackSegment
         
         let asset = AVURLAsset(url: sourceURL)
         
-//        let duration = asset.duration.toOTIORationalTime()
+        let externalReference = asset.toOTIOExternalReference(config: config)
+        
+        print("Creating OTIO External Reference", name, "externalReferenceRange", externalReference.availableRange?.startTime.toTimestring(), externalReference.availableRange?.endTimeExclusive().toTimestring())
+        
+        // MARK: - TimeCode Policy
+        var clipRange = self.timeMapping.source
 
-        // It seems to be a best practice to normalize all of our OTIO times to our assets frame rate tick
-        // AAF complains if our time ranges dont share the same rate
-        var minFrameDuration:RationalTime? = nil
-        
-        if let sourceTrack = asset.track(withTrackID: self.sourceTrackID)
+        switch config.timecodePolicy
         {
-            // Audio has invalid minFrameDuration
-            if sourceTrack.minFrameDuration.isValid
-            {
-                minFrameDuration = sourceTrack.minFrameDuration.toOTIORationalTime()
-            }
+        case .timecode:
+                do
+                {
+                    if let timecode = try asset.startTimecode()
+                    {
+                        clipRange = CMTimeRange(start:clipRange.start + timecode.cmTimeValue, duration: clipRange.duration)
+                    }
+                }
+                catch
+                {
+                    // no - op
+                }
+            break
+        case .trackTime:
+            break
         }
         
-//        let start = RationalTime(value:0, rate:duration.rate)
-//        var referenceRange = TimeRange(startTime: start, duration: duration)
-        
-        var referenceRange = self.timeMapping.source.toOTIOTimeRange()
-        
+        var clipRangeRational = clipRange.toOTIOTimeRange()
+
+        // MARK: - Time Conversion Policy
+
         // Add rescaling - see Additional Notes above
-        if let minFrameDuration = minFrameDuration
+        if let firstMinFrameDuration = asset.readMinFrameDurations().first
         {
-            let rescaledStart = referenceRange.startTime.rescaled(to: minFrameDuration)
-            let rescaledDuration = referenceRange.duration.rescaled(to: minFrameDuration)
+            let rescaledStart = clipRangeRational.startTime.rescaled(to: firstMinFrameDuration.toOTIORationalTime())
+            let rescaledDuration = clipRangeRational.duration.rescaled(to: firstMinFrameDuration.toOTIORationalTime())
             
-            referenceRange = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
+            clipRangeRational = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
         }
         
-        let externalReference = ExternalReference(targetURL: sourceURL.standardizedFileURL.absoluteString, availableRange:referenceRange )
-        print("Creating OTIO External Reference", name, "externalReferenceRange", referenceRange.startTime.toTimestring(), referenceRange.endTimeExclusive().toTimestring())
+        let clip = Clip(name: name, mediaReference: externalReference, sourceRange: clipRangeRational)
         
-        var clipRange = self.timeMapping.target.toOTIOTimeRange()
-        
-        // Add rescaling - see Additional Notes above
-        if let minFrameDuration = minFrameDuration
-        {
-            let rescaledStart = clipRange.startTime.rescaled(to: minFrameDuration)
-            let rescaledDuration = clipRange.duration.rescaled(to: minFrameDuration)
-            
-            clipRange = TimeRange(startTime: rescaledStart, duration: rescaledDuration)
-        }
-        
-        let clip = Clip(name: name, mediaReference: externalReference, sourceRange: clipRange)
-        
-        print("Creating OTIO Clip", name, "sourceRange", clipRange.startTime.toTimestring(), clipRange.endTimeExclusive().toTimestring())
+        print("Creating OTIO Clip", name, "sourceRange", clipRangeRational.startTime.toTimestring(), clipRangeRational.endTimeExclusive().toTimestring())
         
         return clip
     }
