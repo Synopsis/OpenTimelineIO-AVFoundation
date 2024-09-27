@@ -1,5 +1,11 @@
 # OpenTimelineIO-AVFoundation
 
+
+<img src="https://github.com/user-attachments/assets/8fca5c03-93d6-4e4e-85df-390a81980dd1" width="250">
+<img src="https://github.com/user-attachments/assets/cb219070-c5e7-43c6-ad7e-9935dbb3b3c3" width="250">
+
+2 official OpenTimeline IO files opened and playing in the included sample app. 
+            
 ## Note
 
 This library is under heavy development!
@@ -105,9 +111,9 @@ Generally if Quicktime or Final Cut Pro X Can support it, it should just work?
 
 | Sample Project | Import to AVFoundation | Export from AVFoundation 
 -- | -- | --
-| [ALab Trailer](https://dpel.aswf.io/alab-trailer/) |  :white_check_mark: | Not yet tested 
+| [ALab Trailer](https://dpel.aswf.io/alab-trailer/) |  :white_check_mark: | :white_check_mark: 
 | [AWS Picchu Edit](https://dpel.aswf.io/aws-picchu-edit/) | :x: (requires image support & OTIOZ support) | Not yet tested 
-| [OTIO-OC-Examples](https://github.com/darbyjohnston/otio-oc-examples) |  Not yet tested  | Not yet tested 
+| [OTIO-OC-Examples](https://github.com/darbyjohnston/otio-oc-examples) |  :white_check_mark:  | :white_check_mark:
 
 
 ## Dependencies
