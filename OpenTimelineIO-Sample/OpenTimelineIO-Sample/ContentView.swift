@@ -17,7 +17,8 @@ struct ContentView: View
     
     @State private var isExportingOTIO: Bool = false
     @State private var isExportingMPEG4: Bool = false
-
+    @State var secondsToPixels = 10.0;
+    
     init(document:   Binding<OpenTimelineIO_SampleDocument>  , fileURL: URL? = nil) {
         self._document = document
         self.fileURL = fileURL
@@ -41,7 +42,7 @@ struct ContentView: View
             
             VStack(alignment: .leading)
             {
-                TimelineView(timeline: document.timeline)
+                TimelineView(timeline: document.timeline, secondsToPixels: self.$secondsToPixels)
                 
                 HStack
                 {
@@ -84,6 +85,18 @@ struct ContentView: View
                         print(error)
                       }
                     }
+                    
+                    HStack {
+                        Spacer()
+                        Text("Zoom")
+                            .lineLimit(1)
+                            .font(.system(size: 10))
+                        
+                        Slider(value: $secondsToPixels, in: 10...300)
+                            .controlSize(.mini)
+                            .frame(width: 200)
+                    }
+                    .padding(.horizontal)
                 }
                 .padding()
             }

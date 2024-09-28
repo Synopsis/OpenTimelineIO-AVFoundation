@@ -14,7 +14,7 @@ struct TimelineView : View {
     
     var timeline:OpenTimelineIO.Timeline
     
-    @State var secondsToPixels = 10.0;
+    @Binding var secondsToPixels:Double
     
     var body: some View
     {
@@ -40,10 +40,10 @@ struct TimelineView : View {
             
             VStack(alignment:.leading, spacing: 0)
             {
-                TimeRulerView(timeline: self.timeline, secondsToPixels: self.$secondsToPixels)
-                    .background(.red)
-                
-                Divider()
+//                TimeRulerView(timeline: self.timeline, secondsToPixels: self.$secondsToPixels)
+//                    .background(.red)
+//                
+//                Divider()
                 
                 ForEach(0..<videoTracks.count) { index in
                     
@@ -52,7 +52,6 @@ struct TimelineView : View {
                     
                     TrackView(secondsToPixels: self.$secondsToPixels, track: track)
                         .background(color)
-//                        .padding()
                     
                 }
                 
@@ -65,7 +64,6 @@ struct TimelineView : View {
                     
                     TrackView(secondsToPixels: self.$secondsToPixels, track: track)
                         .background(color)
-//                        .padding()
 
                 }
             }
@@ -73,17 +71,7 @@ struct TimelineView : View {
             .frame(maxHeight: CGFloat((videoTracks.count + audioTracks.count)) * 500)
         }
         
-        HStack {
-            Spacer()
-            Text("Zoom")
-                .lineLimit(1)
-                .font(.system(size: 10))
-            
-            Slider(value: $secondsToPixels, in: 10...300)
-                .controlSize(.mini)
-                .frame(width: 200)
-        }
-        .padding(.horizontal)
+      
         
     }
     

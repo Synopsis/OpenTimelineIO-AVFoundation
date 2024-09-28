@@ -32,7 +32,7 @@ struct ItemView : View {
 
             }
             .frame(width: self.getSafeWidth())
-//            .position(x:self.getSafePositionX() , y:geometry.size.height * 0.5 )
+            .offset(x:self.getSafePositionX() )//, y:geometry.size.height * 0.5 )
     }
 
     func getSafeRange() -> OpenTimelineIO.TimeRange
@@ -58,6 +58,6 @@ struct ItemView : View {
     
     func getSafePositionX() -> CGFloat
     {
-        return  self.getSafeRange().startTime.toSeconds() * self.secondsToPixels - self.getSafeWidth()/2.0
+        return  self.getSafeRange().startTime.toSeconds() * self.secondsToPixels// + self.getSafeWidth()/2.0
     }
 }

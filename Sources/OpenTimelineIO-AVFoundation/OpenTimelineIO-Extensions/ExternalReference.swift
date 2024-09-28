@@ -23,7 +23,7 @@ extension ExternalReference
         
         if targetURL.hasPrefix("file://")
         {
-            let fileURL = URL(fileURLWithPath:targetURL.replacingOccurrences(of:"file://", with: ""))
+            let fileURL = URL(fileURLWithPath:targetURL.replacingOccurrences(of:"file://", with: "./"))
             if
                let asset = self.testForAsset(url:fileURL, baseURL:baseURL)
             {
@@ -38,7 +38,6 @@ extension ExternalReference
             {
                 return asset
             }
-
         }
 
         return nil
@@ -61,7 +60,7 @@ extension ExternalReference
             // try niave base relative
             var sourceURL = baseURL.appending(path: path )
             
-            if FileManager.default.fileExists(atPath: sourceURL.path())
+            if FileManager.default.fileExists(atPath: sourceURL.path(percentEncoded: false))
             {
                 return AVURLAsset(url: sourceURL)
             }
@@ -72,7 +71,7 @@ extension ExternalReference
                 var pathWithoutRoot = path
                 pathWithoutRoot.removeFirst()
                 var sourceURL = baseURL.appending(path: pathWithoutRoot )
-                if FileManager.default.fileExists(atPath: sourceURL.path())
+                if FileManager.default.fileExists(atPath: sourceURL.path(percentEncoded: false))
                 {
                     return AVURLAsset(url: sourceURL)
                 }
