@@ -115,6 +115,11 @@ public struct OTIOConversionConfig
         case timecode
     }
     
+    static let standard = OTIOConversionConfig(globalStartTime: RationalTime(),
+                                               urlPolicy: .fileURL,
+                                               rationalTimeConversionPolicy: .passthrough,
+                                               timecodePolicy: .timecode)
+    
     public let globalStartTime:RationalTime
     public let urlPolicy:URLPolicy
     public let rationalTimeConversionPolicy:RationalTimeConversionPolicy

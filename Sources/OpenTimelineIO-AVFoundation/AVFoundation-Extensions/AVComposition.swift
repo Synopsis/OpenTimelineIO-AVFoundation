@@ -28,7 +28,7 @@ import OpenTimelineIO
 
 public extension AVComposition
 {
-    func toOTIOTimeline(named name:String, config:OTIOConversionConfig) throws -> Timeline
+    func toOTIOTimeline(named name:String, config:OTIOConversionConfig = .standard) throws -> Timeline
     {
         print("Making Timeline from Composition", self)
         

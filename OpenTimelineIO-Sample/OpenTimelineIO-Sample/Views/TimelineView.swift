@@ -37,7 +37,7 @@ struct TimelineView : View {
                         TrackView(track: track)
                             .background(.blue)
                             .frame(minWidth: geom.size.width)
-                            .frame(height:10)
+                            
                     }
                 }
             }
