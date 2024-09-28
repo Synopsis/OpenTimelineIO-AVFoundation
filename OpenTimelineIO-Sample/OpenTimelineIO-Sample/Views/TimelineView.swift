@@ -21,24 +21,26 @@ struct TimelineView : View {
         let videoTracks = timeline.videoTracks
         let audioTracks = timeline.audioTracks
         
-        let videoTrackColors = [ Color("VideoTrackBaseColor").saturation(1.0).opacity(0.75),
-                                 Color("VideoTrackBaseColor").saturation(0.9).opacity(0.75),
-                                 Color("VideoTrackBaseColor").saturation(0.8).opacity(0.75),
-                                 Color("VideoTrackBaseColor").saturation(0.7).opacity(0.75),
-                                 Color("VideoTrackBaseColor").saturation(0.6).opacity(0.75),
+        let videoTrackColors = [
+            Color("VideoTrackBaseColor").gradient,//.saturation(1.0).opacity(0.75),
+            Color("VideoTrackBaseColor").gradient,//.saturation(0.9).opacity(0.75),
+            Color("VideoTrackBaseColor").gradient,//.saturation(0.8).opacity(0.75),
+            Color("VideoTrackBaseColor").gradient,//.saturation(0.7).opacity(0.75),
+            Color("VideoTrackBaseColor").gradient,//.saturation(0.6).opacity(0.75),
         ]
         
-        let audioTrackColors = [ Color("AudioTrackBaseColor").saturation(1.0).opacity(0.75),
-                                 Color("AudioTrackBaseColor").saturation(0.9).opacity(0.75),
-                                 Color("AudioTrackBaseColor").saturation(0.8).opacity(0.75),
-                                 Color("AudioTrackBaseColor").saturation(0.7).opacity(0.75),
-                                 Color("AudioTrackBaseColor").saturation(0.6).opacity(0.75),
+        let audioTrackColors = [
+            Color("AudioTrackBaseColor").gradient,//.saturation(1.0).opacity(0.75),
+            Color("AudioTrackBaseColor").gradient,//.saturation(0.9).opacity(0.75),
+            Color("AudioTrackBaseColor").gradient,//.saturation(0.8).opacity(0.75),
+            Color("AudioTrackBaseColor").gradient,//.saturation(0.7).opacity(0.75),
+            Color("AudioTrackBaseColor").gradient,//.saturation(0.6).opacity(0.75),
         ]
         
         ScrollView([.horizontal, .vertical])
         {
             
-            VStack(alignment:.leading, spacing: 0)
+            VStack(alignment:.leading, spacing: 3)
             {
 //                TimeRulerView(timeline: self.timeline, secondsToPixels: self.$secondsToPixels)
 //                    .background(.red)
@@ -50,8 +52,7 @@ struct TimelineView : View {
                     let track = videoTracks[index]
                     let color = videoTrackColors[index % videoTrackColors.count]
                     
-                    TrackView(secondsToPixels: self.$secondsToPixels, track: track)
-                        .background(color)
+                    TrackView(track: track, backgroundColor: Color("VideoTrackBaseColor"), secondsToPixels: self.$secondsToPixels )
                     
                 }
                 
@@ -62,8 +63,7 @@ struct TimelineView : View {
                     let track = audioTracks[index]
                     let color = audioTrackColors[index % audioTrackColors.count]
                     
-                    TrackView(secondsToPixels: self.$secondsToPixels, track: track)
-                        .background(color)
+                    TrackView(track: track, backgroundColor: Color("AudioTrackBaseColor"), secondsToPixels: self.$secondsToPixels )
 
                 }
             }

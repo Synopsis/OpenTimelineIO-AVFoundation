@@ -13,6 +13,7 @@ import SwiftUI
 struct ItemView : View {
     
     var item:OpenTimelineIO.Item
+    var backgroundColor:Color
         
     @Binding var secondsToPixels:Double
     
@@ -20,15 +21,32 @@ struct ItemView : View {
     {
             ZStack {
                 
-                RoundedRectangle(cornerRadius: 3)
-                    .strokeBorder(.white, lineWidth: 1)
-                    .fill(.white.opacity(0.2))
-                    .frame(width: self.getSafeWidth() - 2)
-
-                Text(item.name)
-                    .lineLimit(1)
-                    .font(.system(size: 10))
-                    .frame(width: self.getSafeWidth())
+                if let _ = item as? Gap
+                {
+                    RoundedRectangle(cornerRadius: 3)
+                    //                    .strokeBorder(.white, lineWidth: 1)
+                        .fill( Color("GapTrackBaseColor") )
+                        .frame(width: self.getSafeWidth() - 2)
+                    
+                    Text("Gap")
+                        .lineLimit(1)
+                        .font(.system(size: 10))
+                        .frame(width: self.getSafeWidth())
+                }
+                else
+                {
+                    RoundedRectangle(cornerRadius: 3)
+                    //                    .strokeBorder(.white, lineWidth: 1)
+                        .fill( self.backgroundColor.gradient )
+                        .frame(width: self.getSafeWidth() - 2)
+                    
+                    Text(item.name)
+                        .lineLimit(1)
+                        .font(.system(size: 10))
+                        .frame(width: self.getSafeWidth())
+                }
+                
+               
 
             }
             .frame(width: self.getSafeWidth())

@@ -34,14 +34,14 @@ struct ContentView: View
         {
             VStack
             {
-                Text(document.timeline.name.isEmpty ?  "Untitled Timeline" : document.timeline.name)
-                    .padding()
-                
                 VideoPlayer(player: document.player)
             }
             
             VStack(alignment: .leading)
             {
+                Text(document.timeline.name.isEmpty ?  "Untitled Timeline" : document.timeline.name)
+                    .padding(10)
+                
                 TimelineView(timeline: document.timeline, secondsToPixels: self.$secondsToPixels)
                 
                 HStack

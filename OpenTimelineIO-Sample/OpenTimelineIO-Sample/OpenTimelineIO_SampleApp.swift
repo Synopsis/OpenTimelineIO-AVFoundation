@@ -25,6 +25,7 @@ struct OpenTimelineIO_SampleApp: App {
     {
         DocumentGroup(newDocument: OpenTimelineIO_SampleDocument()) { file in
             ContentView(document: file.$document, fileURL: file.fileURL)
+                .frame(minWidth: 600, minHeight: 600)
         }
     }
 }

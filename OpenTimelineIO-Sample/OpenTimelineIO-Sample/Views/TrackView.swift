@@ -11,12 +11,12 @@ import OpenTimelineIO
 import TimecodeKit
 import SwiftUI
 
-struct TrackView : View {
-    
+struct TrackView : View
+{
+    var track:OpenTimelineIO.Track
+    var backgroundColor:Color
     @Binding var secondsToPixels:Double
 
-    var track:OpenTimelineIO.Track
-        
     var body: some View
     {
         let items:[Item] = track.children.compactMap( { guard let item = $0 as? Item else { return nil }; return item })
@@ -24,17 +24,17 @@ struct TrackView : View {
         LazyHStack(alignment: .top, spacing: 0, pinnedViews: [.sectionHeaders])
         {
             Section(header:
-                    
-                ZStack {
-                    
-                    RoundedRectangle(cornerRadius: 3)
-                        .fill(Color("TrackHeaderColor"))
-                        .strokeBorder(.white, lineWidth: 1)
-
-                    Text(track.name)
-                        .lineLimit(1)
-                        .font(.system(size: 10))
-                }
+                        
+            ZStack {
+                
+                RoundedRectangle(cornerRadius: 3)
+                    .fill(Color("TrackHeaderColor"))
+//                    .strokeBorder(.white, lineWidth: 1)
+                
+                Text(track.name)
+                    .lineLimit(1)
+                    .font(.system(size: 10))
+            }
                 .frame(width: 100)
 
             )
@@ -42,9 +42,14 @@ struct TrackView : View {
              
                 
                 ForEach(items, id: \.self) { item in
+               
+                        ItemView(item: item,
+                                 backgroundColor: self.backgroundColor,
+                                 secondsToPixels: self.$secondsToPixels)
                     
-                    ItemView(item: item, secondsToPixels: self.$secondsToPixels)
-                        
+                    
+                   
+                    
                 }
             }
         }
