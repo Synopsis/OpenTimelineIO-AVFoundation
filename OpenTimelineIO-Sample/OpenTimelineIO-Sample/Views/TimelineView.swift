@@ -51,21 +51,21 @@ struct TimelineView : View {
                     let color = videoTrackColors[index % videoTrackColors.count]
                     
                     TrackView(secondsToPixels: self.$secondsToPixels, track: track)
-                        .background(color)
 //                        .padding()
+                        .background(color)
                     
                 }
                 
                 Divider()
                 
-                ForEach(audioTracks, id:\.self) { track in
-                    
-                    let index = audioTracks.firstIndex(of: track)!
+                ForEach(0..<audioTracks.count) { index in
+
+                    let track = audioTracks[index]
                     let color = audioTrackColors[index % audioTrackColors.count]
                     
                     TrackView(secondsToPixels: self.$secondsToPixels, track: track)
-                        .background(color)
 //                        .padding()
+                        .background(color)
 
                 }
             }
