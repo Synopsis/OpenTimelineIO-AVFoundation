@@ -13,41 +13,80 @@ import SwiftUI
 struct TimelineView : View {
     
     var timeline:OpenTimelineIO.Timeline
-        
+    
+    @State var secondsToPixels = 10.0;
+    
     var body: some View
     {
         let videoTracks = timeline.videoTracks
         let audioTracks = timeline.audioTracks
-
-        GeometryReader { geom in
-            ScrollView([.horizontal, .vertical])
+        
+        let videoTrackColors = [ Color("VideoTrackBaseColor").saturation(1.0).opacity(0.75),
+                                 Color("VideoTrackBaseColor").saturation(0.9).opacity(0.75),
+                                 Color("VideoTrackBaseColor").saturation(0.8).opacity(0.75),
+                                 Color("VideoTrackBaseColor").saturation(0.7).opacity(0.75),
+                                 Color("VideoTrackBaseColor").saturation(0.6).opacity(0.75),
+        ]
+        
+        let audioTrackColors = [ Color("AudioTrackBaseColor").saturation(1.0).opacity(0.75),
+                                 Color("AudioTrackBaseColor").saturation(0.9).opacity(0.75),
+                                 Color("AudioTrackBaseColor").saturation(0.8).opacity(0.75),
+                                 Color("AudioTrackBaseColor").saturation(0.7).opacity(0.75),
+                                 Color("AudioTrackBaseColor").saturation(0.6).opacity(0.75),
+        ]
+        
+        ScrollView([.horizontal, .vertical])
+        {
+            
+            VStack(alignment:.leading, spacing: 0)
             {
-                VStack(alignment:.leading, spacing: 0)
-                {
-                    ForEach(videoTracks, id:\.self) { track in
-                        
-                        TrackView(track: track)
-                            .background(.orange)
-                            .frame(minWidth: geom.size.width)
-                            .frame(height:10)
-                    }
+                TimeRulerView(timeline: self.timeline, secondsToPixels: self.$secondsToPixels)
+                    .background(.red)
+                
+                Divider()
+                
+                ForEach(0..<videoTracks.count) { index in
                     
-                    ForEach(audioTracks, id:\.self) { track in
-                        
-                        TrackView(track: track)
-                            .background(.blue)
-                            .frame(minWidth: geom.size.width)
-                            
-                    }
+                    let track = videoTracks[index]
+                    let color = videoTrackColors[index % videoTrackColors.count]
+                    
+                    TrackView(secondsToPixels: self.$secondsToPixels, track: track)
+                        .background(color)
+//                        .padding()
+                    
+                }
+                
+                Divider()
+                
+                ForEach(audioTracks, id:\.self) { track in
+                    
+                    let index = audioTracks.firstIndex(of: track)!
+                    let color = audioTrackColors[index % audioTrackColors.count]
+                    
+                    TrackView(secondsToPixels: self.$secondsToPixels, track: track)
+                        .background(color)
+//                        .padding()
+
                 }
             }
-            .frame(width: geom.size.width)
-            .frame(minHeight:50, maxHeight: 300)
+            .frame(height: CGFloat((videoTracks.count + audioTracks.count)) * 25 )
+            .frame(maxHeight: CGFloat((videoTracks.count + audioTracks.count)) * 500)
         }
-
+        
+        HStack {
+            Spacer()
+            Text("Zoom")
+                .lineLimit(1)
+                .font(.system(size: 10))
+            
+            Slider(value: $secondsToPixels, in: 10...300)
+                .controlSize(.mini)
+                .frame(width: 200)
+        }
+        .padding(.horizontal)
         
     }
-               
-
-   
+    
+    
+    
 }

@@ -13,22 +13,43 @@ import SwiftUI
 
 struct TrackView : View {
     
+    @Binding var secondsToPixels:Double
+
     var track:OpenTimelineIO.Track
         
     var body: some View
     {
         let items:[Item] = track.children.compactMap( { guard let item = $0 as? Clip else { return nil }; return item })
         
-//        HStack(alignment: .top, spacing: 0)
-//        {
-            ForEach(items, id: \.self) { item in
-                
-                ItemView(item: item)
+        LazyHStack(alignment: .top, spacing: 0, pinnedViews: [.sectionHeaders])
+        {
+            Section(header:
                     
-//            }
+                ZStack {
+                    
+                    RoundedRectangle(cornerRadius: 3)
+                        .fill(Color("TrackHeaderColor"))
+                        .strokeBorder(.white, lineWidth: 1)
+
+                    Text(track.name)
+                        .lineLimit(1)
+                        .font(.system(size: 10))
+                }
+                .frame(width: 100)
+
+            )
+            {
+             
+                
+                ForEach(items, id: \.self) { item in
+                    
+                    ItemView(item: item, secondsToPixels: self.$secondsToPixels)
+                        
+                }
+            }
         }
-        .frame(width: self.getSafeWidth() )
-        .position(x:self.getSafePositionX(), y:0 )
+        .frame(width: self.getSafeWidth(), alignment: .leading )
+//        .position(x:self.getSafePositionX(), y:0 )
     }
     
     func getSafeRange() -> OpenTimelineIO.TimeRange
@@ -49,11 +70,11 @@ struct TrackView : View {
     
     func getSafeWidth() -> CGFloat
     {
-        return self.getSafeRange().duration.toSeconds() * 10
+        return self.getSafeRange().duration.toSeconds() * self.secondsToPixels + 100
     }
     
     func getSafePositionX() -> CGFloat
     {
-        return self.getSafeRange().startTime.toSeconds() * 10 + self.getSafeWidth()/2.0
+        return self.getSafeRange().startTime.toSeconds() * self.secondsToPixels - self.getSafeWidth()/2.0
     }
 }

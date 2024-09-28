@@ -14,12 +14,25 @@ struct ItemView : View {
     
     var item:OpenTimelineIO.Item
         
+    @Binding var secondsToPixels:Double
+    
     var body: some View
     {
-        RoundedRectangle(cornerRadius: 3)
-            .strokeBorder(.white, lineWidth: 1)
-            .frame(width: self.getSafeWidth() )
-            .position(x:self.getSafePositionX(), y:0 )
+            ZStack {
+                
+                RoundedRectangle(cornerRadius: 3)
+                    .strokeBorder(.white, lineWidth: 1)
+                    .fill(.white.opacity(0.2))
+                    .frame(width: self.getSafeWidth() - 2)
+
+                Text(item.name)
+                    .lineLimit(1)
+                    .font(.system(size: 10))
+                    .frame(width: self.getSafeWidth())
+
+            }
+            .frame(width: self.getSafeWidth())
+//            .position(x:self.getSafePositionX() , y:geometry.size.height * 0.5 )
     }
 
     func getSafeRange() -> OpenTimelineIO.TimeRange
@@ -40,11 +53,11 @@ struct ItemView : View {
     
     func getSafeWidth() -> CGFloat
     {
-        return self.getSafeRange().duration.toSeconds() * 10
+        return max(self.getSafeRange().duration.toSeconds() * self.secondsToPixels, 3.0)
     }
     
     func getSafePositionX() -> CGFloat
     {
-        return self.getSafeRange().startTime.toSeconds() * 10 + self.getSafeWidth()/2.0
+        return  self.getSafeRange().startTime.toSeconds() * self.secondsToPixels - self.getSafeWidth()/2.0
     }
 }

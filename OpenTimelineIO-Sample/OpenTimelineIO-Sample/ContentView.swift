@@ -37,11 +37,9 @@ struct ContentView: View
                     .padding()
                 
                 VideoPlayer(player: document.player)
-                
-              
             }
             
-            VStack
+            VStack(alignment: .leading)
             {
                 TimelineView(timeline: document.timeline)
                 
