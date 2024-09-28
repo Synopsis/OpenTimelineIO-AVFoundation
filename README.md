@@ -16,8 +16,8 @@ This Swift Package extends [OpenTimelineIO's Swift Bindings](https://github.com/
 
 The goal is to enable easy interoperability OpenTimelineIO and AVFoundation objects in a correct, lossless and useful manner to enable real world workflows.
 
-* Load OpenTimeline IO files into `Timeline` objects and introspect using the standard Swift bindings.
-* Create AVFoundation compositions directly from an `Timeline` allowing for playback and export to Quicktime compatible file formats.
+* Load OpenTimeline IO files into OTIO `Timeline` objects and introspect using the standard Swift bindings.
+* Create  AVFoundation `AVComposition` `AVVideoComposition` and `AVAudioMix` objects from an OTIO `Timeline` instance allowing for playback via `AVPlayer` and export via `AVExportSession` or `AVAssetWriter` to Quicktime compatible file formats.
 * Convert your own edits as `AVMutableCompositions` into a OTIO `Timeline`
 
 This library should be compatible with the following Apple platforms:
