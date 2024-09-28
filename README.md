@@ -71,27 +71,27 @@ See roadmap for transitions / effects.
     }
 ```
 
-## OpenTimelineIO Extensions
+### OpenTimelineIO Extensions
 
 - Conversion of OpenTimelineIO `RationalTime` to CoreMedia `CMTime`
 - Conversion of OpenTimelineIO `TimeRange` to CoreMedia `CMTimeRange`
 - Conversion of OpenTimelineIO `ExternalReference` to AVFoundation `AVAsset`
 - Conversion of OpenTimelineIO `Timeline` to playable/exportable AVFoundation `AVCompostion` `AVVideoCompostion` and `AVAudioMix` 
 
-## Core Media Extensions
+### Core Media Extensions
 
 - Conversion of CoreMedia `CMTime` to OpenTimelineIO `RationalTime`
 - Conversion of CoreMedia `CMTimeRange` to OpenTimelineIO `TimeRange`
 
-## AVFoundation Extensions
+### AVFoundation Extensions
 
 - Conversion of `AVCompositionTrackSegment` to OpenTimelineIO `Clip` with an embedded OpenTimelineIO `ExternalReference` which has url metadata
 - Conversion of `AVCompositionTrack` to OpenTimelineIO `Track` with each `AVCompositionTrackSegment` converted to OpenTimelineIO `Clip` associations
 - Conversion of `AVComposition` to OpenTimelineIO `Timeline` with associated `Tracks` converted
 
-# Compatibility: 
+## Compatibility: 
 
-## OTIO Format Compatibility Matrix
+### OTIO Format Compatibility Matrix
 
 | OTIO Formats | Status | Notes |
 -- | -- | -- 
@@ -99,7 +99,7 @@ See roadmap for transitions / effects.
 |OTIOD | :white_check_mark:| | 
 |OTIOZ | :x: | Planned|
 
-## NLE Compatibility
+### NLE Compatibility
 
 | NLE | Import from NLE | Export to NLE | 
 -- | -- | ---
@@ -107,7 +107,7 @@ See roadmap for transitions / effects.
 | Davinci Resolve 19 | :white_check_mark: | :white_check_mark: |
 
 
-## Project Validation
+### Project Validation
 
 | Sample Project | Import to AVFoundation | Export from AVFoundation 
 -- | -- | --
@@ -115,7 +115,7 @@ See roadmap for transitions / effects.
 | [AWS Picchu Edit](https://dpel.aswf.io/aws-picchu-edit/) | :x: (requires image support & OTIOZ support) | Not yet tested 
 | [OTIO-OC-Examples](https://github.com/darbyjohnston/otio-oc-examples) |  :white_check_mark:  | :white_check_mark:
 
-## Video Format Compatibility
+### Video Format Compatibility
 
 Generally if Quicktime or Final Cut Pro X Can support it, it should just work.
 
