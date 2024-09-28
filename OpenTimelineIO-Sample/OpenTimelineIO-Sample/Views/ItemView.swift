@@ -32,7 +32,7 @@ struct ItemView : View {
 
             }
             .frame(width: self.getSafeWidth())
-            .offset(x:self.getSafePositionX() )//, y:geometry.size.height * 0.5 )
+//            .offset(x:self.getSafePositionX() )//, y:geometry.size.height * 0.5 )
     }
 
     func getSafeRange() -> OpenTimelineIO.TimeRange

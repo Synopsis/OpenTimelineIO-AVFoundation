@@ -19,7 +19,7 @@ struct TrackView : View {
         
     var body: some View
     {
-        let items:[Item] = track.children.compactMap( { guard let item = $0 as? Clip else { return nil }; return item })
+        let items:[Item] = track.children.compactMap( { guard let item = $0 as? Item else { return nil }; return item })
         
         LazyHStack(alignment: .top, spacing: 0, pinnedViews: [.sectionHeaders])
         {
