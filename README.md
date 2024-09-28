@@ -12,7 +12,13 @@ This library is under heavy development!
 
 ## General
 
-This Swift Package extends [OpenTimelineIO's Swift Bindings](https://github.com/openTimelineIO/OpenTimelineIO-Swift-Bindings/)   to provide isolated functionality for Apple platforms. The goal is to enable easy interchange between OpenTimelineIO and AVFoundation objects in a correct, lossless and useful manner.
+This Swift Package extends [OpenTimelineIO's Swift Bindings](https://github.com/openTimelineIO/OpenTimelineIO-Swift-Bindings/)  to provide  functionality for Apple platforms. 
+
+The goal is to enable easy interoperability OpenTimelineIO and AVFoundation objects in a correct, lossless and useful manner to enable real world workflows.
+
+* Load OpenTimeline IO files into `Timeline` objects and introspect using the standard Swift bindings.
+* Create AVFoundation compositions directly from an `Timeline` allowing for playback and export to Quicktime compatible file formats.
+* Convert your own edits as `AVMutableCompositions` into a OTIO `Timeline`
 
 This library should be compatible with the following Apple platforms:
 
@@ -22,7 +28,7 @@ This library should be compatible with the following Apple platforms:
 
 but to date has only been extensively tested on macOS
 
-## QuickStart
+## Quicktart for Developers: 
 
 ### OpenTimelineIO to AVFoundation:
 
@@ -80,11 +86,12 @@ See roadmap for transitions / effects.
 ## AVFoundation Extensions
 
 - Conversion of `AVCompositionTrackSegment` to OpenTimelineIO `Clip` with an embedded OpenTimelineIO `ExternalReference` which has url metadata
-- Conversion of `AVCompositionTrack` to OpenTimelineIO `Track` with track segments converted to OpenTimelineIO `Clip` associations
+- Conversion of `AVCompositionTrack` to OpenTimelineIO `Track` with each `AVCompositionTrackSegment` converted to OpenTimelineIO `Clip` associations
 - Conversion of `AVComposition` to OpenTimelineIO `Timeline` with associated `Tracks` converted
 
+# Compatibility: 
 
-## Format Compatibility Matrix
+## OTIO Format Compatibility Matrix
 
 | OTIO Formats | Status | Notes |
 -- | -- | -- 
@@ -92,7 +99,25 @@ See roadmap for transitions / effects.
 |OTIOD | :white_check_mark:| | 
 |OTIOZ | :x: | Planned|
 
-Generally if Quicktime or Final Cut Pro X Can support it, it should just work?
+## NLE Compatibility
+
+| NLE | Import from NLE | Export to NLE | 
+-- | -- | ---
+| Davinci Resolve 18.6| :white_check_mark: | :white_check_mark: |
+| Davinci Resolve 19 | :white_check_mark: | :white_check_mark: |
+
+
+## Project Validation
+
+| Sample Project | Import to AVFoundation | Export from AVFoundation 
+-- | -- | --
+| [ALab Trailer](https://dpel.aswf.io/alab-trailer/) |  :white_check_mark: | :white_check_mark: 
+| [AWS Picchu Edit](https://dpel.aswf.io/aws-picchu-edit/) | :x: (requires image support & OTIOZ support) | Not yet tested 
+| [OTIO-OC-Examples](https://github.com/darbyjohnston/otio-oc-examples) |  :white_check_mark:  | :white_check_mark:
+
+## Video Format Compatibility
+
+Generally if Quicktime or Final Cut Pro X Can support it, it should just work.
 
 | Video Formats | Status | Notes 
 -- | -- | -- 
@@ -105,16 +130,6 @@ Generally if Quicktime or Final Cut Pro X Can support it, it should just work?
 | Image Frames | :x: | Requires custom compositor | 
 | Image Sequences | :x: | Requires custom compositor| 
 | Raw Formats (BRaw, Red, etc) | :x: | Requires you to have SDK - manage decode and roll your own custom compositor | 
-
-
-## Project Validation
-
-| Sample Project | Import to AVFoundation | Export from AVFoundation 
--- | -- | --
-| [ALab Trailer](https://dpel.aswf.io/alab-trailer/) |  :white_check_mark: | :white_check_mark: 
-| [AWS Picchu Edit](https://dpel.aswf.io/aws-picchu-edit/) | :x: (requires image support & OTIOZ support) | Not yet tested 
-| [OTIO-OC-Examples](https://github.com/darbyjohnston/otio-oc-examples) |  :white_check_mark:  | :white_check_mark:
-
 
 ## Dependencies
 
