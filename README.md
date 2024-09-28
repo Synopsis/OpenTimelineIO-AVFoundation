@@ -144,11 +144,6 @@ Generally if Quicktime or Final Cut Pro X Can support it, it should just work.
 - Enable robust support for transitions / effects metadata to be passed between AVFoundation and OTIO
     - This requires thinking deeply how to support transitions and effects, and the infrasturcture required (custom instructions, composition renderers, etc).
     - Input welcome!
-    
-- Leverage TimecodeKit to enable Asset reading of TimeCode values and populating our OpenTimelineIO `RationalTimes` with Timecode Offsets as per best practice.
-
-- Follow a best practices guide to facilitate working export to various NLEs successfully.
-
 
 ## FAQ
 
