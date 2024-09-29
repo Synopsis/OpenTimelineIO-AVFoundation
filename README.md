@@ -33,6 +33,17 @@ This library should be compatible with the following Apple platforms:
 
 but to date has only been extensively tested on macOS
 
+## Quickstart for Users
+
+* Download [the latest release of the OpenTimelineIO Reader](https://github.com/Synopsis/OpenTimelineIO-AVFoundation/releases).
+* The app should register itself as a reader of OTIO files. 
+    * In theory should be able to double click a `.otio` file which will launch the app, or control click with open as. 
+* To ensure the widest media support possible, please make sure to install [Apple's Pro Video Formats](https://support.apple.com/en-us/106396) package. 
+    * If you have Final Cut Pro X, Compressor or Motion, this step is unnecessary.
+    * Please note that not all video formats are supported, not are image sequences. See [Video Format Compatibilty](#video-format-compatibility)
+
+* Thats it!  
+
 ## Quicktart for Developers: 
 
 ### OpenTimelineIO to AVFoundation:
