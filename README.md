@@ -1,10 +1,15 @@
 # OpenTimelineIO-AVFoundation
 
+<div align="center">
+<img width="256" alt="OTIO Reader Icon" src="https://github.com/user-attachments/assets/4a439ff5-0c8d-48a9-abf3-702777579de6" align="center">
+<img width="1074" alt="OTIO Reader Screenshot" src="https://github.com/user-attachments/assets/4a69568e-367e-46ff-bd6f-c6a2608c48f0">
+            <div>
+                        Loading OpenTimeline IO files opened and playing in the included OpenTimelineIO Reader sample app:
+            </div>
+</div>
 
-<img src="https://github.com/user-attachments/assets/8fca5c03-93d6-4e4e-85df-390a81980dd1" width="250">
-<img src="https://github.com/user-attachments/assets/cb219070-c5e7-43c6-ad7e-9935dbb3b3c3" width="250">
 
-2 official OpenTimeline IO files opened and playing in the included sample app. 
+
             
 ## Note
 
