@@ -8,6 +8,7 @@
 import CoreMedia
 import AVFoundation
 import OpenTimelineIO
+import TimecodeKit
 
 public class VideoCompositionValidator : NSObject, AVVideoCompositionValidationHandling
 {
@@ -211,7 +212,7 @@ public extension Timeline
                 compositionAudioMixParams.append(audioMixParams)
             }
         }
-        
+
         // Composition Validation
         for track in composition.tracks
         {

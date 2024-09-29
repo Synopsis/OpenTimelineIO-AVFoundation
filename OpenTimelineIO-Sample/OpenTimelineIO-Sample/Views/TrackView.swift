@@ -50,12 +50,13 @@ struct TrackView : View
         ZStack {
             
             RoundedRectangle(cornerRadius: 3)
-                .fill(Color("TrackHeaderColor"))
+                .fill(Color("TrackHeaderColor").gradient)
             //                    .strokeBorder(.white, lineWidth: 1)
             
             Text(track.name)
                 .lineLimit(1)
                 .font(.system(size: 10))
+                .bold()
         }
         .frame(width: 100)
         .onTapGesture {

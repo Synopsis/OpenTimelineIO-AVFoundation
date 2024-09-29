@@ -8,7 +8,32 @@
 import SwiftUI
 import OpenTimelineIO
 
-struct ItemInspectorView: View {
+struct ItemInspectorView: View
+{
+    // Need to conform to these protocols or else SwiftUI isnt happy
+    struct SwiftUISafeKeyAndMetadataValueType : Hashable, Identifiable
+    {
+        static func == (lhs: ItemInspectorView.SwiftUISafeKeyAndMetadataValueType, rhs: ItemInspectorView.SwiftUISafeKeyAndMetadataValueType) -> Bool {
+            
+            return lhs.hashValue == rhs.hashValue
+            
+        }
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(key)
+        }
+        
+        let id:String
+        let key: String
+        let value: (any MetadataValue)
+
+        init(id:String, key: String, value: any MetadataValue) {
+            self.id = id
+            self.key = key
+            self.value = value
+        }
+    }
+
     @Binding var selectedItem: Item?
     
     @State var jsonExpanded: Bool = false
@@ -54,14 +79,15 @@ struct ItemInspectorView: View {
 
                 }
                 
+                Section(header:Text("Effects"))
+                {
+                    self.resursiveEffectViewBuilder(effects: selectedItem.effects)
+                }
+                
                 Section(header: Text("Metadata") )
                 {
                     self.resursiveMetadataViewBuilder(metadata: selectedItem.metadata)
-                   
                 }
-
-                
-                //if let metadata = selectedItem.metadata
                 
                 Section("JSON", isExpanded: self.$jsonExpanded)
                 {
@@ -87,6 +113,7 @@ struct ItemInspectorView: View {
         HStack(alignment: .firstTextBaseline)
         {
             Text(header + ":")
+                .bold()
                 .frame(minWidth: 90, alignment:.trailing)
             
             Text(value.trimmingCharacters(in: .whitespaces))
@@ -224,52 +251,61 @@ struct ItemInspectorView: View {
         return try range.startTime.toTimecode() + " - " + range.endTimeExclusive().toTimecode() + " F"
     }
     
-    struct SwiftUISafeKeyAndMetadataValueType : Hashable, Identifiable
-    {
-        static func == (lhs: ItemInspectorView.SwiftUISafeKeyAndMetadataValueType, rhs: ItemInspectorView.SwiftUISafeKeyAndMetadataValueType) -> Bool {
-            
-            return lhs.hashValue == rhs.hashValue
-            
-        }
-        
-        func hash(into hasher: inout Hasher) {
-            hasher.combine(key)
-        }
-        
-        let id:String
-        let key: String
-        let value: (any MetadataValue)
-        
-        init(key: String, value: any MetadataValue) {
-            self.id = key
-            self.key = key
-            self.value = value
-        }
-    }
-    
     func safeMetadata(metadata:OpenTimelineIO.Metadata.Dictionary) -> [ SwiftUISafeKeyAndMetadataValueType ]
     {
         var safeMetadata: [ SwiftUISafeKeyAndMetadataValueType ] = []
         
-        for (key, value) in metadata
+        for (index, (key, value)) in metadata.enumerated()
         {
-            safeMetadata.append( SwiftUISafeKeyAndMetadataValueType(key: key, value: value))
+            safeMetadata.append( SwiftUISafeKeyAndMetadataValueType(id:"\(index)-\(key)", key: key, value: value))
         }
         
         return safeMetadata
+    }
+        
+    func safeEffects(effects: OpenTimelineIO.SerializableObject.Vector<OpenTimelineIO.Effect>) -> [SwiftUISafeKeyAndMetadataValueType]
+    {
+        var safeEffects: [ SwiftUISafeKeyAndMetadataValueType ] = []
+
+        for (index, effect) in effects.enumerated()
+        {
+            let id = "\(index)-\(effect.name)-\(effect.effectName)"
+            let key =  effect.name.isEmpty ? "\(index)" : "\(effect.name)"
+            
+            safeEffects.append( SwiftUISafeKeyAndMetadataValueType(id:id,  key: key, value: effect.metadata))
+        }
+
+        return safeEffects
     }
     
     func resursiveMetadataViewBuilder(metadata: OpenTimelineIO.Metadata.Dictionary, title:String = "Root" ) ->  AnyView
     {
         let safeMetadata = self.safeMetadata(metadata: metadata)
         
-        return AnyView ( DisclosureGroup(title)
-        {
-            ForEach(safeMetadata, id:\.self) { workAround in
-                
-                self.resursiveMetadataViewBuilder(workAround: workAround)
+        return AnyView (
+            DisclosureGroup(title)
+            {
+                ForEach(safeMetadata, id:\.self) { workAround in
+                    
+                    self.resursiveMetadataViewBuilder(workAround: workAround)
+                }
             }
-        })
+        )
+    }
+    
+    func resursiveEffectViewBuilder(effects: OpenTimelineIO.SerializableObject.Vector<OpenTimelineIO.Effect>, title:String = "Effects" ) ->  AnyView
+    {
+        let safeMetadata = self.safeEffects(effects: effects)
+        
+        return AnyView (
+            DisclosureGroup(title)
+            {
+                ForEach(safeMetadata, id:\.self) { workAround in
+                    
+                    self.resursiveMetadataViewBuilder(workAround: workAround)
+                }
+            }
+        )
     }
     
     func resursiveMetadataViewBuilder(workAround: SwiftUISafeKeyAndMetadataValueType) ->  AnyView
