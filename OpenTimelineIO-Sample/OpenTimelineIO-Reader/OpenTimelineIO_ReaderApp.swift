@@ -10,7 +10,7 @@ import MediaToolbox
 import VideoToolbox
 
 @main
-struct OpenTimelineIO_SampleApp: App {
+struct OpenTimelineIO_ReaderApp: App {
     
     init()
     {
@@ -23,7 +23,7 @@ struct OpenTimelineIO_SampleApp: App {
     
     var body: some Scene
     {
-        DocumentGroup(newDocument: OpenTimelineIO_SampleDocument()) { file in
+        DocumentGroup(newDocument: OpenTimelineIO_ReaderDocument()) { file in
             ContentView(document: file.$document, fileURL: file.fileURL)
                 .frame(minWidth: 600, minHeight: 600)
         }

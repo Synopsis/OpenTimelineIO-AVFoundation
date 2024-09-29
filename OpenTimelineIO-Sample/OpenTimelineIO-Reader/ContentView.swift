@@ -11,7 +11,7 @@ import AVKit
 
 struct ContentView: View
 {
-    @Binding var document: OpenTimelineIO_SampleDocument
+    @Binding var document: OpenTimelineIO_ReaderDocument
 
     // This is beyond lame that I need this in the view!?
     var fileURL:URL?
@@ -23,7 +23,7 @@ struct ContentView: View
     
     @State var selectedItem: OpenTimelineIO.Item? = nil
     
-    init(document: Binding<OpenTimelineIO_SampleDocument>  , fileURL: URL? = nil) {
+    init(document: Binding<OpenTimelineIO_ReaderDocument>  , fileURL: URL? = nil) {
         self._document = document
         self.fileURL = fileURL
 //        self._selectedItem = .constant(nil)
@@ -128,5 +128,5 @@ struct ContentView: View
 }
 
 #Preview {
-    ContentView(document: .constant(OpenTimelineIO_SampleDocument()))
+    ContentView(document: .constant(OpenTimelineIO_ReaderDocument()))
 }

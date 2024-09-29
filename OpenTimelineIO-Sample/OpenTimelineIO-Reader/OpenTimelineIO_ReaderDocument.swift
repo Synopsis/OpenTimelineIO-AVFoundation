@@ -19,7 +19,7 @@ extension UTType
     }
 }
 
-class OpenTimelineIO_SampleDocument: FileDocument
+class OpenTimelineIO_ReaderDocument: FileDocument
 {
     static var readableContentTypes: [UTType] { [.openTimelineIO] }
     static var writableContentTypes: [UTType] { [.openTimelineIO] }
