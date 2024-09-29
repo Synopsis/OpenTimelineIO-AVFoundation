@@ -21,9 +21,9 @@ struct ItemInspectorView: View {
             {
                 Section(header: Text("General") )
                 {
-                    self.inspectorEntry(header: "Type:", value: selectedItem.schemaName)
+                    self.inspectorEntry(header: "Type", value: selectedItem.schemaName)
                     
-                    self.inspectorEntry(header: "Name:", value: selectedItem.name)
+                    self.inspectorEntry(header: "Name", value: selectedItem.name)
                 }
                 
                 if let clip = selectedItem as? Clip,
@@ -31,26 +31,26 @@ struct ItemInspectorView: View {
                 {
                     Section(header: Text("Media Reference") )
                     {
-                        self.inspectorEntry(header: "Target URL:", value: mediaReference.targetURL ?? "No Target URL" )
+                        self.inspectorEntry(header: "Target URL", value: mediaReference.targetURL ?? "No Target URL" )
                     }
                 }
 
                 Section(header: Text("Timing") )
                 {
                     
-                    self.inspectorEntry(header: "Duration Seconds:", value: self.safeDurationSeconds(item: selectedItem))
+                    self.inspectorEntry(header: "Duration Seconds", value: self.safeDurationSeconds(item: selectedItem))
 
-                    self.inspectorEntry(header: "Duration Frames:", value: self.safeDurationTimeCode(item: selectedItem) )
+                    self.inspectorEntry(header: "Duration Frames", value: self.safeDurationTimeCode(item: selectedItem) )
 
-                    self.inspectorEntry(header: "Duration Value:", value: String( self.safeDurationValue(item: selectedItem) ) )
+                    self.inspectorEntry(header: "Duration Value", value: String( self.safeDurationValue(item: selectedItem) ) )
 
-                    self.inspectorEntry(header: "Duration Rate:", value: String( self.safeDurationRate(item: selectedItem) ) )
+                    self.inspectorEntry(header: "Duration Rate", value: String( self.safeDurationRate(item: selectedItem) ) )
 
-                    self.inspectorEntry(header: "Available Range:", value: String( self.safeAvailableRange(item: selectedItem) ) )
+                    self.inspectorEntry(header: "Available Range", value: String( self.safeAvailableRange(item: selectedItem) ) )
 
-                    self.inspectorEntry(header: "Trimmed Range:", value: String( self.safeTrimmedRange(item: selectedItem) ) )
+                    self.inspectorEntry(header: "Trimmed Range", value: String( self.safeTrimmedRange(item: selectedItem) ) )
 
-                    self.inspectorEntry(header: "Visible Range:", value: String( self.safeVisibleRange(item: selectedItem) ) )
+                    self.inspectorEntry(header: "Visible Range", value: String( self.safeVisibleRange(item: selectedItem) ) )
 
                 }
                 
@@ -86,7 +86,7 @@ struct ItemInspectorView: View {
     {
         HStack(alignment: .firstTextBaseline)
         {
-            Text(header)
+            Text(header + ":")
                 .frame(minWidth: 90, alignment:.trailing)
             
             Text(value.trimmingCharacters(in: .whitespaces))
@@ -259,28 +259,21 @@ struct ItemInspectorView: View {
         return safeMetadata
     }
     
-    
     func resursiveMetadataViewBuilder(metadata: OpenTimelineIO.Metadata.Dictionary, title:String = "Root" ) ->  AnyView
     {
         let safeMetadata = self.safeMetadata(metadata: metadata)
         
         return AnyView ( DisclosureGroup(title)
         {
-            
             ForEach(safeMetadata, id:\.self) { workAround in
                 
                 self.resursiveMetadataViewBuilder(workAround: workAround)
-                
-                
             }
         })
     }
     
-    
     func resursiveMetadataViewBuilder(workAround: SwiftUISafeKeyAndMetadataValueType) ->  AnyView
     {
-        
-       
         let value = workAround.value
         let key = workAround.key
 
@@ -292,8 +285,8 @@ struct ItemInspectorView: View {
         case .bool:
             if let boolValue = value as? Bool {
                 return  AnyView(  self.inspectorEntry(header: key , value: String(boolValue) ) )
-                
             }
+            
         case .int64:
             if let intValue = value as? Int64 {
                 return AnyView(  self.inspectorEntry(header: key, value: String(intValue) ) )
@@ -308,28 +301,35 @@ struct ItemInspectorView: View {
             if let stringValue = value as? String {
                 return  AnyView( self.inspectorEntry(header: key, value: stringValue ) )
             }
-//
-//                            case .serializableObject:
-//                                <#code#>
+            
+//        case .serializableObject:
+//            <#code#>
+
         case .rationalTime:
             if let timeValue = value as? RationalTime {
                 return AnyView( self.inspectorEntry(header: key, value: timeValue.toTimestring() ) )
             }
+            
         case .timeRange:
             if let timeRange = value as? TimeRange {
                 return AnyView( self.inspectorEntry(header: key, value: timeRange.startTime.toTimestring() + " - " + timeRange.endTimeExclusive().toTimestring( ) ) )
             }
 
-            //                            case .timeTransform:
-            //                                <#code#>
+//        case .timeTransform:
+//            <#code#>
+
         case .dictionary:
             if let dictionary = value as? Metadata.Dictionary {
                 return self.resursiveMetadataViewBuilder(metadata: dictionary, title: key)
             }
-            //                            case .vector:
-            //                                <#code#>
-            //                            case .unknown:
-            //                                continue
+            
+//        case .vector:
+//            if let vector = value as? Metadata.Vector {
+//                return self.resursiveMetadataViewBuilder(metadata: dictionary, title: key)
+//            }
+
+//        case .unknown:
+//            return AnyView (Text("Unknown)"))
             
         default:
             return AnyView ( EmptyView() )
