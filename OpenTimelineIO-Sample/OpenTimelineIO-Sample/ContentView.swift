@@ -53,7 +53,7 @@ struct ContentView: View
         .inspector(isPresented: self.$inspectorOpen)
         {
             ItemInspectorView(selectedItem: self.$selectedItem)
-                .inspectorColumnWidth(min: 250, ideal: 300, max: 350)
+                .inspectorColumnWidth(min: 250, ideal: 300, max: 500)
                 .toolbar
                 {
                     Spacer()

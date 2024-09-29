@@ -28,12 +28,7 @@ struct ItemView : View {
                     RoundedRectangle(cornerRadius: 3)
                         .fill( Color("GapTrackBaseColor") )
                         .strokeBorder( self.selected ? .white : .clear, lineWidth: 1)
-                        .frame(width: self.getSafeWidth() - 2)
-                    
-                    Text("Gap")
-                        .lineLimit(1)
-                        .font(.system(size: 10))
-                        .frame(width: self.getSafeWidth())
+                        .frame(width: self.getSafeWidth() - 2)                    
                 }
                 else
                 {
