@@ -141,8 +141,8 @@ Generally if Quicktime or Final Cut Pro X Can support it, it should just work.
 | HEVC | :white_check_mark: | Native |
 | Apple ProRes | :white_check_mark: | Requires [Apple Pro Video Formats](https://support.apple.com/kb/DL2100?locale=en_US) for some variants | 
 | Apple Intermediate Codec | :white_check_mark: | Requires [Apple Pro Video Formats](https://support.apple.com/kb/DL2100?locale=en_US) for some variants
-| MXF wrapped Pro Res | :white_check_mark: | Requires `MTRegisterProfessionalVideoWorkflowFormatReaders()` and `VTRegisterProfessionalVideoWorkflowVideoDecoders()`  to be enabled |
-| MXF Wrapped DnXHD | :white_check_mark: | Requires `MTRegisterProfessionalVideoWorkflowFormatReaders()` and `VTRegisterProfessionalVideoWorkflowVideoDecoders()`  to be enabled - only some DnxHD variants work | 
+| MXF wrapped Pro Res | :white_check_mark: | Requires `MTRegisterProfessionalVideoWorkflowFormatReaders()` and `VTRegisterProfessionalVideoWorkflowVideoDecoders()`  to be enabled (this step is not needed for the OpenTimelineIO Reader sample app) |
+| MXF Wrapped DnXHD | :white_check_mark: | Requires `MTRegisterProfessionalVideoWorkflowFormatReaders()` and `VTRegisterProfessionalVideoWorkflowVideoDecoders()`  to be enabled - only some DnxHD variants work (this step is not needed for the OpenTimelineIO Reader sample app)| 
 | Image Frames | :x: | Requires custom compositor | 
 | Image Sequences | :x: | Requires custom compositor| 
 | Raw Formats (BRaw, Red, etc) | :x: | Requires you to have SDK - manage decode and roll your own custom compositor | 
