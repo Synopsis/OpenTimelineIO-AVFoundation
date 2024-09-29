@@ -57,7 +57,10 @@
 			<key>UTTypeDescription</key>
 			<string>OpenTimelineIO</string>
 			<key>UTTypeIcons</key>
-			<dict/>
+			<dict>
+				<key>UTTypeIconBadgeName</key>
+				<string>OTIODocumentIcon</string>
+			</dict>
 			<key>UTTypeIdentifier</key>
 			<string>io.aswf.opentimelineio</string>
 			<key>UTTypeTagSpecification</key>
