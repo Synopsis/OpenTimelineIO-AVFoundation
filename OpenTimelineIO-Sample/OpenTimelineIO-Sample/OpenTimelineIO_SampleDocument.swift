@@ -32,7 +32,6 @@ class OpenTimelineIO_SampleDocument: FileDocument
     {
         self.timeline = Timeline(name: "Untitled OpenTimelineIO Timeline")
     }
- 
     
     required init(configuration: ReadConfiguration) throws
     {
@@ -87,7 +86,6 @@ class OpenTimelineIO_SampleDocument: FileDocument
             {
                 print("Error creating composition from timeline: \(error)")
             }
-                
         }
     }
     
