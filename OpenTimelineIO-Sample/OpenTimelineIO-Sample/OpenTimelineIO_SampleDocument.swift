@@ -75,10 +75,10 @@ class OpenTimelineIO_SampleDocument: FileDocument
                 if let (composition, videoComposition, audioMix) = try await self.timeline.toAVCompositionRenderables(baseURL: url.deletingLastPathComponent())
                 {
                     let playerItem = await AVPlayerItem(asset: composition)
-                    playerItem.videoComposition = videoComposition
-                    playerItem.audioMix = audioMix
                     
                     await MainActor.run {
+                        playerItem.videoComposition = videoComposition
+                        playerItem.audioMix = audioMix
                         self.player.replaceCurrentItem(with: playerItem)
                     }
                 }
