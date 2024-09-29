@@ -54,6 +54,13 @@ struct ItemInspectorView: View {
 
                 }
                 
+                Section(header: Text("Metadata") )
+                {
+                    self.resursiveMetadataViewBuilder(metadata: selectedItem.metadata)
+                   
+                }
+
+                
                 //if let metadata = selectedItem.metadata
                 
                 Section("JSON", isExpanded: self.$jsonExpanded)
@@ -154,7 +161,7 @@ struct ItemInspectorView: View {
         {
             do {
                 let range = try item.availableRange()
-                return try range.startTime.toTimestring() + " - " + range.endTimeExclusive().toTimestring() + " s"
+                return range.startTime.toTimestring() + " - " + range.endTimeExclusive().toTimestring() + " s"
             }
             catch
             {
@@ -178,7 +185,7 @@ struct ItemInspectorView: View {
         {
             do {
                 let range = try item.trimmedRange()
-                return try range.startTime.toTimestring() + " - " + range.endTimeExclusive().toTimestring() + " s"
+                return range.startTime.toTimestring() + " - " + range.endTimeExclusive().toTimestring() + " s"
             }
             catch
             {
@@ -216,5 +223,123 @@ struct ItemInspectorView: View {
         let range = try item.visibleRange()
         return try range.startTime.toTimecode() + " - " + range.endTimeExclusive().toTimecode() + " F"
     }
+    
+    struct SwiftUISafeKeyAndMetadataValueType : Hashable, Identifiable
+    {
+        static func == (lhs: ItemInspectorView.SwiftUISafeKeyAndMetadataValueType, rhs: ItemInspectorView.SwiftUISafeKeyAndMetadataValueType) -> Bool {
+            
+            return lhs.hashValue == rhs.hashValue
+            
+        }
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(key)
+        }
+        
+        let id:String
+        let key: String
+        let value: (any MetadataValue)
+        
+        init(key: String, value: any MetadataValue) {
+            self.id = key
+            self.key = key
+            self.value = value
+        }
+    }
+    
+    func safeMetadata(metadata:OpenTimelineIO.Metadata.Dictionary) -> [ SwiftUISafeKeyAndMetadataValueType ]
+    {
+        var safeMetadata: [ SwiftUISafeKeyAndMetadataValueType ] = []
+        
+        for (key, value) in metadata
+        {
+            safeMetadata.append( SwiftUISafeKeyAndMetadataValueType(key: key, value: value))
+        }
+        
+        return safeMetadata
+    }
+    
+    
+    func resursiveMetadataViewBuilder(metadata: OpenTimelineIO.Metadata.Dictionary, title:String = "Root" ) ->  AnyView
+    {
+        let safeMetadata = self.safeMetadata(metadata: metadata)
+        
+        return AnyView ( DisclosureGroup(title)
+        {
+            
+            ForEach(safeMetadata, id:\.self) { workAround in
+                
+                self.resursiveMetadataViewBuilder(workAround: workAround)
+                
+                
+            }
+        })
+    }
+    
+    
+    func resursiveMetadataViewBuilder(workAround: SwiftUISafeKeyAndMetadataValueType) ->  AnyView
+    {
+        
+       
+        let value = workAround.value
+        let key = workAround.key
+
+        switch value.metadataType
+        {
+        case .none:
+            return AnyView( EmptyView() )
+            
+        case .bool:
+            if let boolValue = value as? Bool {
+                return  AnyView(  self.inspectorEntry(header: key , value: String(boolValue) ) )
+                
+            }
+        case .int64:
+            if let intValue = value as? Int64 {
+                return AnyView(  self.inspectorEntry(header: key, value: String(intValue) ) )
+            }
+            
+        case .double:
+            if let doubleValue = value as? Double {
+                return  AnyView( self.inspectorEntry(header: key, value: String(doubleValue) ) )
+            }
+            
+        case .string:
+            if let stringValue = value as? String {
+                return  AnyView( self.inspectorEntry(header: key, value: stringValue ) )
+            }
+//
+//                            case .serializableObject:
+//                                <#code#>
+        case .rationalTime:
+            if let timeValue = value as? RationalTime {
+                return AnyView( self.inspectorEntry(header: key, value: timeValue.toTimestring() ) )
+            }
+        case .timeRange:
+            if let timeRange = value as? TimeRange {
+                return AnyView( self.inspectorEntry(header: key, value: timeRange.startTime.toTimestring() + " - " + timeRange.endTimeExclusive().toTimestring( ) ) )
+            }
+
+            //                            case .timeTransform:
+            //                                <#code#>
+        case .dictionary:
+            if let dictionary = value as? Metadata.Dictionary {
+                return self.resursiveMetadataViewBuilder(metadata: dictionary, title: key)
+            }
+            //                            case .vector:
+            //                                <#code#>
+            //                            case .unknown:
+            //                                continue
+            
+        default:
+            return AnyView ( EmptyView() )
+            
+            
+        }
+        
+        return AnyView ( EmptyView() )
+
+    }
+    
   
 }
