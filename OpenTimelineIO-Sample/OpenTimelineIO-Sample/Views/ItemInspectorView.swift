@@ -148,37 +148,73 @@ struct ItemInspectorView: View {
     func safeAvailableRange(item: Item) -> String
     {
         do {
-            let range = try item.availableRange()
-            return try range.startTime.toTimecode() + " - " + range.endTimeExclusive().toTimecode()
+            return try safeVisibleRangeTC(item: item)
         }
         catch
         {
-            return "Unable to Available Range: \(error)"
+            do {
+                let range = try item.availableRange()
+                return try range.startTime.toTimestring() + " - " + range.endTimeExclusive().toTimestring() + " s"
+            }
+            catch
+            {
+                return "Unable to Available Range: \(error)"
+            }
         }
+    }
+    
+    func safeAvailableRangeTC(item: Item) throws -> String
+    {
+        let range = try item.availableRange()
+        return try range.startTime.toTimecode() + " - " + range.endTimeExclusive().toTimecode() + " F"
     }
     
     func safeTrimmedRange(item: Item) -> String
     {
         do {
-            let range = try item.trimmedRange()
-            return try range.startTime.toTimecode() + " - " + range.endTimeExclusive().toTimecode()
+            return try safeTrimmedRangeTC(item: item)
         }
         catch
         {
-            return "Unable to Trimmed Range: \(error)"
+            do {
+                let range = try item.trimmedRange()
+                return try range.startTime.toTimestring() + " - " + range.endTimeExclusive().toTimestring() + " s"
+            }
+            catch
+            {
+                return "Unable to Trimmed Range: \(error)"
+            }
         }
+    }
+    
+    func safeTrimmedRangeTC(item: Item) throws -> String
+    {
+        let range = try item.trimmedRange()
+        return try range.startTime.toTimecode() + " - " + range.endTimeExclusive().toTimecode() + " F"
     }
     
     func safeVisibleRange(item: Item) -> String
     {
         do {
-            let range = try item.visibleRange()
-            return try range.startTime.toTimecode() + " - " + range.endTimeExclusive().toTimecode()
+            return try safeVisibleRangeTC(item: item)
         }
         catch
         {
-            return "Unable to Visible Range: \(error)"
+            do {
+                let range = try item.visibleRange()
+                return  range.startTime.toTimestring() + " - " + range.endTimeExclusive().toTimestring() + " s"
+            }
+            catch
+            {
+                return "Unable to Visible Range: \(error)"
+            }
         }
+    }
+    
+    func safeVisibleRangeTC(item: Item) throws -> String
+    {
+        let range = try item.visibleRange()
+        return try range.startTime.toTimecode() + " - " + range.endTimeExclusive().toTimecode() + " F"
     }
   
 }
