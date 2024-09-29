@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "OTIO Reader.png",
+      "filename" : "OTIO Reader-1024.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -13,7 +13,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "OTIO Reader 1.png",
+      "filename" : "OTIO Reader-1024 1.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -25,67 +25,67 @@
           "value" : "tinted"
         }
       ],
-      "filename" : "OTIO Reader 2.png",
+      "filename" : "OTIO Reader-1024 2.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
     },
     {
-      "filename" : "OTIO Reader 16.png",
+      "filename" : "OTIO Reader-16.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "16x16"
     },
     {
-      "filename" : "OTIO Reader 33.png",
+      "filename" : "OTIO Reader-32.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "16x16"
     },
     {
-      "filename" : "OTIO Reader 32.png",
+      "filename" : "OTIO Reader-32 1.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "32x32"
     },
     {
-      "filename" : "OTIO Reader 64.png",
+      "filename" : "OTIO Reader-64.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "32x32"
     },
     {
-      "filename" : "OTIO Reader 128.png",
+      "filename" : "OTIO Reader-128.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "128x128"
     },
     {
-      "filename" : "OTIO Reader 257.png",
+      "filename" : "OTIO Reader-256.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "128x128"
     },
     {
-      "filename" : "OTIO Reader 256.png",
+      "filename" : "OTIO Reader-256 1.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "256x256"
     },
     {
-      "filename" : "OTIO Reader 513.png",
+      "filename" : "OTIO Reader-512.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "256x256"
     },
     {
-      "filename" : "OTIO Reader 512.png",
+      "filename" : "OTIO Reader-512 1.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "512x512"
     },
     {
-      "filename" : "OTIO Reader 3.png",
+      "filename" : "OTIO Reader-1024 3.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "512x512"
