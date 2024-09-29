@@ -263,6 +263,21 @@ struct ItemInspectorView: View
         return safeMetadata
     }
         
+    func safeVector(vector: OpenTimelineIO.Metadata.Vector) -> [SwiftUISafeKeyAndMetadataValueType]
+    {
+        var safeVector: [ SwiftUISafeKeyAndMetadataValueType ] = []
+
+        for (index, vector) in vector.enumerated()
+        {
+            let id = "\(index)"
+            let key =  "\(index)"
+            
+            safeVector.append( SwiftUISafeKeyAndMetadataValueType(id:id,  key: key, value: vector))
+        }
+
+        return safeVector
+    }
+    
     func safeEffects(effects: OpenTimelineIO.SerializableObject.Vector<OpenTimelineIO.Effect>) -> [SwiftUISafeKeyAndMetadataValueType]
     {
         var safeEffects: [ SwiftUISafeKeyAndMetadataValueType ] = []
@@ -286,6 +301,21 @@ struct ItemInspectorView: View
             DisclosureGroup(title)
             {
                 ForEach(safeMetadata, id:\.self) { workAround in
+                    
+                    self.resursiveMetadataViewBuilder(workAround: workAround)
+                }
+            }
+        )
+    }
+    
+    func resursiveMetadataViewBuilder(vector: OpenTimelineIO.Metadata.Vector, title:String = "Vector" ) ->  AnyView
+    {
+        let safeVector = self.safeVector(vector: vector)
+        
+        return AnyView (
+            DisclosureGroup(title)
+            {
+                ForEach(safeVector, id:\.self) { workAround in
                     
                     self.resursiveMetadataViewBuilder(workAround: workAround)
                 }
@@ -359,10 +389,10 @@ struct ItemInspectorView: View
                 return self.resursiveMetadataViewBuilder(metadata: dictionary, title: key)
             }
             
-//        case .vector:
-//            if let vector = value as? Metadata.Vector {
-//                return self.resursiveMetadataViewBuilder(metadata: dictionary, title: key)
-//            }
+        case .vector:
+            if let vector = value as? Metadata.Vector {
+                return self.resursiveMetadataViewBuilder(vector: vector, title: key)
+            }
 
 //        case .unknown:
 //            return AnyView (Text("Unknown)"))
