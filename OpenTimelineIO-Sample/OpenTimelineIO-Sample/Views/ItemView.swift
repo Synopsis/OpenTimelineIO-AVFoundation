@@ -12,20 +12,22 @@ import SwiftUI
 
 struct ItemView : View {
     
-    var item:OpenTimelineIO.Item
-    var backgroundColor:Color
-        
+    @State var item:OpenTimelineIO.Item
+    @State var backgroundColor:Color
+    @State var selected:Bool
+
     @Binding var secondsToPixels:Double
     
     var body: some View
     {
+
             ZStack {
                 
                 if let _ = item as? Gap
                 {
                     RoundedRectangle(cornerRadius: 3)
-                    //                    .strokeBorder(.white, lineWidth: 1)
                         .fill( Color("GapTrackBaseColor") )
+                        .strokeBorder( self.selected ? .white : .clear, lineWidth: 1)
                         .frame(width: self.getSafeWidth() - 2)
                     
                     Text("Gap")
@@ -36,8 +38,8 @@ struct ItemView : View {
                 else
                 {
                     RoundedRectangle(cornerRadius: 3)
-                    //                    .strokeBorder(.white, lineWidth: 1)
                         .fill( self.backgroundColor.gradient )
+                        .strokeBorder( self.selected ? .white : .clear, lineWidth: 1)
                         .frame(width: self.getSafeWidth() - 2)
                     
                     Text(item.name)
@@ -45,9 +47,6 @@ struct ItemView : View {
                         .font(.system(size: 10))
                         .frame(width: self.getSafeWidth())
                 }
-                
-               
-
             }
             .frame(width: self.getSafeWidth())
 //            .offset(x:self.getSafePositionX() )//, y:geometry.size.height * 0.5 )

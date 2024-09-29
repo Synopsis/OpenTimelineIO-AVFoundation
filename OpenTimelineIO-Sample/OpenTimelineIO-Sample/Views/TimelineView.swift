@@ -12,34 +12,18 @@ import SwiftUI
 
 struct TimelineView : View {
     
-    var timeline:OpenTimelineIO.Timeline
+    @State var timeline:OpenTimelineIO.Timeline
     
     @Binding var secondsToPixels:Double
+    @Binding var selectedItem:Item?
     
     var body: some View
     {
         let videoTracks = timeline.videoTracks
         let audioTracks = timeline.audioTracks
         
-        let videoTrackColors = [
-            Color("VideoTrackBaseColor").gradient,//.saturation(1.0).opacity(0.75),
-            Color("VideoTrackBaseColor").gradient,//.saturation(0.9).opacity(0.75),
-            Color("VideoTrackBaseColor").gradient,//.saturation(0.8).opacity(0.75),
-            Color("VideoTrackBaseColor").gradient,//.saturation(0.7).opacity(0.75),
-            Color("VideoTrackBaseColor").gradient,//.saturation(0.6).opacity(0.75),
-        ]
-        
-        let audioTrackColors = [
-            Color("AudioTrackBaseColor").gradient,//.saturation(1.0).opacity(0.75),
-            Color("AudioTrackBaseColor").gradient,//.saturation(0.9).opacity(0.75),
-            Color("AudioTrackBaseColor").gradient,//.saturation(0.8).opacity(0.75),
-            Color("AudioTrackBaseColor").gradient,//.saturation(0.7).opacity(0.75),
-            Color("AudioTrackBaseColor").gradient,//.saturation(0.6).opacity(0.75),
-        ]
-        
         ScrollView([.horizontal, .vertical])
         {
-            
             VStack(alignment:.leading, spacing: 3)
             {
 //                TimeRulerView(timeline: self.timeline, secondsToPixels: self.$secondsToPixels)
@@ -47,34 +31,28 @@ struct TimelineView : View {
 //                
 //                Divider()
                 
-                ForEach(0..<videoTracks.count) { index in
+                ForEach(0..<videoTracks.count, id: \.self) { index in
                     
                     let track = videoTracks[index]
-                    let color = videoTrackColors[index % videoTrackColors.count]
                     
-                    TrackView(track: track, backgroundColor: Color("VideoTrackBaseColor"), secondsToPixels: self.$secondsToPixels )
-                    
+                    TrackView(track: track,
+                              backgroundColor: Color("VideoTrackBaseColor"),
+                              secondsToPixels: self.$secondsToPixels,
+                              selectedItem: self.$selectedItem )
                 }
                 
-                Divider()
-                
-                ForEach(0..<audioTracks.count) { index in
+                ForEach(0..<audioTracks.count, id: \.self) { index in
 
                     let track = audioTracks[index]
-                    let color = audioTrackColors[index % audioTrackColors.count]
                     
-                    TrackView(track: track, backgroundColor: Color("AudioTrackBaseColor"), secondsToPixels: self.$secondsToPixels )
-
+                    TrackView(track: track,
+                              backgroundColor: Color("AudioTrackBaseColor"),
+                              secondsToPixels: self.$secondsToPixels,
+                              selectedItem: self.$selectedItem )
                 }
             }
             .frame(height: CGFloat((videoTracks.count + audioTracks.count)) * 25 )
             .frame(maxHeight: CGFloat((videoTracks.count + audioTracks.count)) * 500)
         }
-        
-      
-        
     }
-    
-    
-    
 }
