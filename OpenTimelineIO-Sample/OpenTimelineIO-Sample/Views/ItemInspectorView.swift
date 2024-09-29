@@ -44,23 +44,25 @@ struct ItemInspectorView: View
         {
             List()
             {
-                Section(header: Text("General") )
+                Section(header: Text( "\(Image(systemName: "info.circle.fill")) General") )
                 {
                     self.inspectorEntry(header: "Type", value: selectedItem.schemaName)
                     
                     self.inspectorEntry(header: "Name", value: selectedItem.name)
                 }
-                
+                .listSectionSeparator(.hidden)
+
                 if let clip = selectedItem as? Clip,
                    let mediaReference = clip.mediaReference as? ExternalReference
                 {
-                    Section(header: Text("Media Reference") )
+                    Section(header: Text("\(Image(systemName: "film.circle.fill")) Media Reference") )
                     {
                         self.inspectorEntry(header: "Target URL", value: mediaReference.targetURL ?? "No Target URL" )
                     }
+                    .listSectionSeparator(.hidden)
                 }
 
-                Section(header: Text("Timing") )
+                Section(header: Text("\(Image(systemName: "clock.fill")) Timing") )
                 {
                     
                     self.inspectorEntry(header: "Duration Seconds", value: self.safeDurationSeconds(item: selectedItem))
@@ -78,28 +80,33 @@ struct ItemInspectorView: View
                     self.inspectorEntry(header: "Visible Range", value: String( self.safeVisibleRange(item: selectedItem) ) )
 
                 }
+                .listSectionSeparator(.hidden)
                 
-                Section(header:Text("Effects"))
+                Section(header:Text("\(Image(systemName: "triangle.circle.fill")) Effects"))
                 {
                     self.resursiveEffectViewBuilder(effects: selectedItem.effects)
                 }
-                
-                Section(header: Text("Metadata") )
+                .listSectionSeparator(.hidden)
+
+                Section(header: Text("\(Image(systemName: "tag.circle.fill")) \(selectedItem.schemaName) Metadata") )
                 {
                     self.resursiveMetadataViewBuilder(metadata: selectedItem.metadata)
                 }
-                
-                Section("JSON", isExpanded: self.$jsonExpanded)
+                .listSectionSeparator(.hidden)
+
+                Section("\(Image(systemName: "gearshape.fill")) JSON", isExpanded: self.$jsonExpanded)
                 {
                     Text(self.safeToJSON(item: selectedItem))
                         .lineLimit(nil)
                         .textSelection(.enabled)
                         .font(.system(size: 10))
                 }
+                .listSectionSeparator(.hidden)
 
             }
+            .controlSize(.mini)
             .listStyle(.sidebar)
-            .environment(\.sidebarRowSize, .small) 
+            .environment(\.sidebarRowSize, .small)
             
         }
         else
@@ -121,6 +128,7 @@ struct ItemInspectorView: View
                 .textSelection(.enabled)
         }
         .font(.system(size: 10))
+        .listRowSeparator(.hidden)
 
     }
     

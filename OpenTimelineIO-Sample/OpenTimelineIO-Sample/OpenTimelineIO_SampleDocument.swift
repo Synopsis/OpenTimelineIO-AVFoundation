@@ -57,7 +57,6 @@ class OpenTimelineIO_SampleDocument: FileDocument
         default:
             throw CocoaError(.fileWriteUnknown)
         }
-        
     }
     
     private func saveAsOTIO() throws -> FileWrapper

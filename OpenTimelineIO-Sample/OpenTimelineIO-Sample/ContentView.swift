@@ -64,6 +64,7 @@ struct ContentView: View
                         Image(systemName: "info.circle")
                     }
                 }
+            
         }
     }
     
