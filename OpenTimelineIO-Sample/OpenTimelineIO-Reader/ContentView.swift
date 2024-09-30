@@ -6,12 +6,13 @@
 //
 
 import OpenTimelineIO
+import OpenTimelineIO_AVFoundation
 import SwiftUI
 import AVKit
 
 struct ContentView: View
 {
-    @Binding var document: OpenTimelineIO_ReaderDocument
+    @ObservedObject var document: OpenTimelineIO_ReaderDocument
 
     // This is beyond lame that I need this in the view!?
     var fileURL:URL?
@@ -23,18 +24,21 @@ struct ContentView: View
     
     @State var selectedItem: OpenTimelineIO.Item? = nil
     
-    init(document: Binding<OpenTimelineIO_ReaderDocument>  , fileURL: URL? = nil) {
-        self._document = document
+    init(document: OpenTimelineIO_ReaderDocument  , fileURL: URL? = nil) {
+        self.document = document
         self.fileURL = fileURL
-//        self._selectedItem = .constant(nil)
         
         guard let fileURL = fileURL else { return }
+        
+        
        
-        self.$document.wrappedValue.setupPlayerWithBaseDocumentURL(fileURL)        
+        self.document.setupPlayerWithBaseDocumentURL(fileURL)
     }
     
     var body: some View {
 
+        
+        
         VSplitView
         {
             VideoPlayer(player: document.player)
@@ -45,7 +49,10 @@ struct ContentView: View
                     .padding(.horizontal)
                     .padding(.top, 5)
 
-                TimelineView(timeline: document.timeline, secondsToPixels: self.$secondsToPixels, selectedItem: self.$selectedItem)
+                TimelineView(timeline: document.timeline,
+                             currentTime: self.$document.currentTime ,
+                             secondsToPixels: self.$secondsToPixels,
+                             selectedItem: self.$selectedItem)
                 
                 self.controlsViewStack()
             }
@@ -128,5 +135,5 @@ struct ContentView: View
 }
 
 #Preview {
-    ContentView(document: .constant(OpenTimelineIO_ReaderDocument()))
+    ContentView(document: OpenTimelineIO_ReaderDocument() )
 }

@@ -9,23 +9,22 @@ import OpenTimelineIO_AVFoundation
 import OpenTimelineIO
 import TimecodeKit
 import SwiftUI
-struct TimeRulerView: View {
+struct TimeRulerView: View
+{
 
     var timeline: OpenTimelineIO.Timeline
     @Binding var secondsToPixels: Double
-    var currentTime: OpenTimelineIO.RationalTime
+    @Binding var currentTime: OpenTimelineIO.RationalTime
 
     var body: some View
     {
         Canvas { context, size in
+            
             let safeRange = getSafeRange()
             let startSeconds = safeRange.startTime.toSeconds()
             let endSeconds = startSeconds + safeRange.duration.toSeconds()
             
-            let startX = 0.0
-            let endX = size.width
-            
-            // Draw ticks
+            // Draw ticks (including frame-level ticks)
             drawTicks(context: context, startSeconds: startSeconds, endSeconds: endSeconds, secondsToPixels: secondsToPixels, size: size)
             
             // Draw playhead
@@ -38,7 +37,10 @@ struct TimeRulerView: View {
     {
         let maxPixelX = size.width
         
-        for timeInSeconds in stride(from: startSeconds, through: endSeconds, by: 1.0)
+        let frameRate = getFrameRate() // Get the frame rate of the timeline
+        let frameDuration = 1.0 / frameRate // Duration of one frame in seconds
+
+        for timeInSeconds in stride(from: startSeconds, through: endSeconds, by: frameDuration)
         {
             let positionX = (timeInSeconds - startSeconds) * secondsToPixels
             
@@ -48,69 +50,89 @@ struct TimeRulerView: View {
             let tickHeight: CGFloat
             let label: String?
             
-            // Determine the tick type (hour, minute, second, or frame)
-            let seconds = timeInSeconds.truncatingRemainder(dividingBy: 60)
+            // Determine if it's an hour, minute, second, or frame tick
+            let frames = timeInSeconds.truncatingRemainder(dividingBy: frameDuration)
+            let seconds = timeInSeconds.truncatingRemainder(dividingBy: 60) 
             let minutes = (timeInSeconds / 60).truncatingRemainder(dividingBy: 60)
             let hours = (timeInSeconds / 3600).truncatingRemainder(dividingBy: 24)
             
             if seconds == 0
             {
-                if minutes == 0
-                {
-                    // Hour tick
-                    tickHeight = 20
-                    label = String(format: "%02d:00:00", Int(hours))
-                }
-                else
-                {
-                    // Minute tick
-                    tickHeight = 15
-                    label = String(format: "%02d:%02d:00", Int(hours), Int(minutes))
-                }
+                // Hour tick
+                tickHeight = 10
+                label = String(seconds)
+
+            }
+            else if minutes == 0
+            {
+                // Hour tick
+                tickHeight = 20
+                label = String(format: "%02d:%02d:00", Int(hours), Int(minutes))
+            }
+            else if hours == 0
+            {
+                // Minute tick
+                tickHeight = 15
+                label = String(format: "%02d:%02d:00", Int(hours), Int(minutes))
             }
             else
             {
-                // Second tick
-                tickHeight = 10
+                // Frame tick (smaller tick)
+                tickHeight = 5
                 label = nil
             }
-            
+        
+//            else if frames == 0
+//            {
+//                // Second tick
+//                tickHeight = 10
+//                label = String(frames)
+//            }
+//            else
+//            {
+//            }
+//            
             // Draw tick line
             let tickRect = CGRect(x: positionX, y: size.height - tickHeight, width: 1, height: tickHeight)
-            context.fill(Path(tickRect), with: .color(.black))
+            context.fill(Path(tickRect), with: .color(.white))
             
             // Draw label if it's an hour or minute
             if let label = label
             {
-                context.draw(Text(label).font(.system(size: 10)), at: CGPoint(x: positionX + 2, y: size.height - tickHeight - 10))
+                context.draw(Text(label).font(.system(size: 10)).foregroundStyle(.white), at: CGPoint(x: positionX + 2, y: size.height - tickHeight - 10))
             }
         }
     }
     
     func drawPlayhead(context: GraphicsContext, currentTime: OpenTimelineIO.RationalTime, secondsToPixels: Double, size: CGSize)
     {
-        let playheadPositionX = (currentTime.toSeconds() - getSafeRange().startTime.toSeconds()) * secondsToPixels
+        print("drawing playhead at \(currentTime)")
+        let playheadPositionX = currentTime.toSeconds() * secondsToPixels
         let playheadRect = CGRect(x: playheadPositionX, y: 0, width: 2, height: size.height)
         context.fill(Path(playheadRect), with: .color(.red))
     }
-    
-    func getSafeRange() -> OpenTimelineIO.TimeRange
-    {
-        var range: OpenTimelineIO.TimeRange
-        do
-        {
-            range = try TimeRange(startTime: timeline.globalStartTime ?? RationalTime(), duration: timeline.duration())
+
+    // New function to get frame rate of the timeline
+    func getFrameRate() -> Double {
+        do {
+            let rate = try timeline.globalStartTime?.rate ?? 24.0 // Default to 24 fps if unavailable
+            return rate
+        } catch {
+            return 24.0 // Fallback to default frame rate
         }
-        catch
-        {
+    }
+    
+    func getSafeRange() -> OpenTimelineIO.TimeRange {
+        var range: OpenTimelineIO.TimeRange
+        do {
+            range = try TimeRange(startTime: timeline.globalStartTime ?? RationalTime(), duration: timeline.duration())
+        } catch {
             range = TimeRange()
         }
-        
         return range
     }
     
-    func getSafeWidth() -> CGFloat
-    {
+    func getSafeWidth() -> CGFloat {
         return self.getSafeRange().duration.toSeconds() * self.secondsToPixels
     }
 }

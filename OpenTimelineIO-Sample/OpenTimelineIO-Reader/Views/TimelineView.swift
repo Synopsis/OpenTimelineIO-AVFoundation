@@ -14,6 +14,7 @@ struct TimelineView : View {
     
     @State var timeline:OpenTimelineIO.Timeline
     
+    @Binding var currentTime:RationalTime
     @Binding var secondsToPixels:Double
     @Binding var selectedItem:Item?
     
@@ -26,8 +27,8 @@ struct TimelineView : View {
         {
             VStack(alignment:.leading, spacing: 3)
             {
-                TimeRulerView(timeline: self.timeline, secondsToPixels: self.$secondsToPixels, currentTime: RationalTime() )
-                    .frame(height: 50)
+                TimeRulerView(timeline: self.timeline, secondsToPixels: self.$secondsToPixels, currentTime: self.$currentTime )
+                    .frame(height: 25)
                     .offset(x:100)
 //
 //                Divider()

@@ -24,7 +24,7 @@ struct OpenTimelineIO_ReaderApp: App {
     var body: some Scene
     {
         DocumentGroup(newDocument: OpenTimelineIO_ReaderDocument()) { file in
-            ContentView(document: file.$document, fileURL: file.fileURL)
+            ContentView(document: file.document, fileURL: file.fileURL)
                 .frame(minWidth: 600, minHeight: 600)
         }
     }
