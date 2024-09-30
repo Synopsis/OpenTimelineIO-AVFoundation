@@ -3,7 +3,7 @@
     {
       "identity" : "opentimelineio-swift-bindings",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/OpenTimelineIO/OpenTimelineIO-Swift-Bindings",
+      "location" : "https://github.com/openTimelineIO/OpenTimelineIO-Swift-Bindings",
       "state" : {
         "branch" : "main",
         "revision" : "77d532fb85d57979f2d6c81fd4dd6d46ff3c220e"
@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/orchetect/TimecodeKit",
       "state" : {
-        "branch" : "main",
-        "revision" : "c5b8de894bc52d691cbc2d6ed974670bea741230"
+        "revision" : "5e2b41bf5d0316c8bf8ccd1ce5046048192c5376",
+        "version" : "2.1.0"
       }
     }
   ],
