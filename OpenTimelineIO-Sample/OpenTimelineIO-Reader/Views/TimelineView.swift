@@ -26,9 +26,10 @@ struct TimelineView : View {
         {
             VStack(alignment:.leading, spacing: 3)
             {
-//                TimeRulerView(timeline: self.timeline, secondsToPixels: self.$secondsToPixels)
-//                    .background(.red)
-//                
+                TimeRulerView(timeline: self.timeline, secondsToPixels: self.$secondsToPixels, currentTime: RationalTime() )
+                    .frame(height: 50)
+                    .offset(x:100)
+//
 //                Divider()
                 
                 ForEach(0..<videoTracks.count, id: \.self) { index in
@@ -51,7 +52,7 @@ struct TimelineView : View {
                               selectedItem: self.$selectedItem )
                 }
             }
-            .frame(height: CGFloat((videoTracks.count + audioTracks.count)) * 25 )
+            .frame(height: CGFloat((videoTracks.count + audioTracks.count)) * 25 + 50 )
             .frame(maxHeight: CGFloat((videoTracks.count + audioTracks.count)) * 500)
         }
     }
