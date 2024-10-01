@@ -28,7 +28,7 @@ struct TimelineView : View {
             VStack(alignment:.leading, spacing: 3)
             {
                 TimeRulerView(timeline: self.timeline, secondsToPixels: self.$secondsToPixels, currentTime: self.$currentTime )
-                    .frame(height: 25)
+                    .frame(height: 40)
                     .offset(x:100)
 //
 //                Divider()
