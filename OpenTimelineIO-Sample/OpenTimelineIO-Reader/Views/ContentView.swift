@@ -124,7 +124,7 @@ struct ContentView: View
                     .lineLimit(1)
                     .font(.system(size: 10))
                 
-                Slider(value: $secondsToPixels, in: 10...300)
+                Slider(value: $secondsToPixels, in: 10...1000)
                     .controlSize(.mini)
                     .frame(width: 200)
             }
