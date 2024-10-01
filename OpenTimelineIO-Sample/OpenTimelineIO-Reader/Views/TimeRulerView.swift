@@ -11,7 +11,6 @@ import TimecodeKit
 import SwiftUI
 struct TimeRulerView: View
 {
-
     var timeline: OpenTimelineIO.Timeline
     @Binding var secondsToPixels: Double
     @Binding var currentTime: OpenTimelineIO.RationalTime
@@ -46,9 +45,6 @@ struct TimeRulerView: View
     func drawSecondTicks(context: GraphicsContext, startSeconds: Double, endSeconds: Double, secondsToPixels: Double, size: CGSize)
     {
         let maxPixelX = size.width
-        
-        let frameRate = getFrameRate() // Get the frame rate of the timeline
-//        let frameDuration = 1.0 / frameRate // Duration of one frame in seconds
 
         for timeInSeconds in stride(from: startSeconds, through: endSeconds, by: 1)
         {
