@@ -40,7 +40,7 @@ struct TimeRulerView: View
             self.drawFrameTicks(context: context, startSeconds: startSeconds, endSeconds: endSeconds, secondsToPixels: secondsToPixels, size: size)
         }
         
-            self.drawSecondTicks(context: context, startSeconds: startSeconds, endSeconds: endSeconds, secondsToPixels: secondsToPixels, size: size)
+        self.drawSecondTicks(context: context, startSeconds: startSeconds, endSeconds: endSeconds, secondsToPixels: secondsToPixels, size: size)
     }
     
     func drawSecondTicks(context: GraphicsContext, startSeconds: Double, endSeconds: Double, secondsToPixels: Double, size: CGSize)
@@ -100,7 +100,6 @@ struct TimeRulerView: View
             if self.secondsToPixels > 400
             {
                 context.draw(Text(String(frameNum)).font(.system(size: 10)).foregroundStyle(.white), at: CGPoint(x: positionX, y: size.height - tickHeight - 5))
-
             }
         }
     }
