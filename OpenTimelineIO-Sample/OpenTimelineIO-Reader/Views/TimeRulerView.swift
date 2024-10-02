@@ -112,13 +112,11 @@ struct TimeRulerView: View
         {
             currentTimeLabel = currentTime.toTimestring()
         }
-            
         
         let playheadPositionX = currentTime.toSeconds() * secondsToPixels
         let playheadRect = CGRect(x: playheadPositionX, y: 20, width: 1, height: size.height-20)
 //        context.fill(Path(playheadRect), with: .color(.orange))
         
-//        context.draw( resolved , in: playheadRect)
         context.draw(Text("\(Image(systemName: "arrowtriangle.down.fill"))").font(.system(size: 13)).foregroundStyle(.orange), at: CGPoint(x: playheadPositionX + 0.5, y: 15))
 
         context.fill(Path(playheadRect), with: .color(.orange))
