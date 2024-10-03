@@ -34,6 +34,7 @@ struct TrackView : View
                              backgroundColor: self.backgroundColor,
                              selected: item.isEquivalent(to: self.selectedItem ?? Item() ),
                              secondsToPixels: self.$secondsToPixels)
+                    
                     .onTapGesture {
                         self.selectedItem = item
                         print("selected Item")

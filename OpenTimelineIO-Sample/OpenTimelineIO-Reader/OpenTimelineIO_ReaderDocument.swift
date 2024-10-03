@@ -19,7 +19,7 @@ extension UTType
     }
 }
 
-class OpenTimelineIO_ReaderDocument: FileDocument
+class OpenTimelineIO_ReaderDocument: FileDocument, ObservableObject
 {
     static var readableContentTypes: [UTType] { [.openTimelineIO] }
     static var writableContentTypes: [UTType] { [.openTimelineIO] }
@@ -27,6 +27,10 @@ class OpenTimelineIO_ReaderDocument: FileDocument
     var player = AVPlayer()
     var timeline:Timeline
     var fileURL:URL? = nil
+    
+    @Published var currentTime:RationalTime = RationalTime()
+    
+    private var timeObserver:Any? = nil
     
     init()
     {
@@ -79,6 +83,15 @@ class OpenTimelineIO_ReaderDocument: FileDocument
                         playerItem.videoComposition = videoComposition
                         playerItem.audioMix = audioMix
                         self.player.replaceCurrentItem(with: playerItem)
+                        
+                        self.timeObserver = self.player.addPeriodicTimeObserver(forInterval: CMTimeMake(value: 1, timescale: 30),
+                                                                               queue: .main,
+                                                                               using: { [weak self] time in
+                            
+                            print("update current time \(time)")
+                            self?.currentTime = time.toOTIORationalTime()
+                            
+                        })
                     }
                 }
             }

@@ -36,11 +36,11 @@ class OTIOToAVFoundationTests: XCTestCase
         let thisFile = URL(filePath: #file)
         let testAsset1URL = thisFile.deletingLastPathComponent().appending(component: "Assets/OTIO Test Media 1 - 23.98.mp4")
 
-        let reference = ExternalReference(targetURL: testAsset1URL.absoluteString )
+        let reference = ExternalReference(targetURL: testAsset1URL.standardizedFileURL.path(percentEncoded: false) )
         
         let asset = reference.toAVAsset()
         
-        XCTAssertEqual(asset?.url.absoluteString, reference.targetURL)
+        XCTAssertEqual(asset?.url.standardizedFileURL.path(percentEncoded: false), reference.targetURL)
     }
     
     func testExternalReferenceBaseURL()
