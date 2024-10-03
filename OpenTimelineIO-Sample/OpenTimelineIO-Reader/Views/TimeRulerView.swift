@@ -117,12 +117,36 @@ struct TimeRulerView: View
         let playheadRect = CGRect(x: playheadPositionX, y: 20, width: 1, height: size.height-20)
 //        context.fill(Path(playheadRect), with: .color(.orange))
         
-        context.draw(Text("\(Image(systemName: "arrowtriangle.down.fill"))").font(.system(size: 13)), at: CGPoint(x: playheadPositionX + 0.5, y: 15))
-
+        if #available(macOS 14.0, *)
+        {
+            context.draw(
+                Text("\(Image(systemName: "arrowtriangle.down.fill"))")
+                    .font(.system(size: 13))
+                    .foregroundStyle(.orange),
+                at: CGPoint(x: playheadPositionX + 0.5, y: 15))
+            
+            context.draw(
+                Text(currentTimeLabel)
+                    .font(.system(size: 10))
+                    .foregroundStyle(.orange),
+                at: CGPoint(x: playheadPositionX, y: 5))
+        }
+        else
+        {
+            context.draw(
+                Text("\(Image(systemName: "arrowtriangle.down.fill"))")
+                    .font(.system(size: 13))
+                    .foregroundColor(.orange),
+                at: CGPoint(x: playheadPositionX + 0.5, y: 15))
+            
+            context.draw(
+                Text(currentTimeLabel)
+                    .font(.system(size: 10))
+                    .foregroundColor(.orange),
+                at: CGPoint(x: playheadPositionX, y: 5))
+        }
+        
         context.fill(Path(playheadRect), with: .color(.orange))
-
-        context.draw( Text(currentTimeLabel).font(.system(size: 10)), at: CGPoint(x: playheadPositionX, y: 5))
-
     }
 
     // New function to get frame rate of the timeline
