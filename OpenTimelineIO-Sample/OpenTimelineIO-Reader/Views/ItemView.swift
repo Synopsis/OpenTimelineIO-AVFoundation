@@ -26,15 +26,21 @@ struct ItemView : View {
                 if let _ = item as? Gap
                 {
                     RoundedRectangle(cornerRadius: 3)
-                        .fill( Color("GapTrackBaseColor") )
-                        .strokeBorder( self.selected ? .white : .clear, lineWidth: 1)
-                        .frame(width: self.getSafeWidth() - 2)                    
+                        .fill(Color("GapTrackBaseColor")) // Fill the RoundedRectangle with color
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 3)
+                                .stroke(self.selected ? .white : .clear, lineWidth: 1) // Add stroke/outline
+                        )
+                        .frame(width: self.getSafeWidth() - 2)
                 }
                 else
                 {
                     RoundedRectangle(cornerRadius: 3)
-                        .fill( self.backgroundColor.gradient )
-                        .strokeBorder( self.selected ? .white : .clear, lineWidth: 1)
+                        .fill(self.backgroundColor.gradient) // Fill the RoundedRectangle with color
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 3)
+                                .stroke(self.selected ? .white : .clear, lineWidth: 1) // Add stroke/outline
+                        )
                         .frame(width: self.getSafeWidth() - 2)
                     
                     Text(item.name)
