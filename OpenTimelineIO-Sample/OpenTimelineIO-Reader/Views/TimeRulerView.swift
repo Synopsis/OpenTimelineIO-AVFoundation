@@ -68,7 +68,7 @@ struct TimeRulerView: View
             // Draw label if it's an hour or minute
             if self.secondsToPixels > 50
             {
-                context.draw(Text(label).font(.system(size: 10)).foregroundStyle(.white), at: CGPoint(x: positionX + 2, y: size.height - tickHeight - 10))
+                context.draw(Text(label).font(.system(size: 10)), at: CGPoint(x: positionX + 2, y: size.height - tickHeight - 10))
             }
         }
     }
@@ -95,7 +95,7 @@ struct TimeRulerView: View
             
             if self.secondsToPixels > 400
             {
-                context.draw(Text(String(frameNum)).font(.system(size: 10)).foregroundStyle(.white), at: CGPoint(x: positionX, y: size.height - tickHeight - 5))
+                context.draw(Text(String(frameNum)).font(.system(size: 10)), at: CGPoint(x: positionX, y: size.height - tickHeight - 5))
             }
         }
     }
@@ -117,11 +117,11 @@ struct TimeRulerView: View
         let playheadRect = CGRect(x: playheadPositionX, y: 20, width: 1, height: size.height-20)
 //        context.fill(Path(playheadRect), with: .color(.orange))
         
-        context.draw(Text("\(Image(systemName: "arrowtriangle.down.fill"))").font(.system(size: 13)).foregroundStyle(.orange), at: CGPoint(x: playheadPositionX + 0.5, y: 15))
+        context.draw(Text("\(Image(systemName: "arrowtriangle.down.fill"))").font(.system(size: 13)), at: CGPoint(x: playheadPositionX + 0.5, y: 15))
 
         context.fill(Path(playheadRect), with: .color(.orange))
 
-        context.draw( Text(currentTimeLabel).font(.system(size: 10)).foregroundStyle(.orange) , at: CGPoint(x: playheadPositionX, y: 5))
+        context.draw( Text(currentTimeLabel).font(.system(size: 10)), at: CGPoint(x: playheadPositionX, y: 5))
 
     }
 

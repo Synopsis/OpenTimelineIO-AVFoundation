@@ -94,7 +94,7 @@ struct ItemInspectorView: View
                 }
                 .listSectionSeparator(.hidden)
 
-                Section("\(Image(systemName: "gearshape.fill")) JSON", isExpanded: self.$jsonExpanded)
+                Section("\(Image(systemName: "gearshape.fill")) JSON")
                 {
                     Text(self.safeToJSON(item: selectedItem))
                         .lineLimit(nil)

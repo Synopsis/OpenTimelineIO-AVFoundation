@@ -20,9 +20,13 @@ struct ContentView: View
     @State private var isExportingOTIO: Bool = false
     @State private var isExportingMPEG4: Bool = false
     @State var secondsToPixels = 10.0;
-    @State var inspectorOpen: Bool = true
     
+    
+    //@State var inspectorOpen: Bool = true
+    @State var columnVisibility: NavigationSplitViewVisibility = .doubleColumn
+
     @State var selectedItem: OpenTimelineIO.Item? = nil
+    
     
     init(document: OpenTimelineIO_ReaderDocument  , fileURL: URL? = nil) {
         self.document = document
@@ -37,34 +41,48 @@ struct ContentView: View
     
     var body: some View {
         
-        VSplitView
+        NavigationSplitView(columnVisibility: $columnVisibility)
         {
-            VideoPlayer(player: document.player)
-            
-            VStack(alignment: .leading)
+            EmptyView()
+        }
+        content:
+        {
+            VSplitView
             {
-                Text(document.timeline.name.isEmpty ?  "Untitled Timeline" : document.timeline.name)
-                    .padding(.horizontal)
-                    .padding(.top, 5)
-
-                TimelineView(timeline: document.timeline,
-                             currentTime: self.$document.currentTime ,
-                             secondsToPixels: self.$secondsToPixels,
-                             selectedItem: self.$selectedItem)
+                VideoPlayer(player: document.player)
                 
-                self.controlsViewStack()
+                VStack(alignment: .leading)
+                {
+                    Text(document.timeline.name.isEmpty ?  "Untitled Timeline" : document.timeline.name)
+                        .padding(.horizontal)
+                        .padding(.top, 5)
+
+                    TimelineView(timeline: document.timeline,
+                                 currentTime: self.$document.currentTime ,
+                                 secondsToPixels: self.$secondsToPixels,
+                                 selectedItem: self.$selectedItem)
+                    
+                    self.controlsViewStack()
+                }
             }
         }
-        .inspector(isPresented: self.$inspectorOpen)
-        {
+        detail: {
             ItemInspectorView(selectedItem: self.$selectedItem)
-                .inspectorColumnWidth(min: 250, ideal: 300, max: 500)
+//                .inspectorColumnWidth(min: 250, ideal: 300, max: 500)
+                .navigationSplitViewColumnWidth(min:250, ideal: 200, max: 300)
+
                 .toolbar
                 {
                     Spacer()
                     
                     Button {
-                        self.inspectorOpen.toggle()
+                        if self.columnVisibility == .detailOnly {
+                            self.columnVisibility = .doubleColumn
+                        }
+                        else
+                        {
+                            self.columnVisibility = .detailOnly
+                        }
                     } label: {
                         Image(systemName: "info.circle")
                     }
