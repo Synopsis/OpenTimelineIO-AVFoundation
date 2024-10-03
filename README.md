@@ -2,7 +2,7 @@
 
 <div align="center">
 <img width="256" alt="OTIO Reader Icon" src="https://github.com/user-attachments/assets/f8fa96f7-06da-45c9-a00e-62c5d3e57377" align="center">
-<img width="1074" alt="OTIO Reader Screenshot" src="https://github.com/user-attachments/assets/4a69568e-367e-46ff-bd6f-c6a2608c48f0">
+<img width="1141" alt="image" src="https://github.com/user-attachments/assets/92d54182-c055-41dd-95e4-f759e3a67a70", align="center">
             <div>
                         Loading OpenTimeline IO files opened and playing in the included OpenTimelineIO Reader sample app:
             </div>
