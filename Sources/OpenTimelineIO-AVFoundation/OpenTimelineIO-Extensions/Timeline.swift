@@ -47,6 +47,11 @@ public extension Timeline
     
     func toAVCompositionRenderables(baseURL:URL? = nil, customCompositorClass:AVVideoCompositing.Type? = nil, useAssetTimecode:Bool = true, rescaleToAsset:Bool = true) async throws -> (composition:AVComposition, videoComposition:AVVideoComposition, audioMix:AVAudioMix)?
     {
+        // OTIO Timelines for the current schema version does not support a well described timeline format - ie no resolution or framerate
+        // We deduce this via a heuristic here...
+        
+        var largestRasterSizeFound = CGSize.zero
+        
         let validator = VideoCompositionValidator()
         
         // Get our global offset - if we have one, to normalize track times
@@ -124,6 +129,11 @@ public extension Timeline
                         try compositionVideoTrack.insertTimeRange(sourceAssetTimeRange, of: sourceAssetFirstVideoTrack, at: trackTimeRange.start)
                     }
                 }
+                
+                largestRasterSizeFound = CGSize(width: max(largestRasterSizeFound.width , compositionVideoTrack.naturalSize.width),
+                                                height: max(largestRasterSizeFound.height , compositionVideoTrack.naturalSize.height)
+                )
+                
                 
                 // TODO: Fix - Support Time Scaling
 //                let unscaledTrackTime = CMTimeRangeMake(start: trackTimeRange.start, duration: sourceAssetTimeRange.duration)
@@ -226,8 +236,9 @@ public extension Timeline
         }
         
         let videoComposition = try await AVMutableVideoComposition.videoComposition(withPropertiesOf: composition)
+        
         // TODO: - Custom Resolution overrides?
-        // videoComposition.renderSize = CGSize(width: 1920, height: 1080)
+        videoComposition.renderSize = largestRasterSizeFound //CGSize(width: 1920, height: 1080)
         videoComposition.renderScale = 1.0
  
         // TODO: It seems as though our custom instructions occasionally have a minor time gap
