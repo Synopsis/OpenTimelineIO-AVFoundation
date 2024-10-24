@@ -43,10 +43,13 @@ struct ItemView : View {
                         )
                         .frame(width: self.getSafeWidth() - 2)
                     
-                    Text(item.name)
-                        .lineLimit(1)
-                        .font(.system(size: 10))
-                        .frame(width: self.getSafeWidth())
+                    if self.getSafeWidth() > 40
+                    {
+                        Text(item.name)
+                            .lineLimit(1)
+                            .font(.system(size: 10))
+                            .frame(width: self.getSafeWidth())
+                    }
                 }
             }
             .frame(width: self.getSafeWidth())
