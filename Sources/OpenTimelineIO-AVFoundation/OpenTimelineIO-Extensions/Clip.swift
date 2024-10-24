@@ -15,13 +15,21 @@ extension Clip
     // see https://opentimelineio.readthedocs.io/en/latest/tutorials/time-ranges.html
     func toAVAssetAndMapping(baseURL:URL? = nil, useTimecode:Bool = true, rescaleToAsset:Bool = true) throws -> (asset:AVAsset, timeMaping:CMTimeMapping)?
     {
-        guard
-            let externalReference = self.mediaReference as? ExternalReference,
-            let asset = externalReference.toAVAsset(baseURL: baseURL)
-//            let parent = self.parent as? Item
+        
+        let asset:AVURLAsset
+        
+        if let externalReference = self.mediaReference as? ExternalReference,
+            let maybeAsset = externalReference.toAVAsset(baseURL: baseURL)
+        {
+            asset = maybeAsset
+        }
         else
         {
-            return nil
+            //see AWS Picchu Edit - Premiere cant import either?
+            //we have a generator or just a dead reference?
+            let missingMediaURL = Bundle.main.url(forResource: "MediaNotFound", withExtension: "mp4")!
+            
+            asset = AVURLAsset(url: missingMediaURL)
         }
         
         var timeRangeInAsset = try self.trimmedRange()
@@ -66,6 +74,22 @@ extension Clip
                     // We dont need to offset our parent..
 //                    let timeRangeInParentTrackNoTC = timeRangeInParentTrack.startTime - startTimeCode.cmTimeValue.toOTIORationalTime()
 //                    timeRangeInParentTrack = TimeRange(startTime: timeRangeInParentTrackNoTC, duration: timeRangeInParentTrack.duration)
+                }
+                
+                // We might find ourselves with a situation where the timecode of the source media in the timeline existed, but we are working with proxies without TC
+                // This means we need to deduce if the time in OTIO differs from the assets and adjust accordingly
+                else if let firstVideoTrackStart = asset.tracks(withMediaType: .video).first
+                {
+                    let assetAvailableTime = try self.availableRange()
+
+                    // If our start times differ...
+                    if firstVideoTrackStart.timeRange.start.toOTIORationalTime() != assetAvailableTime.startTime
+                    {
+                        let timeDifference = assetAvailableTime.startTime - firstVideoTrackStart.timeRange.start.toOTIORationalTime()
+                        
+                        let assetStartTimeNoTC = timeRangeInAsset.startTime - timeDifference
+                        timeRangeInAsset = TimeRange(startTime: assetStartTimeNoTC, duration: timeRangeInAsset.duration)
+                    }
                 }
             }
             catch Timecode.MediaParseError.missingOrNonStandardFrameRate
