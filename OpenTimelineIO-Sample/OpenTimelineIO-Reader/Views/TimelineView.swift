@@ -63,11 +63,11 @@ struct TimelineView : View {
                     .frame(height: 40)
                     .offset(x:100)
                 //
-                //                Divider()
                 
                 ForEach(0..<videoTracks.count, id: \.self) { index in
                     
-                    let track = videoTracks[index]
+                    // Reverse
+                    let track = videoTracks[(videoTracks.count - 1 ) - index]
                     
                     TrackView(track: track,
                               backgroundColor: Color("VideoTrackBaseColor"),
@@ -75,6 +75,8 @@ struct TimelineView : View {
                               selectedItem: self.$selectedItem )
                 }
                 
+                Divider()
+
                 ForEach(0..<audioTracks.count, id: \.self) { index in
                     
                     let track = audioTracks[index]
