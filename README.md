@@ -2,13 +2,11 @@
 
 <div align="center">
 <img width="256" alt="OTIO Reader Icon" src="https://github.com/user-attachments/assets/f8fa96f7-06da-45c9-a00e-62c5d3e57377" align="center">
-<img width="1141" alt="image" src="https://github.com/user-attachments/assets/92d54182-c055-41dd-95e4-f759e3a67a70", align="center">
+<img width="1141" alt="image" src="https://github.com/user-attachments/assets/fbf16b05-7495-4299-bd21-2d563d9f5aaf", align="center">
             <div>
                         Loading OpenTimeline IO files opened and playing in the included OpenTimelineIO Reader sample app:
             </div>
 </div>
-
-
 
             
 ## Note
@@ -128,7 +126,7 @@ See roadmap for transitions / effects.
 | Sample Project | Import to AVFoundation | Export from AVFoundation 
 -- | -- | --
 | [ALab Trailer](https://dpel.aswf.io/alab-trailer/) |  :white_check_mark: | :white_check_mark: 
-| [AWS Picchu Edit](https://dpel.aswf.io/aws-picchu-edit/) | :x: (requires image support & OTIOZ support) | Not yet tested 
+| [AWS Picchu Edit](https://dpel.aswf.io/aws-picchu-edit/) | :white_check_mark: (Decompress .otioz zip file and open the bundled .otio file) | :white_check_mark: 
 | [OTIO-OC-Examples](https://github.com/darbyjohnston/otio-oc-examples) |  :white_check_mark:  | :white_check_mark:
 
 ### Video Format Compatibility
