@@ -11,7 +11,7 @@ import TimecodeKit
 import SwiftUI
 struct TimeRulerView: View
 {
-    var timeline: OpenTimelineIO.Timeline
+    let timeline: OpenTimelineIO.Timeline
     @Binding var secondsToPixels: Double
     @Binding var currentTime: OpenTimelineIO.RationalTime
 

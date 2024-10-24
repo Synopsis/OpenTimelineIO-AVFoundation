@@ -12,7 +12,7 @@ import SwiftUI
 
 struct TimelineView : View {
     
-    var timeline:OpenTimelineIO.Timeline
+    let timeline:OpenTimelineIO.Timeline
     
     @Binding var currentTime:RationalTime
     @Binding var secondsToPixels:Double

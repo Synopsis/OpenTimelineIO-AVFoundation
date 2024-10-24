@@ -11,9 +11,10 @@ import OpenTimelineIO
 import TimecodeKit
 import SwiftUI
 
+
 struct TrackView : View
 {
-    @State var track:OpenTimelineIO.Track
+    let track:OpenTimelineIO.Track
     @State var backgroundColor:Color
     @Binding var secondsToPixels:Double
     @Binding var selectedItem:Item?
@@ -26,12 +27,13 @@ struct TrackView : View
         {
             Section(header: self.headerView() )
            {
+
                 ForEach(0..<items.count, id: \.self) { index in
-                    
                     let item = items[index]
-                    
+
                     ItemView(item: item,
                              backgroundColor: self.backgroundColor,
+//                             backgroundColor: [Color.red, Color.blue, Color.green, Color.yellow, Color.purple].randomElement()!,
                              selected: item.isEquivalent(to: self.selectedItem ?? Item() ),
                              secondsToPixels: self.$secondsToPixels)
                     
