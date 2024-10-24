@@ -88,7 +88,6 @@ class OpenTimelineIO_ReaderDocument: FileDocument, ObservableObject
                                                                                queue: .main,
                                                                                using: { [weak self] time in
                             
-                            print("update current time \(time)")
                             self?.currentTime = time.toOTIORationalTime()
                             
                         })

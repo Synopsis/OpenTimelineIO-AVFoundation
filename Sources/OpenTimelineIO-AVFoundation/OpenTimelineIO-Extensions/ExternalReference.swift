@@ -53,7 +53,7 @@ extension ExternalReference
         if FileManager.default.fileExists(atPath: path)
         {
             let sourceURL = URL(filePath: path)
-            return AVURLAsset(url: sourceURL)
+            return self.tryLoadAssetAtResolvedURL(url: sourceURL)
         }
         else if let baseURL = baseURL
         {
@@ -62,7 +62,7 @@ extension ExternalReference
             
             if FileManager.default.fileExists(atPath: sourceURL.path(percentEncoded: false))
             {
-                return AVURLAsset(url: sourceURL)
+                return self.tryLoadAssetAtResolvedURL(url: sourceURL)
             }
             
             // we cant have a base url with a relative path to root dir...
@@ -73,12 +73,43 @@ extension ExternalReference
                 var sourceURL = baseURL.appending(path: pathWithoutRoot )
                 if FileManager.default.fileExists(atPath: sourceURL.path(percentEncoded: false))
                 {
-                    return AVURLAsset(url: sourceURL)
+                    return self.tryLoadAssetAtResolvedURL(url: sourceURL)
                 }
             }
         }
         
-        return nil
+        let missingMediaURL = Bundle.main.url(forResource: "MediaNotFound", withExtension: "mp4")!
+        
+        return AVURLAsset(url: missingMediaURL)
     }
+    
+    fileprivate func tryLoadAssetAtResolvedURL(url:URL) -> AVURLAsset
+    {
+        // do some very simple semantics to see if theres a chance we can load the asset
+        
+        let supported:Bool
+        
+        switch url.pathExtension
+        {
+        case "mp4":
+            supported = true
+        case "mov":
+            supported = true
+            
+        default:
+            supported = false
+        }
+       
+        if supported
+        {
+            return AVURLAsset(url: url)
+        }
+        
+        let notSupportedMedia = Bundle.main.url(forResource: "MediaNotSupported", withExtension: "mp4")!
+        
+        return AVURLAsset(url: notSupportedMedia)
+
+    }
+    
 }
 
