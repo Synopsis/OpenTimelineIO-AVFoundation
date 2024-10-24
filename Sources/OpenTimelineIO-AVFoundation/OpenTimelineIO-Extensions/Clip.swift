@@ -13,7 +13,7 @@ import TimecodeKit
 extension Clip
 {
     // see https://opentimelineio.readthedocs.io/en/latest/tutorials/time-ranges.html
-    func toAVAssetAndMapping(baseURL:URL? = nil, useTimecode:Bool = true, rescaleToAsset:Bool = true) throws -> (asset:AVAsset, timeMaping:CMTimeMapping)?
+    func toAVAssetAndMapping(baseURL:URL? = nil, trackType:AVMediaType,  useTimecode:Bool = true, rescaleToAsset:Bool = true) throws -> (asset:AVAsset, timeMaping:CMTimeMapping)?
     {
         
         let asset:AVURLAsset
@@ -21,6 +21,9 @@ extension Clip
         if let externalReference = self.mediaReference as? ExternalReference,
             let maybeAsset = externalReference.toAVAsset(baseURL: baseURL)
         {
+            
+            guard !maybeAsset.tracks(withMediaType: trackType).isEmpty else { return nil }
+            
             asset = maybeAsset
         }
         else
@@ -28,8 +31,11 @@ extension Clip
             //see AWS Picchu Edit - Premiere cant import either?
             //we have a generator or just a dead reference?
             let missingMediaURL = Bundle.main.url(forResource: "MediaNotFound", withExtension: "mp4")!
+            let missingAsset = AVURLAsset(url: missingMediaURL)
             
-            asset = AVURLAsset(url: missingMediaURL)
+            guard !missingAsset.tracks(withMediaType: trackType).isEmpty else { return nil }
+            
+            asset = missingAsset
         }
         
         var timeRangeInAsset = try self.trimmedRange()
