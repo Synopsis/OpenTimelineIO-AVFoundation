@@ -12,7 +12,7 @@ import SwiftUI
 
 struct ItemView : View {
     
-    @State var item:OpenTimelineIO.Item
+    let item:OpenTimelineIO.Item
     @State var backgroundColor:Color
     @State var selected:Bool
 
