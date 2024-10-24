@@ -95,6 +95,19 @@ extension ExternalReference
             supported = true
         case "mov":
             supported = true
+        case "m4v":
+            supported = true
+           
+            
+        case "m4a":
+            supported = true
+        case "mp3":
+            supported = true
+        case "aiff":
+            supported = true
+        case "wav":
+            supported = true
+
             
         default:
             supported = false
