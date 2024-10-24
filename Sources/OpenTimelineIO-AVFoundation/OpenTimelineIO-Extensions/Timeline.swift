@@ -83,16 +83,17 @@ public extension Timeline
                     let compositionVideoTrack = compositionVideoTrack //composition.mutableTrack(compatibleWith: sourceAssetFirstVideoTrack) ??
                 else
                 {
-                    
                     // TODO: GAP !?
                     if let gap = item as? Gap,
                        let compositionVideoTrack = compositionVideoTrack
                     {
                         do
                         {
-                            let gapTimeRange = try gap.rangeInParent().toCMTimeRange()
+                            let gapTimeRangeOTIO = try gap.trimmedRangeInParent() ?? gap.rangeInParent()
+                            let gapTimeRange = gapTimeRangeOTIO.toCMTimeRange()
                             compositionVideoTrack.insertEmptyTimeRange(gapTimeRange)
-                            
+                            compositionVideoTrack.preferredTransform = .identity
+
                             let compositionLayerInstruction = AVMutableVideoCompositionLayerInstruction(assetTrack: compositionVideoTrack)
                             let compositionLayerInstructions = [compositionLayerInstruction]
 
@@ -100,8 +101,8 @@ public extension Timeline
                             let compositionVideoInstruction = AVMutableVideoCompositionInstruction()
                             compositionVideoInstruction.layerInstructions = compositionLayerInstructions
                             compositionVideoInstruction.timeRange = gapTimeRange
-                            compositionVideoInstruction.enablePostProcessing = true
-                            compositionVideoInstruction.backgroundColor = CGColor.black
+                            compositionVideoInstruction.enablePostProcessing = false
+                            compositionVideoInstruction.backgroundColor = CGColor(gray: 0, alpha: 0)
                             compositionVideoInstructions.append( compositionVideoInstruction)
                         }
                         catch
@@ -109,6 +110,11 @@ public extension Timeline
                             continue
                         }
                     }
+                    else
+                    {
+                        print("Got unsupported Item type")
+                    }
+                    
                     continue
                 }
                 
@@ -153,7 +159,7 @@ public extension Timeline
                 compositionVideoInstruction.layerInstructions = compositionLayerInstructions
                 compositionVideoInstruction.timeRange = trackTimeRange
                 compositionVideoInstruction.enablePostProcessing = true
-                compositionVideoInstruction.backgroundColor = CGColor(gray: 0, alpha: 1)
+                compositionVideoInstruction.backgroundColor = CGColor(gray: 0, alpha: 0)
                 compositionVideoInstructions.append( compositionVideoInstruction)
             }
         }
