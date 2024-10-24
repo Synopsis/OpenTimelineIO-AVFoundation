@@ -91,6 +91,14 @@ public extension Timeline
                         {
                             let gapTimeRangeOTIO = try gap.trimmedRangeInParent() ?? gap.rangeInParent()
                             let gapTimeRange = gapTimeRangeOTIO.toCMTimeRange()
+                            
+                            guard
+                                gapTimeRange.duration != .zero
+                            else
+                            {
+                                continue
+                            }
+                            
                             compositionVideoTrack.insertEmptyTimeRange(gapTimeRange)
                             compositionVideoTrack.preferredTransform = .identity
 
@@ -122,6 +130,13 @@ public extension Timeline
                 let trackTimeRange = clipTimeMapping.source
                 let sourceAssetTimeRange = clipTimeMapping.target
                    
+                guard trackTimeRange.duration != .zero,
+                      sourceAssetTimeRange.duration != .zero
+                else
+                {
+                    continue
+                }
+                
                 // We attempt to re-use a track per OTIO track, but we may have CMFormatDesc inconsistencies which means insertion will fails
                 // If so - we make a new one  
                 do
@@ -130,7 +145,7 @@ public extension Timeline
                 }
                 catch
                 {
-                    if let compositionVideoTrack = composition.mutableTrack(compatibleWith: sourceAssetFirstVideoTrack) ?? composition.addMutableTrack(withMediaType: .video, preferredTrackID: kCMPersistentTrackID_Invalid)
+                    if let compositionVideoTrack = composition.addMutableTrack(withMediaType: .video, preferredTrackID: kCMPersistentTrackID_Invalid)
                     {
                         try compositionVideoTrack.insertTimeRange(sourceAssetTimeRange, of: sourceAssetFirstVideoTrack, at: trackTimeRange.start)
                     }
@@ -172,7 +187,7 @@ public extension Timeline
             {
                 guard
                     let clip = child as? Clip,
-                    let (sourceAsset, clipTimeMapping) = try clip.toAVAssetAndMapping(baseURL: baseURL, useTimecode: useAssetTimecode, rescaleToAsset: rescaleToAsset),
+                    let (sourceAsset, clipTimeMapping) = try clip.toAVAssetAndMapping(baseURL: baseURL, trackType: .audio, useTimecode: useAssetTimecode, rescaleToAsset: rescaleToAsset),
                     let sourceAssetFirstAudioTrack = try await sourceAsset.loadTracks(withMediaType: .audio).first,
                     let compositionAudioTrack = compositionAudioTrack
                 else
@@ -183,7 +198,16 @@ public extension Timeline
                     {
                         do
                         {
-                            let gapTimeRange = try gap.rangeInParent().toCMTimeRange()
+                            let gapTimeRangeOTIO = try gap.trimmedRangeInParent() ?? gap.rangeInParent()
+                            let gapTimeRange = gapTimeRangeOTIO.toCMTimeRange()
+                            
+                            guard
+                                gapTimeRange.duration != .zero
+                            else
+                            {
+                                continue
+                            }
+                            
                             compositionAudioTrack.insertEmptyTimeRange(gapTimeRange)
                             
                             let audioMixParams = AVMutableAudioMixInputParameters(track: compositionAudioTrack)
@@ -202,6 +226,13 @@ public extension Timeline
                 let trackTimeRange = clipTimeMapping.source
                 let sourceAssetTimeRange = clipTimeMapping.target
                 
+                guard trackTimeRange.duration != .zero,
+                      sourceAssetTimeRange.duration != .zero
+                else
+                {
+                    continue
+                }
+                
                 // We attempt to re-use a track per OTIO track, but we may have CMFormatDesc inconsistencies which means insertion will fails
                 // If so - we make a new one
                 do
@@ -210,9 +241,15 @@ public extension Timeline
                 }
                 catch
                 {
-                    if let compositionAudioTrack = composition.mutableTrack(compatibleWith: sourceAssetFirstAudioTrack) ?? composition.addMutableTrack(withMediaType: .audio, preferredTrackID: kCMPersistentTrackID_Invalid)
+                    if let compositionAudioTrack = composition.addMutableTrack(withMediaType: .audio, preferredTrackID: kCMPersistentTrackID_Invalid)
                     {
-                        try compositionAudioTrack.insertTimeRange(sourceAssetTimeRange, of: sourceAssetFirstAudioTrack, at: trackTimeRange.start)
+                        do  {
+                            try compositionAudioTrack.insertTimeRange(sourceAssetTimeRange, of: sourceAssetFirstAudioTrack, at: trackTimeRange.start)
+                            
+                        }
+                        catch {
+                            print("swallowing traack insertion error \(error)")
+                        }
                     }
                 }
                 
@@ -220,8 +257,6 @@ public extension Timeline
 //                let unscaledTrackTime = CMTimeRangeMake(start: trackTimeRange.start, duration: sourceAssetTimeRange.duration)
 //                compositionAudioTrack.scaleTimeRange(unscaledTrackTime, toDuration: trackTimeRange.duration)
                 
-                compositionAudioTrack.isEnabled = try await sourceAssetFirstAudioTrack.load(.isEnabled)
-
                 // TODO: a few milliseconds fade up / fade out to avoid pops
                 let audioMixParams = AVMutableAudioMixInputParameters(track: compositionAudioTrack)
 
@@ -229,9 +264,16 @@ public extension Timeline
             }
         }
 
+        
+        
         // Composition Validation
         for track in composition.tracks
         {
+            if track.segments.isEmpty
+            {
+                composition.removeTrack(track)
+            }
+            
             do {
                 try track.validateSegments(track.segments)
             }
@@ -246,7 +288,8 @@ public extension Timeline
         // TODO: - Custom Resolution overrides?
         videoComposition.renderSize = largestRasterSizeFound //CGSize(width: 1920, height: 1080)
         videoComposition.renderScale = 1.0
- 
+        audioMix.inputParameters = compositionAudioMixParams
+
         // TODO: It seems as though our custom instructions occasionally have a minor time gap
         // likely due to numerical conversion precision which throws a validation error
         // Im not entirely sure what to do there!
@@ -261,7 +304,6 @@ public extension Timeline
         // Video Composition Validation
         try await videoComposition.isValid(for: composition, timeRange: CMTimeRange(start: .zero, end: composition.duration), validationDelegate:validator)
 
-        audioMix.inputParameters = compositionAudioMixParams
         
         return (composition:composition, videoComposition:videoComposition, audioMix:audioMix)
     }
