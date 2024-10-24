@@ -18,20 +18,52 @@ struct TimelineView : View {
     @Binding var secondsToPixels:Double
     @Binding var selectedItem:Item?
     
+    @State private var hitTestEnabled:Bool = false
+    
     var body: some View
+    {
+        // Lame scroll view optimizations.
+        // It seems as though hit testing for selection causes massive slowdowns in SwiftUI
+        // Due to how recursive hit testing happens
+        // We disable hit testing using macos 15 onScrollPhaseChange
+        
+        if #available(macOS 15.0, *) {
+            ScrollView([.horizontal, .vertical])
+            {
+                self.timelineView()
+                    .allowsHitTesting(self.hitTestEnabled)
+                    .drawingGroup(opaque: true)
+
+            }
+            .onScrollPhaseChange({ oldPhase, newPhase, context in
+                guard oldPhase != newPhase else { return }
+                
+                self.hitTestEnabled = !newPhase.isScrolling
+            })
+        }
+        else
+        {
+            // Fallback on earlier versions
+            ScrollView([.horizontal, .vertical])
+            {
+                self.timelineView()
+            }
+        }
+    }
+    
+    func timelineView() -> some View
     {
         let videoTracks = timeline.videoTracks
         let audioTracks = timeline.audioTracks
-        
-        ScrollView([.horizontal, .vertical])
-        {
+
+        return
             VStack(alignment:.leading, spacing: 3)
             {
                 TimeRulerView(timeline: self.timeline, secondsToPixels: self.$secondsToPixels, currentTime: self.$currentTime )
                     .frame(height: 40)
                     .offset(x:100)
-//
-//                Divider()
+                //
+                //                Divider()
                 
                 ForEach(0..<videoTracks.count, id: \.self) { index in
                     
@@ -44,7 +76,7 @@ struct TimelineView : View {
                 }
                 
                 ForEach(0..<audioTracks.count, id: \.self) { index in
-
+                    
                     let track = audioTracks[index]
                     
                     TrackView(track: track,
@@ -55,6 +87,6 @@ struct TimelineView : View {
             }
             .frame(height: CGFloat((videoTracks.count + audioTracks.count)) * 25 + 50 )
             .frame(maxHeight: CGFloat((videoTracks.count + audioTracks.count)) * 500)
-        }
+        
     }
 }
