@@ -18,7 +18,7 @@ struct TimelineView : View {
     @Binding var secondsToPixels:Double
     @Binding var selectedItem:Item?
     
-    @State private var hitTestEnabled:Bool = false
+    @State private var hitTestEnabled:Bool = true
     
     var body: some View
     {
