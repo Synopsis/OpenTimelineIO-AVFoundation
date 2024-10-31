@@ -36,13 +36,13 @@ public extension AVComposition
         // So some integrations presume the rate of the global start time
         // implies the frame rate of the sequence or project
         
-        let minFrameDuration = self.tracks(withMediaType: .video).reduce(.positiveInfinity) { min($0, $1.minFrameDuration) }
+        let maxNominalFrameRate = self.tracks(withMediaType: .video).reduce(Float.zero) { max($0, $1.nominalFrameRate) }
         
         let globalStartTime:RationalTime
         
-        if minFrameDuration.isValid && minFrameDuration != .positiveInfinity
+        if maxNominalFrameRate != .zero
         {
-            globalStartTime = config.globalStartTime.rescaled(to: Double(minFrameDuration.timescale) )
+            globalStartTime = config.globalStartTime.rescaled(to: Double(maxNominalFrameRate) )
         }
         else
         {
