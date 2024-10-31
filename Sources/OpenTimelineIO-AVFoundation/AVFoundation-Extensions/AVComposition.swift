@@ -32,7 +32,24 @@ public extension AVComposition
     {
         print("Making Timeline from Composition", self)
         
-        let timeline = Timeline(name: name, globalStartTime: config.globalStartTime )
+        // Today OTIO has no way of describing frame rates
+        // So some integrations presume the rate of the global start time
+        // implies the frame rate of the sequence or project
+        
+        let minFrameDuration = self.tracks(withMediaType: .video).reduce(.positiveInfinity) { min($0, $1.minFrameDuration) }
+        
+        let globalStartTime:RationalTime
+        
+        if minFrameDuration.isValid && minFrameDuration != .positiveInfinity
+        {
+            globalStartTime = config.globalStartTime.rescaled(to: Double(minFrameDuration.timescale) )
+        }
+        else
+        {
+            globalStartTime = config.globalStartTime
+        }
+        
+        let timeline = Timeline(name: name, globalStartTime: globalStartTime )
 
         let all_tracks:[Track] = try self.tracks.compactMap { try $0.toOTIOTrack(config: config) }
 
