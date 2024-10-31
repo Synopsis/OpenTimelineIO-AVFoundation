@@ -23,9 +23,14 @@ extension ExternalReference
         
         if targetURL.hasPrefix("file://")
         {
+            if let fileURL =  URL(string: targetURL),
+                let asset = self.testForAsset(url:fileURL, baseURL: baseURL)
+            {
+                return asset
+            }
+
             let fileURL = URL(fileURLWithPath:targetURL.replacingOccurrences(of:"file://", with: "./"))
-            if
-               let asset = self.testForAsset(url:fileURL, baseURL:baseURL)
+            if let asset = self.testForAsset(url:fileURL, baseURL:baseURL)
             {
                 return asset
             }
@@ -45,7 +50,7 @@ extension ExternalReference
     
     fileprivate func testForAsset(url:URL, baseURL:URL?) -> AVURLAsset?
     {
-        return self.testForAsset(path: url.standardizedFileURL.absoluteURL.path(), baseURL: baseURL)
+        return self.testForAsset(path: url.standardizedFileURL.absoluteURL.path(percentEncoded: false), baseURL: baseURL)
     }
     
     fileprivate func testForAsset(path:String, baseURL:URL?) -> AVURLAsset?
