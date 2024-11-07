@@ -140,7 +140,14 @@ Generally if Quicktime or Final Cut Pro X Can support it, it should just work.
 | Apple ProRes | :white_check_mark: | Requires [Apple Pro Video Formats](https://support.apple.com/kb/DL2100?locale=en_US) for some variants | 
 | Apple Intermediate Codec | :white_check_mark: | Requires [Apple Pro Video Formats](https://support.apple.com/kb/DL2100?locale=en_US) for some variants
 | MXF wrapped Pro Res | :white_check_mark: | For developers: Requires  `MTRegisterProfessionalVideoWorkflowFormatReaders()` and `VTRegisterProfessionalVideoWorkflowVideoDecoders()`  to be enabled|
-| MXF Wrapped DNx | :white_check_mark: | Requires [Apple Pro Video Formats](https://support.apple.com/kb/DL2100?locale=en_US) for Avid DNxHD® / Avid DNxHR®. For developers: Requires `MTRegisterProfessionalVideoWorkflowFormatReaders()` and `VTRegisterProfessionalVideoWorkflowVideoDecoders()`  to be enabled - only some DNx variants work| 
+| MXF Wrapped DNx | :white_check_mark: | Requires [Apple Pro Video Formats](https://support.apple.com/kb/DL2100?locale=en_US) for Avid DNxHD® / Avid DNxHR®. For developers: Requires `MTRegisterProfessionalVideoWorkflowFormatReaders()` and `VTRegisterProfessionalVideoWorkflowVideoDecoders()`  to be enabled - only some DNx variants work: | 
+| MXF Wrapped DNxHD_36 | :white_check_mark: | |
+| MXF Wrapped DNxHD_80 | :warning: | (codec specifically gets subsampled down to 1440 x 1080)|
+| MXF Wrapped DNxHD_115 | :white_check_mark:| |
+| MXF Wrapped DNxHD_175 | :white_check_mark:| |
+| MXF Wrapped DNxHR_SQ | :white_check_mark:| |
+| MXF Wrapped DNxHR_LB | :white_check_mark:| |
+| MXF Wrapped DNxHR_HQ | :white_check_mark:| |
 | Image Frames | :x: | Requires custom compositor | 
 | Image Sequences | :x: | Requires custom compositor| 
 | Raw Formats (BRaw, Red, etc) | :x: | Requires you to have SDK - manage decode and roll your own custom compositor | 
