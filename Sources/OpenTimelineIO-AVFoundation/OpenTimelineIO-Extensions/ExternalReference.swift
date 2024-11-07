@@ -81,7 +81,22 @@ extension ExternalReference
                     return self.tryLoadAssetAtResolvedURL(url: sourceURL)
                 }
             }
+            
+            // edge case -
+            // if a OTIO file was packaged with media but paths werent linked, we should check CWD for the file
+            // as a last case attempt.
+            if let filename = path.components(separatedBy: "/").last
+            {
+                let newFileURL = baseURL.appending(component: filename)
+                
+                return self.tryLoadAssetAtResolvedURL(url: newFileURL)
+            }
+            
+            
         }
+        
+       
+        
         
         let missingMediaURL = Bundle.main.url(forResource: "MediaNotFound", withExtension: "mp4")!
         
@@ -102,7 +117,9 @@ extension ExternalReference
             supported = true
         case "m4v":
             supported = true
-           
+        case "mxf":
+            supported = true
+            
             
         case "m4a":
             supported = true
@@ -120,12 +137,12 @@ extension ExternalReference
        
         if supported
         {
-            return AVURLAsset(url: url)
+            return AVURLAsset(url: url, options: [AVURLAssetPreferPreciseDurationAndTimingKey : true])
         }
         
         let notSupportedMedia = Bundle.main.url(forResource: "MediaNotSupported", withExtension: "mp4")!
         
-        return AVURLAsset(url: notSupportedMedia)
+        return AVURLAsset(url: notSupportedMedia, options: [AVURLAssetPreferPreciseDurationAndTimingKey : true])
 
     }
     
