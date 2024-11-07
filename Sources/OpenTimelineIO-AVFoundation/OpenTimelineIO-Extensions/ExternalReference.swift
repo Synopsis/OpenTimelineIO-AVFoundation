@@ -102,7 +102,9 @@ extension ExternalReference
             supported = true
         case "m4v":
             supported = true
-           
+        case "mxf":
+            supported = true
+            
             
         case "m4a":
             supported = true
