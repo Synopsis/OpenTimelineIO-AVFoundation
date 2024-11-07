@@ -43,7 +43,9 @@ extension Clip
 
         var minFrameDuration:RationalTime? = nil
         if let videoTrack = asset.tracks(withMediaType: .video).first,
-            rescaleToAsset
+            rescaleToAsset,
+           videoTrack.minFrameDuration.isValid,
+           videoTrack.minFrameDuration != .zero
         {
             minFrameDuration = videoTrack.minFrameDuration.toOTIORationalTime()
         }
