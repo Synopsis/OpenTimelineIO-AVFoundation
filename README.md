@@ -4,7 +4,7 @@
 <img width="256" alt="OTIO Reader Icon" src="https://github.com/user-attachments/assets/f8fa96f7-06da-45c9-a00e-62c5d3e57377" align="center">
 <img width="1141" alt="image" src="https://github.com/user-attachments/assets/fbf16b05-7495-4299-bd21-2d563d9f5aaf", align="center">
             <div>
-                        Loading OpenTimeline IO files opened and playing in the included OpenTimelineIO Reader sample app:
+                        Realtime playback of OpenTimelineIO files with the sample app OpenTimelineIO Reader:
             </div>
 </div>
 
