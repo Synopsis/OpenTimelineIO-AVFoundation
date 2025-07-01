@@ -53,6 +53,7 @@ struct ItemView : View {
                 }
             }
             .frame(width: self.getSafeWidth())
+            
 //            .offset(x:self.getSafePositionX() )//, y:geometry.size.height * 0.5 )
     }
 
@@ -81,4 +82,11 @@ struct ItemView : View {
     {
         return  self.getSafeRange().startTime.toSeconds() * self.secondsToPixels// + self.getSafeWidth()/2.0
     }
+    
+//    @ViewBuilder func getMarkerView() -> some View
+//    {
+//        ForEach(self.item.markers) { marker in
+//            
+//        }
+//    }
 }
