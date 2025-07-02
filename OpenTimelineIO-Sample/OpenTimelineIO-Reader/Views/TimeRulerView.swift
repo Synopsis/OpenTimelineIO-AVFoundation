@@ -11,6 +11,9 @@ import TimecodeKit
 import SwiftUI
 struct TimeRulerView: View
 {
+    
+    static let VerticalPadding:CGFloat = 100
+    
     let timeline: OpenTimelineIO.Timeline
     @Binding var secondsToPixels: Double
     @Binding var currentTime: OpenTimelineIO.RationalTime
@@ -18,6 +21,8 @@ struct TimeRulerView: View
     var body: some View
     {
         Canvas { context, size in
+            
+            context.translateBy(x: TrackView.trackHeaderWidth, y: 0)
             
             let safeRange = getSafeRange()
             let startSeconds = safeRange.startTime.toSeconds()
@@ -32,7 +37,7 @@ struct TimeRulerView: View
             drawMarkers(context: context, startSeconds: startSeconds, endSeconds: endSeconds, secondsToPixels: secondsToPixels, size: size)
             
         }
-        .frame(width: self.getSafeWidth())
+        .frame(width: self.getSafeWidth() + TrackView.trackHeaderWidth)
     }
     
     func drawMarkers(context: GraphicsContext, startSeconds: Double, endSeconds: Double, secondsToPixels: Double, size: CGSize)
