@@ -19,7 +19,7 @@ struct MarkerView : View {
     var body: some View
     {
         self.colorForMarker()
-            .frame(width: self.getSafeWidth(), height: 7.0, alignment: .leading )
+            .frame(width: self.getSafeWidth(), height: 7.0 )
             .offset(x:self.getSafePositionX() )
     }
     
