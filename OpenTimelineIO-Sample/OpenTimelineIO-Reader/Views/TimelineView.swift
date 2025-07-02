@@ -55,53 +55,58 @@ struct TimelineView : View {
     {
         let videoTracks = timeline.videoTracks
         let audioTracks = timeline.audioTracks
-
         
-            VStack(alignment:.leading, spacing: 3)
-            {
+
+        VStack(alignment:.leading, spacing: 3)
+        {
                 TimeRulerView(timeline: self.timeline, secondsToPixels: self.$secondsToPixels, currentTime: self.$currentTime )
                     .frame(height: 40)
                     .offset(x:100)
-                    .overlay( self.getMarkerView( ) )
-
-                //
+//                    .overlay(
+//                            self.getMarkerView( )
+//                    )
+            //
+            
+            ForEach(0..<videoTracks.count, id: \.self) { index in
                 
-                ForEach(0..<videoTracks.count, id: \.self) { index in
-                    
-                    // Reverse
-                    let track = videoTracks[(videoTracks.count - 1 ) - index]
-                    
-                    TrackView(track: track,
-                              backgroundColor: Color("VideoTrackBaseColor"),
-                              secondsToPixels: self.$secondsToPixels,
-                              selectedItem: self.$selectedItem )
-                }
+                // Reverse
+                let track = videoTracks[(videoTracks.count - 1 ) - index]
                 
-                Divider()
-
-                ForEach(0..<audioTracks.count, id: \.self) { index in
-                    
-                    let track = audioTracks[index]
-                    
-                    TrackView(track: track,
-                              backgroundColor: Color("AudioTrackBaseColor"),
-                              secondsToPixels: self.$secondsToPixels,
-                              selectedItem: self.$selectedItem )
-                }
+                TrackView(track: track,
+                          backgroundColor: Color("VideoTrackBaseColor"),
+                          secondsToPixels: self.$secondsToPixels,
+                          selectedItem: self.$selectedItem )
             }
-            .frame(height: CGFloat((videoTracks.count + audioTracks.count)) * 25 + 50 )
-            .frame(maxHeight: CGFloat((videoTracks.count + audioTracks.count)) * 500)
-    }
-    
-    @ViewBuilder func getMarkerView() -> some View
-    {
-        HStack(alignment: .top)
-        {
-            let markerRange = (self.timeline.tracks?.markers.startIndex ?? 0) ..< (self.timeline.tracks?.markers.endIndex ?? 0)
-            ForEach(markerRange, id:\.self) { markerIndex in
-                MarkerView(marker: self.timeline.tracks!.markers[markerIndex],
-                           secondsToPixels: self.$secondsToPixels)
+            
+            Divider()
+            
+            ForEach(0..<audioTracks.count, id: \.self) { index in
+                
+                let track = audioTracks[index]
+                
+                TrackView(track: track,
+                          backgroundColor: Color("AudioTrackBaseColor"),
+                          secondsToPixels: self.$secondsToPixels,
+                          selectedItem: self.$selectedItem )
             }
         }
+        .frame(height: CGFloat((videoTracks.count + audioTracks.count)) * 25 + 50 )
+        .frame(maxHeight: CGFloat((videoTracks.count + audioTracks.count)) * 500)
+
     }
+    
+//    @ViewBuilder func getMarkerView() -> some View
+//    {
+//        HStack(alignment: .top, spacing: 0)
+//        {
+//            let markerRange = (self.timeline.tracks?.markers.startIndex ?? 0) ..< (self.timeline.tracks?.markers.endIndex ?? 0)
+//            ForEach(markerRange, id:\.self) { markerIndex in
+//                MarkerView(marker: self.timeline.tracks!.markers[markerIndex],
+//                           secondsToPixels: self.$secondsToPixels)
+//            }
+//        }
+////        .frame(width: self.getSafeWidth(), alignment: .leading )
+//        .frame(alignment: .leading)
+//        .border(Color.purple, width: 2)
+//    }
 }

@@ -65,6 +65,7 @@ struct ContentView: View
                     self.controlsViewStack()
                 }
             }
+            
         }
         detail: {
             ItemInspectorView(selectedItem: self.$selectedItem)
