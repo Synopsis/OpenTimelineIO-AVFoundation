@@ -23,32 +23,70 @@ struct TimeRulerView: View
             let startSeconds = safeRange.startTime.toSeconds()
             let endSeconds = safeRange.endTimeInclusive().toSeconds()
 
-            if let tracks = self.timeline.tracks
-            {
-                let markerRange = tracks.markers.startIndex ..< tracks.markers.endIndex
-                for markerIndex in markerRange
-                {
-                    let marker = tracks.markers[markerIndex]
-                    let x = marker.markedRange.startTime.toSeconds() * self.secondsToPixels// +
-                    
-                    let path = Path(roundedRect: CGRect(origin: CGPoint(x: x, y: 0),
-                                                        size: CGSize(width: 5.0, height: 9.0)),
-                                    cornerRadius: 3.0)
-                    
-                    context.fill(path, with: .color(.red))
-                }
-            }
             
+            // Draw ticks (including frame-level ticks)
+            drawTicks(context: context, startSeconds: startSeconds, endSeconds: endSeconds, secondsToPixels: secondsToPixels, size: size)
             
             // Draw playhead
             drawPlayhead(context: context, currentTime: currentTime, secondsToPixels: secondsToPixels, size: size)
-
-            // Draw ticks (including frame-level ticks)
-            drawTicks(context: context, startSeconds: startSeconds, endSeconds: endSeconds, secondsToPixels: secondsToPixels, size: size)
+            
+            drawMarkers(context: context, startSeconds: startSeconds, endSeconds: endSeconds, secondsToPixels: secondsToPixels, size: size)
             
         }
         .frame(width: self.getSafeWidth())
     }
+    
+    func drawMarkers(context: GraphicsContext, startSeconds: Double, endSeconds: Double, secondsToPixels: Double, size: CGSize)
+    {
+        if let tracks = self.timeline.tracks
+        {
+            let markerRange = tracks.markers.startIndex ..< tracks.markers.endIndex
+            for markerIndex in markerRange
+            {
+                let marker = tracks.markers[markerIndex]
+                let x = marker.markedRange.startTime.toSeconds() * self.secondsToPixels// +
+                
+//                    let path = Path(roundedRect: CGRect(origin: CGPoint(x: x, y: 13),
+//                                                        size: CGSize(width: 3.0, height: 9.0)),
+//                                    cornerRadius: 1.0)
+//
+//                    context.fill(path, with: .color(.red))
+                
+                let text = marker.name
+                
+                if #available(macOS 14.0, *)
+                {
+                    context.draw(
+                        Text("\(Image(systemName: "arrowtriangle.down.fill"))")
+                            .font(.system(size: 10))
+                            .foregroundStyle(.red),
+                        at: CGPoint(x: x + 0.5, y: 21))
+                    
+                    
+                    context.draw(
+                        Text(text)
+                            .font(.system(size: 10))
+                            .foregroundStyle(.white),
+                        at: CGPoint(x: x , y: 12))
+                }
+                else
+                {
+                    context.draw(
+                        Text("\(Image(systemName: "arrowtriangle.down.fill"))")
+                            .font(.system(size: 10))
+                            .foregroundColor(.red),
+                        at: CGPoint(x: x + 0.5, y: 21))
+                    
+                    context.draw(
+                        Text(text)
+                            .font(.system(size: 10))
+                            .foregroundColor(.orange),
+                        at: CGPoint(x: x , y: 12))
+                }
+            }
+        }
+    }
+    
     func drawTicks(context: GraphicsContext, startSeconds: Double, endSeconds: Double, secondsToPixels: Double, size: CGSize)
     {
         if self.secondsToPixels > 75
