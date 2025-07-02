@@ -46,7 +46,11 @@ struct TrackView : View
                 }
             }
         }
+<<<<<<< HEAD
         .frame(width: self.getSafeWidth(), height:Self.trackHeight, alignment: .leading )
+=======
+        .frame(width: self.getSafeWidth(), alignment: .leading )
+>>>>>>> 883836b (Wire basic marker view up - need to validate placement logic)
         .overlay {
             self.getMarkerView()
         }

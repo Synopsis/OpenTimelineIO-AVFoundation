@@ -20,7 +20,6 @@ struct ItemView : View {
     
     var body: some View
     {
-
             ZStack {
                 
                 if let _ = item as? Gap
@@ -52,8 +51,10 @@ struct ItemView : View {
                     }
                 }
             }
-            .frame(width: self.getSafeWidth())
-            
+            .frame(width: self.getSafeWidth(), alignment: .leading )
+            .overlay {
+                self.getMarkerView()
+            }
 //            .offset(x:self.getSafePositionX() )//, y:geometry.size.height * 0.5 )
     }
 
@@ -83,10 +84,15 @@ struct ItemView : View {
         return  self.getSafeRange().startTime.toSeconds() * self.secondsToPixels// + self.getSafeWidth()/2.0
     }
     
-//    @ViewBuilder func getMarkerView() -> some View
-//    {
-//        ForEach(self.item.markers) { marker in
-//            
-//        }
-//    }
+    @ViewBuilder func getMarkerView() -> some View
+    {
+        HStack(alignment: .top)
+        {
+            let markerRange = self.item.markers.startIndex ..< self.item.markers.endIndex
+            ForEach(markerRange, id:\.self) { markerIndex in
+                MarkerView(marker: self.item.markers[markerIndex],
+                           secondsToPixels: self.$secondsToPixels)
+            }
+        }
+    }
 }
