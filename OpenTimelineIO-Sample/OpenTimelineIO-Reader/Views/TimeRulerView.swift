@@ -23,7 +23,6 @@ struct TimeRulerView: View
             let startSeconds = safeRange.startTime.toSeconds()
             let endSeconds = safeRange.endTimeInclusive().toSeconds()
 
-            
             // Draw ticks (including frame-level ticks)
             drawTicks(context: context, startSeconds: startSeconds, endSeconds: endSeconds, secondsToPixels: secondsToPixels, size: size)
             
@@ -38,7 +37,7 @@ struct TimeRulerView: View
     
     func drawMarkers(context: GraphicsContext, startSeconds: Double, endSeconds: Double, secondsToPixels: Double, size: CGSize)
     {
-        let y = 15.0
+        let y = 20.0
         if let tracks = self.timeline.tracks
         {
             let markerRange = tracks.markers.startIndex ..< tracks.markers.endIndex
@@ -85,7 +84,7 @@ struct TimeRulerView: View
                     )
                 }
                 
-                let tickHeight = 20.0
+                let tickHeight = 24.0
 
                 // Draw tick line
                 let tickRect = CGRect(x: x, y: size.height - tickHeight, width: 1, height: tickHeight)
@@ -177,7 +176,7 @@ struct TimeRulerView: View
         }
         
         let playheadPositionX = currentTime.toSeconds() * secondsToPixels
-        let playheadRect = CGRect(x: playheadPositionX, y: 20, width: 1, height: size.height-20)
+        let playheadRect = CGRect(x: playheadPositionX, y: 22, width: 1, height: size.height - 22)
 //        context.fill(Path(playheadRect), with: .color(.orange))
         
         if #available(macOS 14.0, *)
