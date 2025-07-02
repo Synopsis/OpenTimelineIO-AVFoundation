@@ -59,7 +59,7 @@ struct TimeRulerView: View
                         Text("\(Image(systemName: "arrowtriangle.down.fill"))")
                             .font(.system(size: 10))
                             .foregroundStyle(.red),
-                        at: CGPoint(x: x + 0.5, y: y),
+                        at: CGPoint(x: x + 0.5, y: y)
                     )
                     
                     
@@ -77,7 +77,7 @@ struct TimeRulerView: View
                         Text("\(Image(systemName: "arrowtriangle.down.fill"))")
                             .font(.system(size: 10))
                             .foregroundColor(.red),
-                        at: CGPoint(x: x + 0.5, y: y),
+                        at: CGPoint(x: x + 0.5, y: y)
                     )
                     
                     context.draw(
