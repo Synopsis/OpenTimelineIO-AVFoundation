@@ -19,13 +19,13 @@ struct MarkerView : View {
     var body: some View
     {
         self.colorForMarker()
-            .frame(width: self.getSafeWidth() )
+            .frame(width: self.getSafeWidth(), height: 7.0, alignment: .leading )
             .offset(x:self.getSafePositionX() )
     }
     
     func getSafeWidth() -> CGFloat
     {
-        return max(self.marker.markedRange.duration.toSeconds() * self.secondsToPixels, 3.0)
+        return max(self.marker.markedRange.duration.toSeconds() * self.secondsToPixels, 5.0)
     }
     
     func getSafePositionX() -> CGFloat
@@ -50,7 +50,6 @@ struct MarkerView : View {
             case .magenta : return Color(red: 1.0, green: 0, blue: 1.0)
             case .black : return Color.black
             case .white : return Color.white
-
             }
         }
         
