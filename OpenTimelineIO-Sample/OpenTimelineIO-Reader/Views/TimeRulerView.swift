@@ -38,6 +38,7 @@ struct TimeRulerView: View
     
     func drawMarkers(context: GraphicsContext, startSeconds: Double, endSeconds: Double, secondsToPixels: Double, size: CGSize)
     {
+        let y = 15.0
         if let tracks = self.timeline.tracks
         {
             let markerRange = tracks.markers.startIndex ..< tracks.markers.endIndex
@@ -54,14 +55,17 @@ struct TimeRulerView: View
                         Text("\(Image(systemName: "arrowtriangle.down.fill"))")
                             .font(.system(size: 10))
                             .foregroundStyle(.red),
-                        at: CGPoint(x: x + 0.5, y: 21))
+                        at: CGPoint(x: x + 0.5, y: y),
+                    )
                     
                     
                     context.draw(
                         Text(text)
                             .font(.system(size: 10))
-                            .foregroundStyle(.white),
-                        at: CGPoint(x: x , y: 12))
+                            .foregroundStyle(.red),
+                        at: CGPoint(x: x + 9 , y: y - 2.0),
+                        anchor: UnitPoint(x: 0, y: 0.5)
+)
                 }
                 else
                 {
@@ -69,14 +73,23 @@ struct TimeRulerView: View
                         Text("\(Image(systemName: "arrowtriangle.down.fill"))")
                             .font(.system(size: 10))
                             .foregroundColor(.red),
-                        at: CGPoint(x: x + 0.5, y: 21))
+                        at: CGPoint(x: x + 0.5, y: y),
+                    )
                     
                     context.draw(
                         Text(text)
                             .font(.system(size: 10))
-                            .foregroundColor(.orange),
-                        at: CGPoint(x: x , y: 12))
+                            .foregroundColor(.red),
+                        at: CGPoint(x: x + 9 , y: y - 2.0),
+                        anchor: UnitPoint(x: 0, y: 0.5)
+                    )
                 }
+                
+                let tickHeight = 20.0
+
+                // Draw tick line
+                let tickRect = CGRect(x: x, y: size.height - tickHeight, width: 1, height: tickHeight)
+                context.fill(Path(tickRect), with: .color(.red))
             }
         }
     }
@@ -177,7 +190,7 @@ struct TimeRulerView: View
             
             context.draw(
                 Text(currentTimeLabel)
-                    .font(.system(size: 10))
+                    .font(.system(size: 10, weight: .bold))
                     .foregroundStyle(.orange),
                 at: CGPoint(x: playheadPositionX, y: 5))
         }
@@ -191,7 +204,7 @@ struct TimeRulerView: View
             
             context.draw(
                 Text(currentTimeLabel)
-                    .font(.system(size: 10))
+                    .font(.system(size: 10, weight: .bold))
                     .foregroundColor(.orange),
                 at: CGPoint(x: playheadPositionX, y: 5))
         }
