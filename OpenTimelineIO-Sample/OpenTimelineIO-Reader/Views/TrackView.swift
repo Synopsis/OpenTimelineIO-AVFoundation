@@ -45,6 +45,9 @@ struct TrackView : View
             }
         }
         .frame(width: self.getSafeWidth(), alignment: .leading )
+        .overlay {
+            self.getMarkerView()
+        }
 //        .position(x:self.getSafePositionX(), y:0 )
     }
     
@@ -93,5 +96,17 @@ struct TrackView : View
     func getSafePositionX() -> CGFloat
     {
         return self.getSafeRange().startTime.toSeconds() * self.secondsToPixels - self.getSafeWidth()/2.0
+    }
+    
+    @ViewBuilder func getMarkerView() -> some View
+    {
+        HStack(alignment: .top)
+        {
+            let markerRange = self.track.markers.startIndex ..< self.track.markers.endIndex
+            ForEach(markerRange, id:\.self) { markerIndex in
+                MarkerView(marker: self.track.markers[markerIndex],
+                           secondsToPixels: self.$secondsToPixels)
+            }
+        }
     }
 }
