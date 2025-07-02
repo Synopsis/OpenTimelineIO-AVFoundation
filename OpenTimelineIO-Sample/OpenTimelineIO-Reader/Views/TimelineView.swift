@@ -32,7 +32,7 @@ struct TimelineView : View {
             {
                 self.timelineView()
                     .allowsHitTesting(self.hitTestEnabled)
-//                    .drawingGroup(opaque: true)
+                    .drawingGroup(opaque: true)
 
             }
             .onScrollPhaseChange({ oldPhase, newPhase, context in
@@ -40,8 +40,6 @@ struct TimelineView : View {
                 
                 self.hitTestEnabled = !newPhase.isScrolling
             })
-            .frame(idealHeight: ( CGFloat((timeline.videoTracks.count + timeline.audioTracks.count)) * TrackView.trackHeight) + TimeRulerView.VerticalPadding )
-
         }
         else
         {
@@ -50,8 +48,6 @@ struct TimelineView : View {
             {
                 self.timelineView()
             }
-            .frame(idealHeight: ( CGFloat((timeline.videoTracks.count + timeline.audioTracks.count)) * TrackView.trackHeight) + TimeRulerView.VerticalPadding )
-
         }
     }
     
@@ -59,25 +55,19 @@ struct TimelineView : View {
     {
         let videoTracks = timeline.videoTracks
         let audioTracks = timeline.audioTracks
+        
 
-<<<<<<< HEAD
         VStack(alignment:.leading, spacing: 3)
         {
-            TimeRulerView(timeline: self.timeline, secondsToPixels: self.$secondsToPixels, currentTime: self.$currentTime )
-                    .frame(height: 50)
-            
-            ForEach(0..<videoTracks.count, id: \.self) { index in
-=======
-        
-            VStack(alignment:.leading, spacing: 3)
-            {
                 TimeRulerView(timeline: self.timeline, secondsToPixels: self.$secondsToPixels, currentTime: self.$currentTime )
                     .frame(height: 40)
                     .offset(x:100)
-                    .overlay( self.getMarkerView( ) )
-
-                //
->>>>>>> 883836b (Wire basic marker view up - need to validate placement logic)
+//                    .overlay(
+//                            self.getMarkerView( )
+//                    )
+            //
+            
+            ForEach(0..<videoTracks.count, id: \.self) { index in
                 
                 // Reverse
                 let track = videoTracks[(videoTracks.count - 1 ) - index]
@@ -87,12 +77,9 @@ struct TimelineView : View {
                           secondsToPixels: self.$secondsToPixels,
                           selectedItem: self.$selectedItem )
             }
-<<<<<<< HEAD
             
-            Spacer()
             Divider()
-            Spacer()
-
+            
             ForEach(0..<audioTracks.count, id: \.self) { index in
                 
                 let track = audioTracks[index]
@@ -103,22 +90,23 @@ struct TimelineView : View {
                           selectedItem: self.$selectedItem )
             }
         }
+        .frame(height: CGFloat((videoTracks.count + audioTracks.count)) * 25 + 50 )
+        .frame(maxHeight: CGFloat((videoTracks.count + audioTracks.count)) * 500)
 
-=======
-            .frame(height: CGFloat((videoTracks.count + audioTracks.count)) * 25 + 50 )
-            .frame(maxHeight: CGFloat((videoTracks.count + audioTracks.count)) * 500)
     }
     
-    @ViewBuilder func getMarkerView() -> some View
-    {
-        HStack(alignment: .top)
-        {
-            let markerRange = (self.timeline.tracks?.markers.startIndex ?? 0) ..< (self.timeline.tracks?.markers.endIndex ?? 0)
-            ForEach(markerRange, id:\.self) { markerIndex in
-                MarkerView(marker: self.timeline.tracks!.markers[markerIndex],
-                           secondsToPixels: self.$secondsToPixels)
-            }
-        }
->>>>>>> 883836b (Wire basic marker view up - need to validate placement logic)
-    }
+//    @ViewBuilder func getMarkerView() -> some View
+//    {
+//        HStack(alignment: .top, spacing: 0)
+//        {
+//            let markerRange = (self.timeline.tracks?.markers.startIndex ?? 0) ..< (self.timeline.tracks?.markers.endIndex ?? 0)
+//            ForEach(markerRange, id:\.self) { markerIndex in
+//                MarkerView(marker: self.timeline.tracks!.markers[markerIndex],
+//                           secondsToPixels: self.$secondsToPixels)
+//            }
+//        }
+////        .frame(width: self.getSafeWidth(), alignment: .leading )
+//        .frame(alignment: .leading)
+//        .border(Color.purple, width: 2)
+//    }
 }

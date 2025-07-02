@@ -54,6 +54,7 @@ struct ItemView : View {
             .frame(width: self.getSafeWidth(), alignment: .leading )
             .overlay {
                 self.getMarkerView()
+
             }
 //            .offset(x:self.getSafePositionX() )//, y:geometry.size.height * 0.5 )
     }
@@ -94,5 +95,7 @@ struct ItemView : View {
                            secondsToPixels: self.$secondsToPixels)
             }
         }
+        .frame(width: self.getSafeWidth(), alignment: .leading )
+
     }
 }

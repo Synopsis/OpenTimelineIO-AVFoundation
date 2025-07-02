@@ -11,9 +11,6 @@ import TimecodeKit
 import SwiftUI
 struct TimeRulerView: View
 {
-    
-    static let VerticalPadding:CGFloat = 100
-    
     let timeline: OpenTimelineIO.Timeline
     @Binding var secondsToPixels: Double
     @Binding var currentTime: OpenTimelineIO.RationalTime
@@ -22,82 +19,36 @@ struct TimeRulerView: View
     {
         Canvas { context, size in
             
-            context.translateBy(x: TrackView.trackHeaderWidth, y: 0)
-            
             let safeRange = getSafeRange()
             let startSeconds = safeRange.startTime.toSeconds()
             let endSeconds = safeRange.endTimeInclusive().toSeconds()
 
-            // Draw ticks (including frame-level ticks)
-            drawTicks(context: context, startSeconds: startSeconds, endSeconds: endSeconds, secondsToPixels: secondsToPixels, size: size)
+            if let tracks = self.timeline.tracks
+            {
+                let markerRange = tracks.markers.startIndex ..< tracks.markers.endIndex
+                for markerIndex in markerRange
+                {
+                    let marker = tracks.markers[markerIndex]
+                    let x = marker.markedRange.startTime.toSeconds() * self.secondsToPixels// +
+                    
+                    let path = Path(roundedRect: CGRect(origin: CGPoint(x: x, y: 0),
+                                                        size: CGSize(width: 5.0, height: 9.0)),
+                                    cornerRadius: 3.0)
+                    
+                    context.fill(path, with: .color(.red))
+                }
+            }
+            
             
             // Draw playhead
             drawPlayhead(context: context, currentTime: currentTime, secondsToPixels: secondsToPixels, size: size)
-            
-            drawMarkers(context: context, startSeconds: startSeconds, endSeconds: endSeconds, secondsToPixels: secondsToPixels, size: size)
-            
-        }
-        .frame(width: self.getSafeWidth() + TrackView.trackHeaderWidth)
-    }
-    
-    func drawMarkers(context: GraphicsContext, startSeconds: Double, endSeconds: Double, secondsToPixels: Double, size: CGSize)
-    {
-        let y = 20.0
-        if let tracks = self.timeline.tracks
-        {
-            let markerRange = tracks.markers.startIndex ..< tracks.markers.endIndex
-            for markerIndex in markerRange
-            {
-                let marker = tracks.markers[markerIndex]
-                let x = marker.markedRange.startTime.toSeconds() * self.secondsToPixels
-                
-                let text = marker.name
-                
-                if #available(macOS 14.0, *)
-                {
-                    context.draw(
-                        Text("\(Image(systemName: "arrowtriangle.down.fill"))")
-                            .font(.system(size: 10))
-                            .foregroundStyle(.red),
-                        at: CGPoint(x: x + 0.5, y: y),
-                    )
-                    
-                    
-                    context.draw(
-                        Text(text)
-                            .font(.system(size: 10))
-                            .foregroundStyle(.red),
-                        at: CGPoint(x: x + 9 , y: y - 2.0),
-                        anchor: UnitPoint(x: 0, y: 0.5)
-)
-                }
-                else
-                {
-                    context.draw(
-                        Text("\(Image(systemName: "arrowtriangle.down.fill"))")
-                            .font(.system(size: 10))
-                            .foregroundColor(.red),
-                        at: CGPoint(x: x + 0.5, y: y),
-                    )
-                    
-                    context.draw(
-                        Text(text)
-                            .font(.system(size: 10))
-                            .foregroundColor(.red),
-                        at: CGPoint(x: x + 9 , y: y - 2.0),
-                        anchor: UnitPoint(x: 0, y: 0.5)
-                    )
-                }
-                
-                let tickHeight = 24.0
 
-                // Draw tick line
-                let tickRect = CGRect(x: x, y: size.height - tickHeight, width: 1, height: tickHeight)
-                context.fill(Path(tickRect), with: .color(.red))
-            }
+            // Draw ticks (including frame-level ticks)
+            drawTicks(context: context, startSeconds: startSeconds, endSeconds: endSeconds, secondsToPixels: secondsToPixels, size: size)
+            
         }
+        .frame(width: self.getSafeWidth())
     }
-    
     func drawTicks(context: GraphicsContext, startSeconds: Double, endSeconds: Double, secondsToPixels: Double, size: CGSize)
     {
         if self.secondsToPixels > 75
@@ -181,7 +132,7 @@ struct TimeRulerView: View
         }
         
         let playheadPositionX = currentTime.toSeconds() * secondsToPixels
-        let playheadRect = CGRect(x: playheadPositionX, y: 22, width: 1, height: size.height - 22)
+        let playheadRect = CGRect(x: playheadPositionX, y: 20, width: 1, height: size.height-20)
 //        context.fill(Path(playheadRect), with: .color(.orange))
         
         if #available(macOS 14.0, *)
@@ -194,7 +145,7 @@ struct TimeRulerView: View
             
             context.draw(
                 Text(currentTimeLabel)
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.system(size: 10))
                     .foregroundStyle(.orange),
                 at: CGPoint(x: playheadPositionX, y: 5))
         }
@@ -208,7 +159,7 @@ struct TimeRulerView: View
             
             context.draw(
                 Text(currentTimeLabel)
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.system(size: 10))
                     .foregroundColor(.orange),
                 at: CGPoint(x: playheadPositionX, y: 5))
         }
