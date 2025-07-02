@@ -129,7 +129,6 @@ struct ItemInspectorView: View
         }
         .font(.system(size: 10))
         .listRowSeparator(.hidden)
-
     }
     
     func safeToJSON(item: Item) -> String
