@@ -14,8 +14,10 @@ import SwiftUI
 
 struct TrackView : View
 {
+    static let trackHeight:CGFloat = 35
+    
     let track:OpenTimelineIO.Track
-    @State var backgroundColor:Color
+    let backgroundColor:Color
     @Binding var secondsToPixels:Double
     @Binding var selectedItem:Item?
 
@@ -27,14 +29,13 @@ struct TrackView : View
         {
             Section(header: self.headerView() )
            {
-
                 ForEach(0..<items.count, id: \.self) { index in
                     let item = items[index]
 
                     ItemView(item: item,
                              backgroundColor: self.backgroundColor,
 //                             backgroundColor: [Color.red, Color.blue, Color.green, Color.yellow, Color.purple].randomElement()!,
-                             selected: item.isEquivalent(to: self.selectedItem ?? Item() ),
+                             selected: item == self.selectedItem,
                              secondsToPixels: self.$secondsToPixels)
                     
                     .onTapGesture {
@@ -44,7 +45,7 @@ struct TrackView : View
                 }
             }
         }
-        .frame(width: self.getSafeWidth(), alignment: .leading )
+        .frame(width: self.getSafeWidth(), height:Self.trackHeight, alignment: .leading )
         .overlay {
             self.getMarkerView()
         }
@@ -64,7 +65,7 @@ struct TrackView : View
                 .font(.system(size: 10))
                 .bold()
         }
-        .frame(width: 100)
+        .frame(width: 100, height:Self.trackHeight)
         .onTapGesture {
             self.selectedItem = track
             print("selected Item")

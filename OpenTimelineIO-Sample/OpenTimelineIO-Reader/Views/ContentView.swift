@@ -33,9 +33,7 @@ struct ContentView: View
         self.fileURL = fileURL
         
         guard let fileURL = fileURL else { return }
-        
-        
-       
+               
         self.document.setupPlayerWithBaseDocumentURL(fileURL)
     }
     
