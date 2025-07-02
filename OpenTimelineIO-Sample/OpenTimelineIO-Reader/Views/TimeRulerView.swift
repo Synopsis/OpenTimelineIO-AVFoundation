@@ -23,6 +23,23 @@ struct TimeRulerView: View
             let startSeconds = safeRange.startTime.toSeconds()
             let endSeconds = safeRange.endTimeInclusive().toSeconds()
 
+            if let tracks = self.timeline.tracks
+            {
+                let markerRange = tracks.markers.startIndex ..< tracks.markers.endIndex
+                for markerIndex in markerRange
+                {
+                    let marker = tracks.markers[markerIndex]
+                    let x = marker.markedRange.startTime.toSeconds() * self.secondsToPixels// +
+                    
+                    let path = Path(roundedRect: CGRect(origin: CGPoint(x: x, y: 0),
+                                                        size: CGSize(width: 5.0, height: 9.0)),
+                                    cornerRadius: 3.0)
+                    
+                    context.fill(path, with: .color(.red))
+                }
+            }
+            
+            
             // Draw playhead
             drawPlayhead(context: context, currentTime: currentTime, secondsToPixels: secondsToPixels, size: size)
 
