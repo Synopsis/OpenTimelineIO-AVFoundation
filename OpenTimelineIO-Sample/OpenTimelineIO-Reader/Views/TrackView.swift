@@ -14,7 +14,6 @@ import SwiftUI
 
 struct TrackView : View
 {
-    static let trackHeaderWidth:CGFloat = 100
     static let trackHeight:CGFloat = 35
     
     let track:OpenTimelineIO.Track
@@ -46,11 +45,7 @@ struct TrackView : View
                 }
             }
         }
-<<<<<<< HEAD
         .frame(width: self.getSafeWidth(), height:Self.trackHeight, alignment: .leading )
-=======
-        .frame(width: self.getSafeWidth(), alignment: .leading )
->>>>>>> 883836b (Wire basic marker view up - need to validate placement logic)
         .overlay {
             self.getMarkerView()
         }
@@ -70,7 +65,7 @@ struct TrackView : View
                 .font(.system(size: 10))
                 .bold()
         }
-        .frame(width: Self.trackHeaderWidth, height:Self.trackHeight)
+        .frame(width: 100, height:Self.trackHeight)
         .onTapGesture {
             self.selectedItem = track
             print("selected Item")
@@ -96,7 +91,7 @@ struct TrackView : View
     
     func getSafeWidth() -> CGFloat
     {
-        return self.getSafeRange().duration.toSeconds() * self.secondsToPixels + TrackView.trackHeaderWidth
+        return self.getSafeRange().duration.toSeconds() * self.secondsToPixels + 100
     }
     
     func getSafePositionX() -> CGFloat
