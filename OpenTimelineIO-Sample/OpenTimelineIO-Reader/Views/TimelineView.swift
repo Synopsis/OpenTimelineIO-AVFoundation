@@ -51,17 +51,19 @@ struct TimelineView : View {
         }
     }
     
-    func timelineView() -> some View
+    @ViewBuilder func timelineView() -> some View
     {
         let videoTracks = timeline.videoTracks
         let audioTracks = timeline.audioTracks
 
-        return
+        
             VStack(alignment:.leading, spacing: 3)
             {
                 TimeRulerView(timeline: self.timeline, secondsToPixels: self.$secondsToPixels, currentTime: self.$currentTime )
                     .frame(height: 40)
                     .offset(x:100)
+                    .overlay( self.getMarkerView( ) )
+
                 //
                 
                 ForEach(0..<videoTracks.count, id: \.self) { index in
@@ -89,6 +91,17 @@ struct TimelineView : View {
             }
             .frame(height: CGFloat((videoTracks.count + audioTracks.count)) * 25 + 50 )
             .frame(maxHeight: CGFloat((videoTracks.count + audioTracks.count)) * 500)
-        
+    }
+    
+    @ViewBuilder func getMarkerView() -> some View
+    {
+        HStack(alignment: .top)
+        {
+            let markerRange = (self.timeline.tracks?.markers.startIndex ?? 0) ..< (self.timeline.tracks?.markers.endIndex ?? 0)
+            ForEach(markerRange, id:\.self) { markerIndex in
+                MarkerView(marker: self.timeline.tracks!.markers[markerIndex],
+                           secondsToPixels: self.$secondsToPixels)
+            }
+        }
     }
 }

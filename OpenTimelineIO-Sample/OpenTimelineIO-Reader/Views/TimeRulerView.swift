@@ -34,7 +34,7 @@ struct TimeRulerView: View
     }
     func drawTicks(context: GraphicsContext, startSeconds: Double, endSeconds: Double, secondsToPixels: Double, size: CGSize)
     {
-        if self.secondsToPixels > 100
+        if self.secondsToPixels > 75
         {
             self.drawFrameTicks(context: context, startSeconds: startSeconds, endSeconds: endSeconds, secondsToPixels: secondsToPixels, size: size)
         }
@@ -66,7 +66,7 @@ struct TimeRulerView: View
             context.fill(Path(tickRect), with: .color(.white))
             
             // Draw label if it's an hour or minute
-            if self.secondsToPixels > 50
+            if self.secondsToPixels > 75
             {
                 context.draw(Text(label).font(.system(size: 10)), at: CGPoint(x: positionX + 2, y: size.height - tickHeight - 10))
             }
@@ -93,9 +93,10 @@ struct TimeRulerView: View
             let tickRect = CGRect(x: positionX, y: size.height - tickHeight, width: 1, height: tickHeight)
             context.fill(Path(tickRect), with: .color(.white))
             
-            if self.secondsToPixels > 400
+            if self.secondsToPixels > 500
             {
-                context.draw(Text(String(frameNum)).font(.system(size: 10)), at: CGPoint(x: positionX, y: size.height - tickHeight - 5))
+                context.draw(Text(String(frameNum)).font(.system(size: 10)),
+                             at: CGPoint(x: positionX, y: size.height - tickHeight - 5))
             }
         }
     }
