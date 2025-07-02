@@ -13,50 +13,42 @@ import SwiftUI
 struct ItemView : View {
     
     let item:OpenTimelineIO.Item
-    @State var backgroundColor:Color
-    @State var selected:Bool
+    let backgroundColor:Color
+    let selected:Bool
+    
+    private var isGap: Bool {
+        item.isKind(of: Gap.self)
+    }
 
     @Binding var secondsToPixels:Double
     
     var body: some View
     {
-            ZStack {
-                
-                if let _ = item as? Gap
-                {
+        ZStack
+        {
+            let fill:AnyShapeStyle = ( isGap ) ? AnyShapeStyle( Color("GapTrackBaseColor") ) : AnyShapeStyle(self.backgroundColor.gradient)
+            let textGapOpacity:Double = ( isGap ) ? 0.0 : 1.0
+            
+            RoundedRectangle(cornerRadius: 3)
+                .fill(fill, style: FillStyle())
+                .overlay(
                     RoundedRectangle(cornerRadius: 3)
-                        .fill(Color("GapTrackBaseColor")) // Fill the RoundedRectangle with color
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 3)
-                                .stroke(self.selected ? .white : .clear, lineWidth: 1) // Add stroke/outline
-                        )
+                        .strokeBorder(self.selected ? .orange : .clear, lineWidth: 1) // Add stroke/outline
                         .frame(width: self.getSafeWidth() - 2)
-                }
-                else
-                {
-                    RoundedRectangle(cornerRadius: 3)
-                        .fill(self.backgroundColor.gradient) // Fill the RoundedRectangle with color
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 3)
-                                .stroke(self.selected ? .white : .clear, lineWidth: 1) // Add stroke/outline
-                        )
-                        .frame(width: self.getSafeWidth() - 2)
-                    
-                    if self.getSafeWidth() > 40
-                    {
-                        Text(item.name)
-                            .lineLimit(1)
-                            .font(.system(size: 10))
-                            .frame(width: self.getSafeWidth())
-                    }
-                }
-            }
-            .frame(width: self.getSafeWidth(), alignment: .leading )
-            .overlay {
-                self.getMarkerView()
-
-            }
-//            .offset(x:self.getSafePositionX() )//, y:geometry.size.height * 0.5 )
+                )
+                .frame(width: self.getSafeWidth() - 2)
+            
+            Text(item.name)
+                .lineLimit(1)
+                .font(.system(size: 10))
+                .frame(width: self.getSafeWidth())
+                .opacity(self.getSafeWidth() > 40 ? textGapOpacity : 0.0)
+        }
+        .frame(width: self.getSafeWidth(), alignment: .leading )
+        .overlay {
+            // TODO: Get item marker coordinate system working
+//            self.getMarkerView()
+        }
     }
 
     func getSafeRange() -> OpenTimelineIO.TimeRange
