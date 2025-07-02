@@ -44,13 +44,7 @@ struct TimeRulerView: View
             for markerIndex in markerRange
             {
                 let marker = tracks.markers[markerIndex]
-                let x = marker.markedRange.startTime.toSeconds() * self.secondsToPixels// +
-                
-//                    let path = Path(roundedRect: CGRect(origin: CGPoint(x: x, y: 13),
-//                                                        size: CGSize(width: 3.0, height: 9.0)),
-//                                    cornerRadius: 1.0)
-//
-//                    context.fill(path, with: .color(.red))
+                let x = marker.markedRange.startTime.toSeconds() * self.secondsToPixels
                 
                 let text = marker.name
                 
