@@ -40,8 +40,7 @@ struct TimelineView : View {
                 
                 self.hitTestEnabled = !newPhase.isScrolling
             })
-            .frame(idealHeight: ( CGFloat((timeline.videoTracks.count + timeline.audioTracks.count)) * TrackView.trackHeight) + 100 )
-    //        .frame(maxHeight: CGFloat((videoTracks.count + audioTracks.count)) * 500)
+            .frame(idealHeight: ( CGFloat((timeline.videoTracks.count + timeline.audioTracks.count)) * TrackView.trackHeight) + TimeRulerView.VerticalPadding )
 
         }
         else
@@ -51,6 +50,8 @@ struct TimelineView : View {
             {
                 self.timelineView()
             }
+            .frame(idealHeight: ( CGFloat((timeline.videoTracks.count + timeline.audioTracks.count)) * TrackView.trackHeight) + TimeRulerView.VerticalPadding )
+
         }
     }
     
@@ -63,7 +64,6 @@ struct TimelineView : View {
         {
             TimeRulerView(timeline: self.timeline, secondsToPixels: self.$secondsToPixels, currentTime: self.$currentTime )
                     .frame(height: 50)
-                    .offset(x:100)
             
             ForEach(0..<videoTracks.count, id: \.self) { index in
                 
